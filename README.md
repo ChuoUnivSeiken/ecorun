@@ -6,7 +6,7 @@
 自動車やバイク,自転車といった乗り物の知識を横断的に用い,
 溶接やFRPによる成形を行い自動車を1から製作します.
 
-[emc]: http://www.honda.co.jp/Racing/emc/ [Hondaエコマイレッジチャレンジ公式HP]
+http://www.honda.co.jp/Racing/emc/ [Hondaエコマイレッジチャレンジ公式HP]
 
 # インジェクションとは
 
