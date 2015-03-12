@@ -1,0 +1,248 @@
+/*
+ * LPC1347 linker script file.
+ * This linker is intended to use with libc.
+ */
+
+MEMORY
+{
+  irom  (rx)      : ORIGIN = 0x0,         LENGTH = 0x10000 /* 64k */
+  isram (rwx)     : ORIGIN = 0x10000000,  LENGTH = 0x2000  /* 8k  */
+  isramUsb (rwx)  : ORIGIN = 0x20004000,  LENGTH = 0x800   /* 2k  */
+}
+
+  /* Define a symbol for the top of stack */
+  /* It won't be used if user define FIXED_STACKHEAP_SIZE */
+  __StackTop = ORIGIN(isram) + LENGTH(isram);
+  
+__stack = ORIGIN(isram) + LENGTH(isram);
+  
+__Main_Stack_Size = 1024 ;
+
+PROVIDE ( _Main_Stack_Size = __Main_Stack_Size ) ;
+
+__Main_Stack_Limit = __stack  - __Main_Stack_Size ;
+
+/*"PROVIDE" allows to easily override these values from an object file or the command line. */
+PROVIDE ( _Main_Stack_Limit = __Main_Stack_Limit ) ;
+
+
+PROVIDE ( _Heap_Begin = _end_noinit ) ;
+PROVIDE ( _Heap_Limit = __stack - __Main_Stack_Size ) ;
+
+ENTRY(Reset_Handler)
+
+SECTIONS
+{
+	/*
+     * For Cortex-M devices, the beginning of the startup code is stored in
+     * the .isr_vector section, which goes to FLASH 
+     */
+    .isr_vector :
+    {
+    __text_start = .;
+        . = ALIGN(4);
+        KEEP(*(.isr_vector))     	/* Interrupt vectors */
+        
+		/*KEEP(*(.cfmconfig))*/			/* Freescale configuration words */   
+		     
+        /* 
+         * This section is here for convenience, to store the
+         * startup code at the beginning of the flash area, hoping that
+         * this will increase the readability of the listing.
+         */
+        *(.after_vectors .after_vectors.*)	/* Startup code and ISR */
+
+        . = ALIGN(4);
+    } > irom
+
+    .inits :
+    {
+        . = ALIGN(4);
+        
+        /*
+         * These are the old initialisation sections, intended to contain
+         * naked code, with the prologue/epilogue added by crti.o/crtn.o
+         * when linking with startup files. The standalone startup code
+         * currently does not run these, better use the init arrays below.
+         */
+		KEEP(*(.init))
+		KEEP(*(.fini))
+
+		. = ALIGN(4);
+
+		/*
+         * The preinit code, i.e. an array of pointers to initialisation 
+         * functions to be performed before constructors.
+         */
+		PROVIDE_HIDDEN (__preinit_array_start = .);
+        
+        /*
+         * Used to run the SystemInit() before anything else.
+         */
+		KEEP(*(.preinit_array_sysinit .preinit_array_sysinit.*))
+        
+        /* 
+         * Used for other platform inits.
+         */
+		KEEP(*(.preinit_array_platform .preinit_array_platform.*))
+        
+        /*
+         * The application inits. If you need to enforce some order in 
+         * execution, create new sections, as before.
+         */
+		KEEP(*(.preinit_array .preinit_array.*))
+
+		PROVIDE_HIDDEN (__preinit_array_end = .);
+
+		. = ALIGN(4);
+
+		/*
+         * The init code, i.e. an array of pointers to static constructors.
+         */
+		PROVIDE_HIDDEN (__init_array_start = .);
+		KEEP(*(SORT(.init_array.*)))
+		KEEP(*(.init_array))
+		PROVIDE_HIDDEN (__init_array_end = .);
+
+		. = ALIGN(4);
+
+		/*
+         * The fini code, i.e. an array of pointers to static destructors.
+         */
+		PROVIDE_HIDDEN (__fini_array_start = .);
+		KEEP(*(SORT(.fini_array.*)))
+		KEEP(*(.fini_array))
+		PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4);
+
+    } > irom
+    
+  /* MAIN TEXT SECTION */
+  .text : ALIGN(4)
+  {
+    *(.text .text.*)			/* all remaining code */
+    *(.rodata .rodata.*) 		/* read-only data (constants) */
+    *(vtable)					/* C++ virtual tables */
+    . = ALIGN(4);
+    __text_end = .;
+  } > irom
+
+  /*
+   * For exception handling/unwind - some Newlib functions (in common
+   * with C++ and STDC++) use this.
+   * Use KEEP so it's not discarded with --gc-sections
+   */
+  .ARM.extab : ALIGN(4)
+  {
+    KEEP(*(.ARM.extab* .gnu.linkonce.armextab.*))
+  } > irom
+  
+  __exidx_start = .;
+  .ARM.exidx : ALIGN(4)
+  {
+    KEEP(*(.ARM.exidx* .gnu.linkonce.armexidx.*))
+  } > irom
+  __exidx_end = .;
+  
+  . = ALIGN(4);
+    _etext = .;
+    __etext = .;
+
+/* 
+     * This address is used by the startup code to 
+     * initialise the .data section.
+     */
+    _sidata = _etext;
+  
+  .data : AT(_sidata)
+  {
+  	/* This is used by the startup code to initialise the .data section */
+		_sdata = . ;        	/* STM specific definition */
+        __data_start__ = . ;
+
+    *(.data*)
+    
+    . = ALIGN(4) ;
+    /* This is used by the startup code to initialise the .data section */
+        _edata = . ;        	/* STM specific definition */
+        __data_end__ = . ;
+  } > isram
+
+  /* This is used for USB RAM section */
+  .usb_ram (NOLOAD): ALIGN(4)
+  {
+    FILL(0xff)
+    *(USB_RAM)
+  } > isramUsb
+
+  /* MAIN BSS SECTION */
+  .bss (NOLOAD) :
+  {
+  . = ALIGN(4);
+    __bss_start__ = .;
+    _sbss = .;              /* STM specific definition */
+    *(.bss*)
+    rt_*.o(COMMON)
+    *(COMMON)
+    /*bin/obj/usbd.o(COMMON)*/
+    *(.heap)
+    __fixed_heap_end = .;
+    *(.stack)
+    . = ALIGN(4) ;
+    __bss_end__ = .;
+    PROVIDE(end = .);
+  } > isram
+  
+  .noinit (NOLOAD) :
+    {
+	    . = ALIGN(4);
+        _noinit = .;
+        
+        *(.noinit .noinit.*) 
+        
+         . = ALIGN(4) ;
+        _end_noinit = .;   
+    } > isram
+    
+    /* Mandatory to be word aligned, _sbrk assumes this */
+    PROVIDE ( end = _end_noinit ); /* was _ebss */
+    PROVIDE ( _end = _end_noinit );
+    PROVIDE ( __end = _end_noinit );
+    PROVIDE ( __end__ = _end_noinit );
+  
+  /* Stabs debugging sections.  */
+    .stab          0 : { *(.stab) }
+    .stabstr       0 : { *(.stabstr) }
+    .stab.excl     0 : { *(.stab.excl) }
+    .stab.exclstr  0 : { *(.stab.exclstr) }
+    .stab.index    0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment       0 : { *(.comment) }
+    /*
+     * DWARF debug sections.
+     * Symbols in the DWARF debugging sections are relative to the beginning
+     * of the section so we begin them at 0.  
+     */
+    /* DWARF 1 */
+    .debug          0 : { *(.debug) }
+    .line           0 : { *(.line) }
+    /* GNU DWARF 1 extensions */
+    .debug_srcinfo  0 : { *(.debug_srcinfo) }
+    .debug_sfnames  0 : { *(.debug_sfnames) }
+    /* DWARF 1.1 and DWARF 2 */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    /* DWARF 2 */
+    .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
+    /* SGI/MIPS DWARF 2 extensions */
+    .debug_weaknames 0 : { *(.debug_weaknames) }
+    .debug_funcnames 0 : { *(.debug_funcnames) }
+    .debug_typenames 0 : { *(.debug_typenames) }
+    .debug_varnames  0 : { *(.debug_varnames) }    
+}
