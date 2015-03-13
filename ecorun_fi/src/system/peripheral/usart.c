@@ -36,13 +36,14 @@
  */
 
 #include "../cmsis/LPC13Uxx.h"
-#include "uart.h"
+#include "usart.h"
 
 #define USE_BLUETOOTH 0
 
 static uint32_t is_start_of_txt = 0;
 
-void uart_init(uint32_t baudrate) {
+void uart_init(uint32_t baudrate)
+{
 	volatile uint32_t fdiv, regVal;
 
 #if USE_BLUETOOTH
@@ -102,7 +103,8 @@ void uart_init(uint32_t baudrate) {
 	while (( LPC_USART->LSR & (USART_LSR_THRE | USART_LSR_TEMT))
 			!= (USART_LSR_THRE | USART_LSR_TEMT))
 		;
-	while ( LPC_USART->LSR & USART_LSR_RDR_DATA) {
+	while ( LPC_USART->LSR & USART_LSR_RDR_DATA)
+	{
 		/* Dump data from RX FIFO */
 		regVal = LPC_USART->RBR;
 	}
@@ -114,33 +116,41 @@ void uart_init(uint32_t baudrate) {
 	is_start_of_txt = 1;
 }
 
-void uart_putc(uint8_t c) {
+void usart_write_char(uint8_t c)
+{
 	if (is_start_of_txt)
 	{
 		is_start_of_txt = 0;
-		uart_putc(UART_STX);
+		usart_write_char(USART_STX);
 	}
-	if (c == UART_ETX) {
+	if (c == USART_ETX)
+	{
 		is_start_of_txt = 1;
 	}
 	while (!(LPC_USART->LSR & USART_LSR_THRE))
-		;
+	{
+		// no operation
+	}
 	LPC_USART->THR = c;
 }
 
-int uart_puts_with_term(const char* s) {
-	int n;
-	for (n = 0; *s; s++, n++) {
-		uart_putc(*s);
+uint32_t usart_writeln_string(const char* s)
+{
+	volatile uint32_t n;
+	for (n = 0; *s; s++, n++)
+	{
+		usart_write_char(*s);
 	}
-	uart_putc(UART_ETX);
+	usart_endln();
 	return n;
 }
 
-uint32_t uart_puts(const char* s) {
+uint32_t usart_write_string(const char* s)
+{
 	volatile uint32_t n;
-	for (n = 0; *s; s++, n++) {
-		uart_putc(*s);
+	for (n = 0; *s; s++, n++)
+	{
+		usart_write_char(*s);
 	}
 	return n;
 }
@@ -149,37 +159,44 @@ char uart_int_conv[12];
 
 #include "../integer.h"
 
-void uart_int32_with_term(int32_t value) {
+void usart_writeln_int32(int32_t value)
+{
 	int32_to_str(value, uart_int_conv);
-	uart_puts_with_term(uart_int_conv);
+	usart_writeln_string(uart_int_conv);
 }
 
-void uart_uint32_with_term(uint32_t value) {
+void usart_writeln_uint32(uint32_t value)
+{
 	uint32_to_str(value, uart_int_conv);
-	uart_puts_with_term(uart_int_conv);
+	usart_writeln_string(uart_int_conv);
 }
 
-void uart_uint32_hex_with_term(uint32_t value) {
+void usart_writeln_uint32_hex(uint32_t value)
+{
 	uint32_to_hex_str(value, uart_int_conv);
-	uart_puts_with_term(uart_int_conv);
+	usart_writeln_string(uart_int_conv);
 }
 
-void uart_int32(int32_t value) {
+void usart_write_int32(int32_t value)
+{
 	int32_to_str(value, uart_int_conv);
-	uart_puts(uart_int_conv);
+	usart_write_string(uart_int_conv);
 }
 
-void uart_uint32(uint32_t value) {
+void usart_write_uint32(uint32_t value)
+{
 	uint32_to_str(value, uart_int_conv);
-	uart_puts(uart_int_conv);
+	usart_write_string(uart_int_conv);
 }
 
-void uart_uint32_hex(uint32_t value) {
+void usart_write_uint32_hex(uint32_t value)
+{
 	uint32_to_hex_str(value, uart_int_conv);
-	uart_puts(uart_int_conv);
+	usart_write_string(uart_int_conv);
 }
 
-void uart_terminate(void) {
-	uart_putc(UART_ETX);
+void usart_endln(void)
+{
+	usart_write_char(USART_ETX);
 }
 

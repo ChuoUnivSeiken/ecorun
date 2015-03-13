@@ -5,16 +5,16 @@
 
 MEMORY
 {
-  irom  (rx)      : ORIGIN = 0x0,         LENGTH = 0x10000 /* 64k */
-  isram (rwx)     : ORIGIN = 0x10000000,  LENGTH = 0x2000  /* 8k  */
-  isramUsb (rwx)  : ORIGIN = 0x20004000,  LENGTH = 0x800   /* 2k  */
+  FLASH  (rx) : ORIGIN = 0x0,         LENGTH = 64k
+  RAM (rwx) : ORIGIN = 0x10000000,  LENGTH = 8k
+  USBRAM (rwx) : ORIGIN = 0x20004000,  LENGTH = 2k
 }
 
   /* Define a symbol for the top of stack */
   /* It won't be used if user define FIXED_STACKHEAP_SIZE */
-  __StackTop = ORIGIN(isram) + LENGTH(isram);
+  __StackTop = ORIGIN(RAM) + LENGTH(RAM);
   
-__stack = ORIGIN(isram) + LENGTH(isram);
+__stack = ORIGIN(RAM) + LENGTH(RAM);
   
 __Main_Stack_Size = 1024 ;
 
@@ -53,7 +53,7 @@ SECTIONS
         *(.after_vectors .after_vectors.*)	/* Startup code and ISR */
 
         . = ALIGN(4);
-    } > irom
+    } >FLASH
 
     .inits :
     {
@@ -115,7 +115,7 @@ SECTIONS
 		PROVIDE_HIDDEN (__fini_array_end = .);
         . = ALIGN(4);
 
-    } > irom
+    } >FLASH
     
   /* MAIN TEXT SECTION */
   .text : ALIGN(4)
@@ -125,7 +125,7 @@ SECTIONS
     *(vtable)					/* C++ virtual tables */
     . = ALIGN(4);
     __text_end = .;
-  } > irom
+  } >FLASH
 
   /*
    * For exception handling/unwind - some Newlib functions (in common
@@ -135,13 +135,13 @@ SECTIONS
   .ARM.extab : ALIGN(4)
   {
     KEEP(*(.ARM.extab* .gnu.linkonce.armextab.*))
-  } > irom
+  } >FLASH
   
   __exidx_start = .;
   .ARM.exidx : ALIGN(4)
   {
     KEEP(*(.ARM.exidx* .gnu.linkonce.armexidx.*))
-  } > irom
+  } >FLASH
   __exidx_end = .;
   
   . = ALIGN(4);
@@ -166,14 +166,14 @@ SECTIONS
     /* This is used by the startup code to initialise the .data section */
         _edata = . ;        	/* STM specific definition */
         __data_end__ = . ;
-  } > isram
+  } >RAM
 
-  /* This is used for USB RAM section */
+  /* This is used for USBRAM section */
   .usb_ram (NOLOAD): ALIGN(4)
   {
     FILL(0xff)
     *(USB_RAM)
-  } > isramUsb
+  } >USBRAM
 
   /* MAIN BSS SECTION */
   .bss (NOLOAD) :
@@ -191,7 +191,7 @@ SECTIONS
     . = ALIGN(4) ;
     __bss_end__ = .;
     PROVIDE(end = .);
-  } > isram
+  } >RAM
   
   .noinit (NOLOAD) :
     {
@@ -202,7 +202,7 @@ SECTIONS
         
          . = ALIGN(4) ;
         _end_noinit = .;   
-    } > isram
+    } >RAM
     
     /* Mandatory to be word aligned, _sbrk assumes this */
     PROVIDE ( end = _end_noinit ); /* was _ebss */

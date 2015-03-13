@@ -6,7 +6,7 @@
  */
 
 #include "system/cmsis/LPC13Uxx.h"
-#include "system/peripheral/uart.h"
+#include "system/peripheral/usart.h"
 
 int main(void)
 {
@@ -16,7 +16,7 @@ int main(void)
 
 	uart_init(UART_BAUDRATE);
 
-	uart_puts_with_term("Hello, World!\n");
+	usart_writeln_string("Hello, World!\n");
 
 	while (1)
 	{

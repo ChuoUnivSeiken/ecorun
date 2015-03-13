@@ -71,7 +71,7 @@ uint32_t uint32_to_str(uint32_t num, char* buf)
 	{
 		buf[count++] = num_convert_buf[bufpos];
 	}
-	buf[count++] = '\0';
+	buf[count] = '\0';
 
 	return count;
 }
@@ -97,7 +97,7 @@ uint32_t uint32_to_hex_str(uint32_t num, char* buf)
 	{
 		buf[count++] = num_convert_buf[bufpos];
 	}
-	buf[count++] = '\0';
+	buf[count] = '\0';
 
 	return count;
 }
@@ -108,7 +108,9 @@ uint32_t str_to_uint32(char* buf)
 	volatile uint32_t base = 1;
 	volatile char* ptr = buf;
 	while (*(++ptr) != '\0')
-		;
+	{
+		// no operation
+	}
 
 	while (ptr-- > buf)
 	{

@@ -35,8 +35,8 @@
  * 本ソフトウェアは、著作権者およびコントリビューターによって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者もコントリビューターも、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
  */
 
-#ifndef UART_H_
-#define UART_H_
+#ifndef USART_H_
+#define USART_H_
 
 #include <stdint.h>
 
@@ -59,8 +59,8 @@
 #define LSR_TEMT  	0x40
 #define LSR_RXFE  	0x80
 
-#define UART_STX 0x02
-#define UART_ETX 0x03
+#define USART_STX 0x02
+#define USART_ETX 0x03
 
 #if defined(__cplusplus)
 extern "C" {
@@ -70,28 +70,28 @@ extern "C" {
 void uart_init(uint32_t baudrate);
 
 // send one character
-void uart_putc(uint8_t c);
+void usart_write_char(uint8_t c);
 
 // send caracters
-uint32_t uart_puts(const char* s);
+uint32_t usart_write_string(const char* s);
 
 // send string with '\0'
-int uart_puts_with_term(const char* s);
+uint32_t usart_writeln_string(const char* s);
 
 // send interger with '\0'
-void uart_int32_with_term(int32_t value);
-void uart_uint32_with_term(uint32_t value);
-void uart_uint32_hex_with_term(uint32_t value);
+void usart_writeln_int32(int32_t value);
+void usart_writeln_uint32(uint32_t value);
+void usart_writeln_uint32_hex(uint32_t value);
 
-void uart_int32(int32_t value);
-void uart_uint32(uint32_t value);
-void uart_uint32(uint32_t value);
+void usart_write_int32(int32_t value);
+void usart_write_uint32(uint32_t value);
+void usart_write_uint32(uint32_t value);
 
 // send UART_ETX
-void uart_terminate(void);
+void usart_endln(void);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* UART_H_ */
+#endif /* USART_H_ */

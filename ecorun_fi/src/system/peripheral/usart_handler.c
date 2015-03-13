@@ -35,41 +35,41 @@
  * 本ソフトウェアは、著作権者およびコントリビューターによって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者もコントリビューターも、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
  */
 
-#include "uart.h"
+#include "usart.h"
 #include "../cmsis/LPC13Uxx.h"
 
 #define BUFSIZE		512
 
-volatile uint8_t uart_buf_arr[BUFSIZE];
-volatile uint8_t* uart_buf_ptr = uart_buf_arr;
-volatile uint32_t uart_buf_count = 0;
+volatile uint8_t usart_buf_arr[BUFSIZE];
+volatile uint8_t* usart_buf_ptr = usart_buf_arr;
+volatile uint32_t usart_buf_count = 0;
 
 #define WEAK __attribute__((weak))
 
-WEAK void uart_receive_data_handler(uint8_t* buf, uint32_t count);
+WEAK void usart_receive_data_handler(uint8_t* buf, uint32_t count);
 
-void uart_receive_data_handler(uint8_t* buf, uint32_t count)
+void usart_receive_data_handler(uint8_t* buf, uint32_t count)
 {
 }
 
-void receive_data(uint8_t data)
+void usart_receive_data(uint8_t data)
 {
-	if (uart_buf_count == BUFSIZE - 1)
+	if (usart_buf_count == BUFSIZE - 1)
 	{
-		uart_buf_count = 0; // buffer overflow
-		uart_puts("uart buffer overflow.");
+		usart_buf_count = 0; // buffer overflow
+		usart_write_string("uart buffer overflow.");
 	}
 	else
 	{
-		uart_buf_arr[uart_buf_count++] = data;
+		usart_buf_arr[usart_buf_count++] = data;
 		switch (data)
 		{
 		case 0x00:
-			uart_receive_data_handler(uart_buf_arr, uart_buf_count);
-			uart_buf_count = 0;
+			usart_receive_data_handler(usart_buf_arr, usart_buf_count);
+			usart_buf_count = 0;
 			break;
 		case 0x05:
-			uart_putc(0x06);
+			usart_write_char(0x06);
 			break;
 		}
 	}
@@ -102,10 +102,10 @@ void USART_IRQHandler(void)
 		{
 			/* If no error on RLS, normal ready, save into the data buffer. */
 			/* Note: read RBR will clear the interrupt */
-			uart_buf_arr[uart_buf_count++] = LPC_USART->RBR;
-			if (uart_buf_count == BUFSIZE)
+			usart_buf_arr[usart_buf_count++] = LPC_USART->RBR;
+			if (usart_buf_count == BUFSIZE)
 			{
-				uart_buf_count = 0; /* buffer overflow */
+				usart_buf_count = 0; /* buffer overflow */
 			}
 		}
 	}
@@ -115,7 +115,7 @@ void USART_IRQHandler(void)
 	{
 		// Add incoming text to UART buffer
 		uint8_t data = LPC_USART->RBR;
-		receive_data(data);
+		usart_receive_data(data);
 	}
 
 	// 3.) Check character timeout indicator
