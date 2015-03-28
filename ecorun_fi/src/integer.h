@@ -1,9 +1,6 @@
 /*
- * Copyright (c) 2013, K. Townsend (microBuilder.eu)
- * https://github.com/microbuilder/
+ * Copyright (c) 2015 Yoshio Nakamura
  * All rights reserved.
- *
- * Modified by Yoshio Nakamura, Copyright (c) 2015
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -35,128 +32,24 @@
  * 本ソフトウェアは、著作権者およびコントリビューターによって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者もコントリビューターも、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
  */
 
-#include "../cmsis/LPC13Uxx.h"
-#include "usart.h"
+#ifndef INTEGER_H_
+#define INTEGER_H_
 
-#define USE_BLUETOOTH 0
+#include <stdint.h>
 
-static uint32_t is_start_of_txt = 0;
-
-void usart_init(uint32_t baudrate)
+#if defined(__cplusplus)
+extern "C"
 {
-	volatile uint32_t fdiv, regVal;
-
-#if USE_BLUETOOTH
-	/* Set 1.13 UART RXD */
-	LPC_IOCON->PIO1_13 &= ~0x07;
-	LPC_IOCON->PIO1_13 |= 0x03;
-
-	/* Set 1.14 UART TXD */
-	LPC_IOCON->PIO1_14 &= ~0x07;
-	LPC_IOCON->PIO1_14 |= 0x03;
-#else
-	/* Set 0.18 UART RXD */
-	LPC_IOCON->PIO0_18 &= ~0x07;
-	LPC_IOCON->PIO0_18 |= 0x01;
-
-	/* Set 0.19 UART TXD */
-	LPC_IOCON->PIO0_19 &= ~0x07;
-	LPC_IOCON->PIO0_19 |= 0x01;
 #endif
 
-	/* Enable UART clock */
-	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
-	LPC_SYSCON->UARTCLKDIV = 0x1;
+uint32_t int32_to_str(int32_t num, char* buf);
+uint32_t uint32_to_str(uint32_t num, char* buf);
+uint32_t uint32_to_hex_str(uint32_t num, char* buf);
 
-	/* Set DLAB back to 0 */
-	LPC_USART->LCR = (USART_LCR_Word_Length_Select_8Chars |
-	USART_LCR_Stop_Bit_Select_1Bits |
-	USART_LCR_Parity_Disabled |
-	USART_LCR_Parity_Select_OddParity |
-	USART_LCR_Break_Control_Disabled |
-	USART_LCR_Divisor_Latch_Access_Enabled);
+uint32_t str_to_uint32(char* buf);
+uint32_t str_to_uint32_len(const char* buf, uint32_t len);
 
-	/* Baud rate */
-	regVal = LPC_SYSCON->UARTCLKDIV;
-	fdiv = ((SystemCoreClock / LPC_SYSCON->UARTCLKDIV) / 16) / baudrate;
-
-	LPC_USART->DLM = fdiv / 256;
-	LPC_USART->DLL = fdiv % 256;
-
-	/* Set DLAB back to 0 */
-	LPC_USART->LCR = (USART_LCR_Word_Length_Select_8Chars |
-	USART_LCR_Stop_Bit_Select_1Bits |
-	USART_LCR_Parity_Disabled |
-	USART_LCR_Parity_Select_OddParity |
-	USART_LCR_Break_Control_Disabled |
-	USART_LCR_Divisor_Latch_Access_Disabled);
-
-	/* Enable and reset TX and RX FIFO. */
-	LPC_USART->FCR = (USART_FCR_FIFO_Enabled |
-	USART_FCR_Rx_FIFO_Reset |
-	USART_FCR_Tx_FIFO_Reset);
-
-	/* Read to clear the line status. */
-	regVal = LPC_USART->LSR;
-
-	/* Ensure a clean start, no data in either TX or RX FIFO. */
-	while (( LPC_USART->LSR & (USART_LSR_THRE | USART_LSR_TEMT))
-			!= (USART_LSR_THRE | USART_LSR_TEMT))
-		;
-	while ( LPC_USART->LSR & USART_LSR_RDR_DATA)
-	{
-		/* Dump data from RX FIFO */
-		regVal = LPC_USART->RBR;
-	}
-
-	NVIC_EnableIRQ(USART_IRQn);
-	LPC_USART->IER = USART_IER_RBR_Interrupt_Enabled
-			| USART_IER_RLS_Interrupt_Enabled;
-
-	is_start_of_txt = 1;
+#if defined(__cplusplus)
 }
-
-void usart_write_char(uint8_t c)
-{
-	if (is_start_of_txt)
-	{
-		is_start_of_txt = 0;
-		usart_write_char(USART_STX);
-	}
-	if (c == USART_ETX)
-	{
-		is_start_of_txt = 1;
-	}
-	while (!(LPC_USART->LSR & USART_LSR_THRE))
-	{
-		// no operation
-	}
-	LPC_USART->THR = c;
-}
-
-uint32_t usart_writeln_string(const char* s)
-{
-	volatile uint32_t n;
-	for (n = 0; *s; s++, n++)
-	{
-		usart_write_char(*s);
-	}
-	usart_endln();
-	return n;
-}
-
-uint32_t usart_write_string(const char* s)
-{
-	volatile uint32_t n;
-	for (n = 0; *s; s++, n++)
-	{
-		usart_write_char(*s);
-	}
-	return n;
-}
-
-void usart_endln(void)
-{
-	usart_write_char(USART_ETX);
-}
-
+#endif
+#endif /* INTEGER_H_ */

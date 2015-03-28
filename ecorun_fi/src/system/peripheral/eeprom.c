@@ -1,6 +1,9 @@
 /*
- * Copyright (c) 2015 Yoshio Nakamura
+ * Copyright (c) 2013, K. Townsend (microBuilder.eu)
+ * https://github.com/microbuilder/
  * All rights reserved.
+ *
+ * Modified by Yoshio Nakamura, Copyright (c) 2015
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -32,23 +35,65 @@
  * 本ソフトウェアは、著作権者およびコントリビューターによって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者もコントリビューターも、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
  */
 
-#ifndef INTEGER_H_
-#define INTEGER_H_
+#include "eeprom.h"
 
-#include "type.h"
+#include <string.h>
+#include "eeprom.h"
+#include "../cmsis/LPC13Uxx.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+typedef void (*IAP)(unsigned int[], unsigned int[]);
+static const IAP iap_entry = (IAP) 0x1FFF1FF1;
 
-uint32_t int32_to_str(int32_t num, char* buf);
-uint32_t uint32_to_str(uint32_t num, char* buf);
-uint32_t uint32_to_hex_str(uint32_t num, char* buf);
-
-uint32_t str_to_uint32(char* buf);
-uint32_t str_to_uint32_len(const char* buf, uint32_t len);
-
-#if defined(__cplusplus)
+RAMFUNC err_t eeprom_write(uint8_t* rom_address, uint8_t* buf, uint32_t count)
+{
+	unsigned int command[5], result[4];
+	/* EEPROM Write : IAP Command Code : 61
+	 Param 1 : EEPROM address
+	 Param 2 : RAM address of data/buffer to write
+	 Param 3 : Number of bytes to be written
+	 Param 4 : System clock frequency in kHz (SystemCoreClock/1000)
+	 Return Codes : 0 - CMD_SUCCESS
+	 4 - SRC_ADDR_NOT_MAPPED
+	 5 - DST_ADDR_NOT_MAPPED */
+	command[0] = 61;
+	command[1] = (uint32_t) rom_address;
+	command[2] = (uint32_t) buf;
+	command[3] = count;
+	command[4] = (uint32_t) (SystemCoreClock / 1000);
+	/* Invoke IAP call (interrupts need to be disabled during IAP calls)...*/
+	__disable_irq();
+	iap_entry(command, result);
+	__enable_irq();
+	if (0 != result[0])
+	{
+		return EFAULT;
+	}
+	return 0;
 }
-#endif
-#endif /* INTEGER_H_ */
+
+RAMFUNC err_t eeprom_read(uint8_t* rom_address, uint8_t* buf, uint32_t count)
+{
+	unsigned int command[5], result[4];
+	/* EEPROM Read : IAP Command Code : 62
+	 Param 1 : EEPROM address
+	 Param 2 : RAM address to store data
+	 Param 3 : Number of bytes to read
+	 Param 4 : System clock frequency in kHz (SystemCoreClock/1000)
+	 Return Codes : 0 - CMD_SUCCESS
+	 4 - SRC_ADDR_NOT_MAPPED
+	 5 - DST_ADDR_NOT_MAPPED */
+	command[0] = 62;
+	command[1] = (uint32_t) rom_address;
+	command[2] = (uint32_t) buf;
+	command[3] = count;
+	command[4] = (uint32_t) (SystemCoreClock / 1000);
+	/* Invoke IAP call (interrupts need to be disabled during IAP calls)...*/
+	__disable_irq();
+	iap_entry(command, result);
+	__enable_irq();
+	if (0 != result[0])
+	{
+		return EFAULT;
+	}
+	return 0;
+}

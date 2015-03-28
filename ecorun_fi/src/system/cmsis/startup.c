@@ -25,10 +25,10 @@ extern "C"
 
 //*****************************************************************************
 #if defined (__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
-extern unsigned int __StackTop;
 #ifdef FIXED_STACKHEAP_SIZE
 #define STACK_SIZE  (800)
 #define HEAP_SIZE  (200)
@@ -103,6 +103,8 @@ extern void __main(void);
 extern int main(void);
 #endif
 
+extern unsigned int _estack;
+
 //*****************************************************************************
 #if defined (__cplusplus)
 } // extern "C"
@@ -114,11 +116,12 @@ extern int main(void);
 //
 //*****************************************************************************
 __attribute__ ((section(".isr_vector")))
-void (* const Vectors[])(void) = {
+void (* const Vectors[])(void) =
+{
 #ifdef FIXED_STACKHEAP_SIZE
 		(void (*)(void))(StackMem + STACK_SIZE), // The initial stack pointer
 #else
-		(void (*)(void))&__StackTop,
+		(void (*)(void))&_estack,
 #endif
 		Reset_Handler,            // The reset handler
 		NMI_Handler,// The NMI handler
@@ -187,7 +190,8 @@ extern unsigned int __bss_end__;
 inline void
 __attribute__((always_inline))
 __initialize_data(unsigned int* from, unsigned int* section_begin,
-		unsigned int* section_end) {
+		unsigned int* section_end)
+{
 	// Iterate and copy word by word.
 	// It is assumed that the pointers are word aligned.
 	unsigned int *p = section_begin;
@@ -197,7 +201,8 @@ __initialize_data(unsigned int* from, unsigned int* section_begin,
 
 inline void
 __attribute__((always_inline))
-__initialize_bss(unsigned int* section_begin, unsigned int* section_end) {
+__initialize_bss(unsigned int* section_begin, unsigned int* section_end)
+{
 	// Iterate and clear word by word.
 	// It is assumed that the pointers are word aligned.
 	unsigned int *p = section_begin;
@@ -222,7 +227,8 @@ extern void
 // Iterate over all the preinit/init routines (mainly static constructors).
 inline void
 __attribute__((always_inline))
-__run_init_array(void) {
+__run_init_array(void)
+{
 	int count;
 	int i;
 
@@ -243,7 +249,8 @@ __run_init_array(void) {
 // Run all the cleanup routines (mainly static destructors).
 inline void
 __attribute__((always_inline))
-__run_fini_array(void) {
+__run_fini_array(void)
+{
 	int count;
 	int i;
 
@@ -263,7 +270,8 @@ __run_fini_array(void) {
 // library.
 //*****************************************************************************
 __attribute__ ((section(".after_vectors")))
-void Reset_Handler(void) {
+void Reset_Handler(void)
+{
 	// Zero fill the bss segment
 	__initialize_bss(&__bss_start__, &__bss_end__);
 
@@ -299,54 +307,72 @@ void Reset_Handler(void) {
 //
 //*****************************************************************************
 __attribute__ ((section(".after_vectors")))
-void NMI_Handler(void) {
-	while (1) {
+void NMI_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void HardFault_Handler(void) {
-	while (1) {
+void HardFault_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void MemManage_Handler(void) {
-	while (1) {
+void MemManage_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void BusFault_Handler(void) {
-	while (1) {
+void BusFault_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void UsageFault_Handler(void) {
-	while (1) {
+void UsageFault_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void SVCall_Handler(void) {
-	while (1) {
+void SVCall_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 __attribute__ ((section(".after_vectors")))
-void DebugMon_Handler(void) {
-	while (1) {
+void DebugMon_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
 __attribute__ ((section(".after_vectors")))
-void PendSV_Handler(void) {
-	while (1) {
+void PendSV_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 __attribute__ ((section(".after_vectors")))
-void SysTick_Handler(void) {
-	while (1) {
+void SysTick_Handler(void)
+{
+	while (1)
+	{
 	}
 }
 
@@ -357,7 +383,9 @@ void SysTick_Handler(void) {
 //
 //*****************************************************************************
 __attribute__ ((section(".after_vectors")))
-void IntDefaultHandler(void) {
-	while (1) {
+void IntDefaultHandler(void)
+{
+	while (1)
+	{
 	}
 }

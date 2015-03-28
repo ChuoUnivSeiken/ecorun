@@ -40,38 +40,38 @@
 
 #define BUFSIZE		512
 
-volatile uint8_t usart_buf_arr[BUFSIZE];
-volatile uint8_t* usart_buf_ptr = usart_buf_arr;
-volatile uint32_t usart_buf_count = 0;
+uint8_t usart_buf_arr[BUFSIZE];
+uint8_t* usart_buf_ptr = usart_buf_arr;
+uint32_t usart_buf_count = 0;
 
 #define WEAK __attribute__((weak))
 
 WEAK void usart_receive_data_handler(uint8_t* buf, uint32_t count);
 
-void usart_receive_data_handler(uint8_t* buf, uint32_t count)
-{
-}
-
 void usart_receive_data(uint8_t data)
 {
-	if (usart_buf_count == BUFSIZE - 1)
+	if (usart_buf_count < BUFSIZE)
 	{
-		usart_buf_count = 0; // buffer overflow
-		usart_write_string("uart buffer overflow.");
-	}
-	else
-	{
-		usart_buf_arr[usart_buf_count++] = data;
 		switch (data)
 		{
-		case 0x00:
-			usart_receive_data_handler(usart_buf_arr, usart_buf_count);
-			usart_buf_count = 0;
-			break;
 		case 0x05:
 			usart_write_char(0x06);
 			break;
+		case 0x02:
+			usart_buf_count = 0;
+			break;
+		case 0x03:
+			usart_buf_arr[usart_buf_count] = '\0';
+			usart_receive_data_handler(usart_buf_arr, usart_buf_count);
+			break;
+		default:
+			usart_buf_arr[usart_buf_count++] = data;
 		}
+	}
+	else
+	{
+		usart_buf_count = 0; // buffer overflow
+		usart_write_string("uart buffer overflow.");
 	}
 }
 
@@ -89,7 +89,9 @@ void USART_IRQHandler(void)
 	{
 		LSRValue = LPC_USART->LSR;
 		// Check for errors
-		if (LSRValue & (USART_LSR_OE | USART_LSR_PE | USART_LSR_FE | USART_LSR_RXFE | USART_LSR_BI))
+		if (LSRValue
+				& (USART_LSR_OE | USART_LSR_PE | USART_LSR_FE | USART_LSR_RXFE
+						| USART_LSR_BI))
 		{
 			/* There are errors or break interrupt */
 			/* Read LSR will clear the interrupt */

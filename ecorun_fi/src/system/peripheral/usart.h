@@ -63,11 +63,12 @@
 #define USART_ETX 0x03
 
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
 // first initalization
-void uart_init(uint32_t baudrate);
+void usart_init(uint32_t baudrate);
 
 // send one character
 void usart_write_char(uint8_t c);
@@ -77,15 +78,6 @@ uint32_t usart_write_string(const char* s);
 
 // send string with '\0'
 uint32_t usart_writeln_string(const char* s);
-
-// send interger with '\0'
-void usart_writeln_int32(int32_t value);
-void usart_writeln_uint32(uint32_t value);
-void usart_writeln_uint32_hex(uint32_t value);
-
-void usart_write_int32(int32_t value);
-void usart_write_uint32(uint32_t value);
-void usart_write_uint32(uint32_t value);
 
 // send UART_ETX
 void usart_endln(void);

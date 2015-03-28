@@ -1,6 +1,9 @@
 /*
- * Copyright (c) 2015 Yoshio Nakamura
+ * Copyright (c) 2013, K. Townsend (microBuilder.eu)
+ * https://github.com/microbuilder/
  * All rights reserved.
+ *
+ * Modified by Yoshio Nakamura, Copyright (c) 2015
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -32,41 +35,43 @@
  * 本ソフトウェアは、著作権者およびコントリビューターによって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者もコントリビューターも、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
  */
 
-#ifndef TYPE_H_
-#define TYPE_H_
+#ifndef PERIPHERAL_EEPROM_H_
+#define PERIPHERAL_EEPROM_H_
 
-#if defined   (  __GNUC__  )
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
+#include <errno.h>
 #include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+
+#define EEPROM_SIZE (4032)
+#define EEPROM_RESERVED (0x00FF) // Protect first 256 bytes of memory
+#define EEPROM_CHIBI_NODEADDR (uint16_t)(0x0000) // 2
+#define EEPROM_CHIBI_IEEEADDR (uint16_t)(0x0004) // 8
+
+#ifdef __GNUC__
+#ifdef __CROSSWORKS_ARM
+#define RAMFUNC __attribute__ ((long_call, section (".fast")))
 #else
-
-/* exact-width signed integer types */
-typedef signed char int8_t;
-typedef signed short int int16_t;
-typedef signed int int32_t;
-typedef signed __int64 int64_t;
-
-/* exact-width unsigned integer types */
-typedef unsigned char uint8_t;
-typedef unsigned short int uint16_t;
-typedef unsigned int uint32_t;
-typedef unsigned __int64 uint64_t;
-
-#ifndef NULL
-#define NULL    ((void *)0)
+/* ToDo: Throws 'ignoring changed section attributes for .data' */
+// #define RAMFUNC __attribute__ ((long_call, section (".data")))
+/* Hmm ... not working from the makefile ... need to debug! */
+/* Leave it blank for now unless we're in Crossworks */
+#define RAMFUNC
+#endif
+#else
+#error "No section defined for RAMFUNC in sysdefs.h"
 #endif
 
-#ifndef FALSE
-#define FALSE   (0)
+typedef uint32_t err_t;
+
+RAMFUNC err_t eeprom_write(uint8_t* rom_address, uint8_t* buf, uint32_t count);
+RAMFUNC err_t eeprom_read(uint8_t* rom_address, uint8_t* buf, uint32_t coutn);
+
+#if defined(__cplusplus)
+}
 #endif
 
-#ifndef TRUE
-#define TRUE    (1)
-#endif
-
-#endif
-
-#define _BV(n) (((uint32_t)1) << n)
-
-#endif /* TYPE_H_ */
+#endif /* PERIPHERAL_EEPROM_H_ */
