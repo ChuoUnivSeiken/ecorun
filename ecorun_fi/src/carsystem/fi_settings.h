@@ -31,7 +31,7 @@ extern volatile uint32_t fuel_cut_interval_threshold;
 
 typedef struct fi_setting_data_t
 {
-	volatile uint8_t inject_time_map[16][16];
+	volatile uint8_t basic_inject_time_map[16][16];
 } fi_setting_data;
 
 void fi_set_default(void);
@@ -39,7 +39,7 @@ void fi_set_default(void);
 uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev);
 void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time);
 
-fi_setting_data* get_fi_setting_data(void);
+extern fi_setting_data fi_settings;
 
 #if defined(__cplusplus)
 }

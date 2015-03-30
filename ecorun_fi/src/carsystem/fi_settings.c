@@ -7,7 +7,7 @@
 
 #include "fi_settings.h"
 
-static fi_setting_data fi;
+fi_setting_data fi_settings;
 
 volatile uint32_t inject_time_100us = DEFAULT_INJECT_TIME;  // 5ms
 volatile uint32_t inject_time_idle_100us = DEFAULT_INJECT_IDLE_TIME; // 3.5ms
@@ -43,7 +43,7 @@ void fi_set_default(void)
 				break;
 			}
 
-			fi.inject_time_map[rev][th] = time;
+			fi_settings.basic_inject_time_map[rev][th] = time;
 		}
 	}
 }
@@ -59,7 +59,7 @@ uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev)
 	num = th2 - 150;
 	thIndex = (num >> 6) & 15;
 	revIndex = (rev >> 9) & 15;
-	return fi.inject_time_map[revIndex][thIndex];
+	return fi_settings.basic_inject_time_map[revIndex][thIndex];
 }
 
 void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time)
@@ -73,10 +73,10 @@ void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time)
 	num = th2 - 150;
 	thIndex = (num >> 6) & 15;
 	revIndex = (rev >> 9) & 15;
-	fi.inject_time_map[revIndex][thIndex] = time;
+	fi_settings.basic_inject_time_map[revIndex][thIndex] = time;
 }
 
 fi_setting_data* get_fi_setting_data(void)
 {
-	return &fi;
+	return &fi_settings;
 }

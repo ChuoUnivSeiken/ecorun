@@ -9,14 +9,19 @@
 #include "base64.h"
 #include "../system/peripheral/usart.h"
 
+static const uint8_t b64[] =
+		{ 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+				128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 62 /* + */, 128, 128, 128, 63 /*/ */, 52 /* 0 */, 53, 54, 55, 56, 57, 58, 59,
+				60, 61 /* 9 */, 128, 128, 128, 0 /* = */, 128, 128, 128, 0 /* A */, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+				22, 23, 24, 25 /* Z */, 128, 128, 128, 128, 128, 128, 26 /* a */, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+				46, 47, 48, 49, 50, 51 /* z */};
+static const uint8_t w[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
 void usart_write_base64(const uint8_t* data, uint32_t size)
 {
-	uint32_t i, ensize = (8 * size + 5) / 6; // sizeof encoded char
-	//uart_uint32(ensize);
-	//uart_puts_with_term("\n");
+	uint32_t i;
 
-	char *w = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	volatile uint8_t *p = data;
+	volatile uint8_t* p = data;
 	int x = 0, l = 0;
 	i = 0;
 
@@ -44,14 +49,11 @@ void usart_write_base64(const uint8_t* data, uint32_t size)
 
 uint32_t get_base64(const uint8_t* data, uint32_t size, uint8_t* base64)
 {
-	uint32_t i, ensize; // sizeof encoded char
+	uint32_t i; // sizeof encoded char
 	if (base64 == NULL)
 	{
-		ensize = (8 * size + 5) / 6;
-		return ensize;
+		return (8 * size + 5) / 6;
 	}
-
-	char *w = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	volatile uint8_t *p = data;
 	int x = 0, l = 0;
 	i = 0;
@@ -87,25 +89,40 @@ uint32_t get_base64(const uint8_t* data, uint32_t size, uint8_t* base64)
  */
 uint32_t decode_base64(const uint8_t* base64, uint32_t base64_size, uint8_t* destination)
 {
-	char b64[128], *w = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-	char *p, c[4], *buff = destination;
+	uint8_t* dest_ptr = destination;
+	char temp[4];
 	int i = 0, j;
+	uint32_t len = 0;
 
-	p = base64;
+	if (destination == NULL)
+	{
+		len = (base64_size * 3) / 4;
+		if (base64[base64_size - 1] == '=')
+		{
+			if (base64[base64_size - 2] == '=') /* = Ç™Ç¬Ç≠ÇÃÇÕç≈ëÂ2å¬ */
+			{
+				return len - 2;
+			}
+			return len - 1;
+		}
+	}
 
-	for (j = 0; j < 65; j++)
-		b64[w[j]] = j & 63;
 	while (base64_size > 0)
 	{
-		for (j = 0; j < 4; j++)
+		for (j = 0; j < 4 & base64_size > 0; j++)
 		{
-			c[j] = b64[*(p++)];
+			temp[j] = b64[*(base64++)];
 			base64_size--;
 		}
 		for (j = 0; j < 3; j++)
-			buff[i++] = c[j] << ((j << 1) + 2) | c[j + 1] >> (((2 - j) << 1));
+		{
+			if (temp[j] != '=')
+			{
+				dest_ptr[i++] = temp[j] << ((j << 1) + 2) | temp[j + 1] >> (((2 - j) << 1));
+			}
+		}
 	}
-	buff[i] = '\0';
+	dest_ptr[i] = '\0';
 
 	return i;
 }
