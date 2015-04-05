@@ -34,14 +34,20 @@ void command_error_func(const char* id, command_func func)
 
 static uint8_t buf[128]; // TODO check buffer size
 
-void put_data(uint8_t* data, uint32_t size, const char* id)
+/**
+ * @remarks put (data)
+ * 			data = (id 4bytes)(space 1byte)(base64 encoded binary nbytes)(checksum 4bytes)
+ */
+void put_data(const uint8_t* data, uint32_t size, const char* id)
 {
 	usart_write_string("put ");
 	usart_write_string(id);
-	memcpy(buf, (const uint8_t*) data, size);
-	uint32_t check_sum = adler32((const uint8_t*) buf, size);
-	memcpy(buf + size, (const uint8_t*) &check_sum, 4);
-	usart_write_base64((uint8_t*) buf, size + 4);
+	usart_write_string(" ");
+	usart_writeln_uint32(size);
+	usart_write_string(" ");
+	usart_write_base64(data, size);
+	usart_write_string(" ");
+	usart_writeln_uint32_hex(adler32(data, size));
 	usart_writeln_string("");
 }
 
@@ -54,10 +60,9 @@ typedef struct named_variable_t
 
 static named_variable registered_variables[] =
 {
-{ "ENGN", &eg_data, sizeof(engine_data) },
-{ "CARD", &cr_data, sizeof(car_data) } };
-static uint32_t registered_variables_count = sizeof(registered_variables)
-		/ sizeof(registered_variables[0]);
+{ "engine_data", &eg_data, sizeof(engine_data) },
+{ "car_data", &cr_data, sizeof(car_data) } };
+static uint32_t registered_variables_count = sizeof(registered_variables) / sizeof(registered_variables[0]);
 
 void command_get(command_data* data)
 {
@@ -65,27 +70,28 @@ void command_get(command_data* data)
 	volatile uint32_t i = 0;
 	for (i = 0; i < registered_variables_count; i++)
 	{
-		if (strncmp(id, registered_variables[i].name, 4) == 0)
+		if (strcmp(id, registered_variables[i].name) == 0)
 		{
-			put_data((uint8_t*) registered_variables[i].variable,
-					registered_variables[i].variable_size,
-					registered_variables[i].name);
+			put_data((uint8_t*) registered_variables[i].variable, registered_variables[i].variable_size, registered_variables[i].name);
 		}
 	}
 }
 
 void command_put(command_data* data)
 {
-	const uint8_t* param = data->args[0].arg_value;
-	if (strncmp(param, "ENGN", 4) == 0)
+	const uint8_t* id = data->args[0].arg_value;
+	const uint32_t size = str_to_uint32(data->args[1].arg_value);
+	const uint8_t* bin_data = str_to_uint32(data->args[2].arg_value);
+	const uint32_t bin_data_size = str_to_uint32(data->args[2].arg_value);
+	volatile uint32_t i = 0;
+	for (i = 0; i < registered_variables_count; i++)
 	{
-		uint32_t b64_size = ((sizeof(engine_data) + 4) * 8 + 5) / 6;
-		b64_size = ((b64_size << 2) + 3) >> 2;
-		if (b64_size == (strlen(param) - 5))
+		if (strcmp(id, registered_variables[i].name) == 0)
 		{
-			decode_base64((const uint8_t*) data->args[0].arg_value,
-					data->args[0].arg_value_length, (uint8_t*) &eg_data,
-					sizeof(engine_data));
+			uint32_t b64_size = ((sizeof(engine_data) + 4) * 8 + 5) / 6;
+			b64_size = ((b64_size << 2) + 3) >> 2;
+			// assert(size == b64_size);
+			decode_base64(bin_data, bin_data_size, (uint8_t*) registered_variables[i].variable, registered_variables[i].variable_size);
 		}
 	}
 }
