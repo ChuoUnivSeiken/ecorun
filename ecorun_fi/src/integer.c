@@ -102,7 +102,7 @@ uint32_t uint32_to_hex_str(uint32_t num, char* buf)
 	return count;
 }
 
-uint32_t str_to_uint32(char* buf)
+uint32_t str_to_uint32(const char* buf)
 {
 	volatile uint32_t num = 0;
 	volatile uint32_t base = 1;

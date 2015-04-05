@@ -46,7 +46,7 @@ uint32_t int32_to_str(int32_t num, char* buf);
 uint32_t uint32_to_str(uint32_t num, char* buf);
 uint32_t uint32_to_hex_str(uint32_t num, char* buf);
 
-uint32_t str_to_uint32(char* buf);
+uint32_t str_to_uint32(const char* buf);
 uint32_t str_to_uint32_len(const char* buf, uint32_t len);
 
 #if defined(__cplusplus)

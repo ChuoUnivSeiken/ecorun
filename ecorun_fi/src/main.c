@@ -12,6 +12,7 @@
 #include "core/command.h"
 #include "core/base64.h"
 #include "core/adler32.h"
+#include "integer.h"
 #include "carsystem/car_info.h"
 #include "carsystem/injection.h"
 #include "carsystem/fi_settings.h"
@@ -31,8 +32,6 @@ void command_error_func(const char* id, command_func func)
 	usart_write_string(id);
 	usart_writeln_string("\n");
 }
-
-static uint8_t buf[128]; // TODO check buffer size
 
 /**
  * @remarks put (data)
@@ -81,7 +80,7 @@ void command_put(command_data* data)
 {
 	const uint8_t* id = data->args[0].arg_value;
 	const uint32_t size = str_to_uint32(data->args[1].arg_value);
-	const uint8_t* bin_data = str_to_uint32(data->args[2].arg_value);
+	const uint8_t* bin_data = data->args[2].arg_value;
 	const uint32_t bin_data_size = str_to_uint32(data->args[2].arg_value);
 	volatile uint32_t i = 0;
 	for (i = 0; i < registered_variables_count; i++)
