@@ -18,7 +18,7 @@ extern "C"
 void usart_write_base64(const uint8_t* data, uint32_t data_size);
 uint32_t encode_base64(const uint8_t* data, uint32_t data_size, uint8_t* base64);
 uint32_t decode_base64(const uint8_t* base64, uint32_t base64_size,
-		uint8_t* data);
+		uint8_t* dest, uint32_t dest_size);
 
 #if defined(__cplusplus)
 }

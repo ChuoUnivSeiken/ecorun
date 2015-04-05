@@ -45,19 +45,31 @@ void put_data(uint8_t* data, uint32_t size, const char* id)
 	usart_writeln_string("");
 }
 
-static uint8_t* registered_ids[] =
-{ "ENGN", "CARD" };
-static uint32_t registered_ids_count = sizeof(registered_ids) / sizeof(registered_ids[0]);
+typedef struct named_variable_t
+{
+	const uint8_t* name;
+	void* variable;
+	uint32_t variable_size;
+} named_variable;
+
+static named_variable registered_variables[] =
+{
+{ "ENGN", &eg_data, sizeof(engine_data) },
+{ "CARD", &cr_data, sizeof(car_data) } };
+static uint32_t registered_variables_count = sizeof(registered_variables)
+		/ sizeof(registered_variables[0]);
 
 void command_get(command_data* data)
 {
 	const uint8_t* id = data->args[0].arg_value;
 	volatile uint32_t i = 0;
-	for (i = 0; i < registered_ids_count; i++)
+	for (i = 0; i < registered_variables_count; i++)
 	{
-		if (strncmp(id, registered_ids[i], 4) == 0)
+		if (strncmp(id, registered_variables[i].name, 4) == 0)
 		{
-			put_data((uint8_t*) &eg_data, sizeof(eg_data), registered_ids[i]);
+			put_data((uint8_t*) registered_variables[i].variable,
+					registered_variables[i].variable_size,
+					registered_variables[i].name);
 		}
 	}
 }
@@ -68,10 +80,12 @@ void command_put(command_data* data)
 	if (strncmp(param, "ENGN", 4) == 0)
 	{
 		uint32_t b64_size = ((sizeof(engine_data) + 4) * 8 + 5) / 6;
-		b64_size = (b64_size + 3) / 4;
+		b64_size = ((b64_size << 2) + 3) >> 2;
 		if (b64_size == (strlen(param) - 5))
 		{
-			decode_base64((const uint8_t*) data->args[0].arg_value, data->args[0].arg_value_length, (uint8_t*) &eg_data);
+			decode_base64((const uint8_t*) data->args[0].arg_value,
+					data->args[0].arg_value_length, (uint8_t*) &eg_data,
+					sizeof(engine_data));
 		}
 	}
 }
