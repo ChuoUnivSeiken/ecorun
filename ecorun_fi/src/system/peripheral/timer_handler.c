@@ -23,8 +23,6 @@ uint32_t timer_event_count = 0;
 timer_event_handler* event_timer32_0;
 timer_event_handler* event_timer32_1;
 
-timer_event_handler event_timer_sys;
-
 uint32_t timer32_add_event(uint32_t timer, timer_event_func func)
 {
 	timer_event_handler** events;
@@ -199,16 +197,5 @@ void CT16B1_IRQHandler(void)
 		LPC_CT16B1->IR = _BV(3);
 	}
 }
-void add_event_system_timer(void (*func)(uint8_t timer, uint8_t num))
-{
-	event_timer_sys.func = func;
-}
 
-void SysTick_Handler(void)
-{
-	if (event_timer_sys.func != NULL)
-	{
-		event_timer_sys.func(0, 0);
-	}
-}
 

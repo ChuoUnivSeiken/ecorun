@@ -226,9 +226,3 @@ void init_timer16_1(uint32_t prescale, uint32_t interval)
 	NVIC_EnableIRQ(CT16B1_IRQn);
 }
 
-void enable_system_timer(uint32_t fraq)
-{
-	SysTick->LOAD = SystemCoreClock / fraq - 1;
-	SysTick->CTRL = 0x07;
-}
-

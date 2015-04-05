@@ -44,9 +44,6 @@ void reset_timer16_1(void);
 void init_timer16_0(uint32_t prescale, uint32_t interval);
 void init_timer16_1(uint32_t prescale, uint32_t interval);
 
-void enable_system_timer(uint32_t freq);
-void add_event_system_timer(void (*func)(uint8_t timer, uint8_t num));
-
 #if defined(__cplusplus)
 }
 #endif
