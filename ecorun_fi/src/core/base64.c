@@ -19,16 +19,14 @@ static const uint8_t b64[] =
 		18, 19, 20, 21, 22, 23, 24, 25 /* Z */, 128, 128, 128, 128, 128, 128,
 		26 /* a */, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
 		42, 43, 44, 45, 46, 47, 48, 49, 50, 51 /* z */};
-static const uint8_t w[] =
+static const uint8_t* w =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-void usart_write_base64(const uint8_t* data, uint32_t size)
+void usart_write_base64(const_buffer data, uint32_t size)
 {
-	uint32_t i;
-
-	volatile uint8_t* p = data;
-	int x = 0, l = 0;
-	i = 0;
+	volatile uint32_t encoded_size = 0;
+	volatile const_buffer p = data;
+	volatile uint32_t x = 0, l = 0;
 
 	for (; size-- > 0; p++)
 	{
@@ -36,26 +34,26 @@ void usart_write_base64(const uint8_t* data, uint32_t size)
 		for (l += 8; l >= 6; l -= 6)
 		{
 			usart_write_char(w[(x >> (l - 6)) & 0x3f]);
-			i++;
+			encoded_size++;
 		}
 	}
 	if (l > 0)
 	{
 		x <<= 6 - l;
 		usart_write_char(w[x & 0x3f]);
-		i++;
+		encoded_size++;
 	}
-	for (; i & 3;)
+	for (; encoded_size & 3;)
 	{
 		usart_write_char('=');
-		i++;
+		encoded_size++;
 	}
 }
 
-uint32_t get_base64(const uint8_t* data, uint32_t size, uint8_t* base64)
+uint32_t get_base64(const_buffer data, uint32_t size, string dest)
 {
 	uint32_t i; // sizeof encoded char
-	if (base64 == NULL)
+	if (dest == NULL)
 	{
 		return (8 * size + 5) / 6;
 	}
@@ -68,19 +66,19 @@ uint32_t get_base64(const uint8_t* data, uint32_t size, uint8_t* base64)
 		x = x << 8 | *p;
 		for (l += 8; l >= 6; l -= 6)
 		{
-			base64[i++] = w[(x >> (l - 6)) & 0x3f];
+			dest[i++] = w[(x >> (l - 6)) & 0x3f];
 		}
 	}
 	if (l > 0)
 	{
 		x <<= 6 - l;
-		base64[i++] = w[x & 0x3f];
+		dest[i++] = w[x & 0x3f];
 	}
 	for (; i & 3;)
 	{
-		base64[i++] = '=';
+		dest[i++] = '=';
 	}
-	base64[i] = '\0';
+	dest[i] = '\0';
 	return i;
 }
 
@@ -92,11 +90,12 @@ uint32_t get_base64(const uint8_t* data, uint32_t size, uint8_t* base64)
  * @return 出力される文字列の長さ。
  *　@remarks 失敗した場合は戻り値は0。
  */
-uint32_t decode_base64(const uint8_t* base64, uint32_t base64_size,
-		uint8_t* dest, uint32_t dest_size)
+uint32_t decode_base64_s(const_string base64, uint32_t base64_size, buffer dest,
+		uint32_t dest_size)
 {
 	uint8_t* dest_ptr = dest;
 	char temp[4];
+	char temp2[4];
 	int i = 0, j;
 	uint32_t len = 0;
 
@@ -115,20 +114,61 @@ uint32_t decode_base64(const uint8_t* base64, uint32_t base64_size,
 
 	while (base64_size > 0)
 	{
-		for (j = 0; j < 4 & base64_size > 0; j++)
+		for (j = 0; (j < 4) & (base64_size > 0); j++)
 		{
+			temp2[j] = *base64;
 			temp[j] = b64[*(base64++)];
 			base64_size--;
 		}
 		for (j = 0; j < 3; j++)
 		{
+			if (temp2[j + 1] != '=' && i < dest_size)
+			{
+				dest_ptr[i++] = temp[j] << ((j << 1) + 2)
+						| temp[j + 1] >> (((2 - j) << 1));
+
+			}
+		}
+	}
+
+	return i;
+}
+
+uint32_t decode_base64(const_string base64, buffer dest)
+{
+	uint8_t* dest_ptr = dest;
+	char temp[4];
+	int i = 0, j;
+	uint32_t len = 0;
+	uint32_t base64_len = strlen(base64);
+
+	if (dest == NULL)
+	{
+		len = (base64_len * 3) / 4;
+		if (base64[base64_len - 1] == '=')
+		{
+			if (base64[base64_len - 2] == '=') /* = がつくのは最大2個 */
+			{
+				return len - 2;
+			}
+			return len - 1;
+		}
+	}
+
+	while (base64_len > 0)
+	{
+		for (j = 0; j < 4 & base64_len > 0; j++)
+		{
+			temp[j] = b64[*(base64++)];
+			base64_len--;
+		}
+		for (j = 0; j < 3; j++)
+		{
 			if (temp[j] != '=')
 			{
-				if (i < dest_size)
-				{
-					dest_ptr[i++] = temp[j] << ((j << 1) + 2)
-							| temp[j + 1] >> (((2 - j) << 1));
-				}
+				dest_ptr[i++] = temp[j] << ((j << 1) + 2)
+						| temp[j + 1] >> (((2 - j) << 1));
+
 			}
 		}
 	}

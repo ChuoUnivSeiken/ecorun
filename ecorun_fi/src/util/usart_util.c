@@ -9,7 +9,7 @@
 #include "../integer.h"
 #include "usart_util.h"
 
-static char usart_util_conv_buf[12];
+static uint8_t usart_util_conv_buf[12];
 
 void usart_writeln_int32(int32_t value)
 {

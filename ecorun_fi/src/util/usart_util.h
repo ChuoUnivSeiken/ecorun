@@ -22,7 +22,7 @@ void usart_writeln_uint32_hex(uint32_t value);
 
 void usart_write_int32(int32_t value);
 void usart_write_uint32(uint32_t value);
-void usart_write_uint32(uint32_t value);
+void usart_write_uint32_hex(uint32_t value);
 
 #if defined(__cplusplus)
 }

@@ -38,7 +38,7 @@
 #ifndef USART_H_
 #define USART_H_
 
-#include <stdint.h>
+#include "../common_types.h"
 
 #define TX_INTERRUPT 0
 
@@ -74,10 +74,10 @@ void usart_init(uint32_t baudrate);
 void usart_write_char(uint8_t c);
 
 // send caracters
-uint32_t usart_write_string(const char* s);
+uint32_t usart_write_string(const_string s);
 
 // send string with '\0'
-uint32_t usart_writeln_string(const char* s);
+uint32_t usart_writeln_string(const_string s);
 
 // send UART_ETX
 void usart_endln(void);

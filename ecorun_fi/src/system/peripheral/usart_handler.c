@@ -46,7 +46,7 @@ uint32_t usart_buf_count = 0;
 
 #define WEAK __attribute__((weak))
 
-WEAK void usart_receive_data_handler(uint8_t* buf, uint32_t count);
+WEAK void usart_receive_data_handler(string str, uint32_t str_len);
 
 void usart_receive_data(uint8_t data)
 {

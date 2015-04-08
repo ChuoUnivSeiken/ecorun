@@ -38,37 +38,23 @@
 #ifndef PERIPHERAL_EEPROM_H_
 #define PERIPHERAL_EEPROM_H_
 
+#include "../common_types.h"
+#include <errno.h>
+
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
-
-#include <errno.h>
-#include <stdint.h>
 
 #define EEPROM_SIZE (4032)
 #define EEPROM_RESERVED (0x00FF) // Protect first 256 bytes of memory
 #define EEPROM_CHIBI_NODEADDR (uint16_t)(0x0000) // 2
 #define EEPROM_CHIBI_IEEEADDR (uint16_t)(0x0004) // 8
 
-#ifdef __GNUC__
-#ifdef __CROSSWORKS_ARM
-#define RAMFUNC __attribute__ ((long_call, section (".fast")))
-#else
-/* ToDo: Throws 'ignoring changed section attributes for .data' */
-// #define RAMFUNC __attribute__ ((long_call, section (".data")))
-/* Hmm ... not working from the makefile ... need to debug! */
-/* Leave it blank for now unless we're in Crossworks */
-#define RAMFUNC
-#endif
-#else
-#error "No section defined for RAMFUNC in sysdefs.h"
-#endif
-
 typedef uint32_t err_t;
 
-RAMFUNC err_t eeprom_write(uint8_t* rom_address, uint8_t* buf, uint32_t count);
-RAMFUNC err_t eeprom_read(uint8_t* rom_address, uint8_t* buf, uint32_t coutn);
+err_t eeprom_write(uint8_t* rom_address, const_buffer src, uint32_t count);
+err_t eeprom_read(uint8_t* rom_address, buffer dest, uint32_t count);
 
 #if defined(__cplusplus)
 }

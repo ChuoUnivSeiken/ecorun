@@ -44,7 +44,7 @@
 typedef void (*IAP)(unsigned int[], unsigned int[]);
 static const IAP iap_entry = (IAP) 0x1FFF1FF1;
 
-RAMFUNC err_t eeprom_write(uint8_t* rom_address, uint8_t* buf, uint32_t count)
+err_t eeprom_write(uint8_t* rom_address, const_buffer buf, uint32_t count)
 {
 	unsigned int command[5], result[4];
 	/* EEPROM Write : IAP Command Code : 61
@@ -71,7 +71,7 @@ RAMFUNC err_t eeprom_write(uint8_t* rom_address, uint8_t* buf, uint32_t count)
 	return 0;
 }
 
-RAMFUNC err_t eeprom_read(uint8_t* rom_address, uint8_t* buf, uint32_t count)
+err_t eeprom_read(uint8_t* rom_address, buffer buf, uint32_t count)
 {
 	unsigned int command[5], result[4];
 	/* EEPROM Read : IAP Command Code : 62

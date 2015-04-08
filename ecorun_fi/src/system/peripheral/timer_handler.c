@@ -5,11 +5,8 @@
  *      Author: Yoshio
  */
 
-#include <stddef.h>
 #include "../cmsis/LPC13Uxx.h"
 #include "timer.h"
-
-#define _BV(n) ((uint32_t)0x1 << n)
 
 typedef struct timer_event_handler
 {

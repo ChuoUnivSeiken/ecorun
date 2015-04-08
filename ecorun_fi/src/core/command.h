@@ -8,7 +8,7 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
-#include <stdint.h>
+#include "../system/common_types.h"
 
 #if defined(__cplusplus)
 extern "C"
@@ -43,11 +43,11 @@ typedef void (*error_func)(const char* cmd, void (*func)(command_data*));
 // first initialization
 void initialize_command_system(error_func func);
 
-// command table operations
-int register_command(const char* cmd, command_func func);
-int get_command_id(const char* cmd);
-int get_command_id_len(const char* cmd, uint32_t cmd_length);
-int get_registered_command_count(void);
+typedef uint32_t command_id;
+
+command_id register_command(const_string cmd, command_func func);
+command_id get_command_id(const_string cmd);
+uint32_t get_registered_command_count(void);
 void execute_all_command(void);
 void execute_one_command(void);
 

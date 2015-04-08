@@ -35,29 +35,29 @@
 #include "integer.h"
 #include <string.h>
 
-volatile static char num_convert_buf[10];
+volatile static uint8_t num_convert_buf[10];
 
-uint32_t int32_to_str(int32_t num, char* buf)
+size_t int32_to_str(int32_t num, string str)
 {
 	volatile int count = 0;
 	if (num < 0)
 	{
-		buf[count++] = '-';
+		str[count++] = '-';
 		num = -num;
 	}
 
-	count += uint32_to_str(num, &buf[count]);
+	count += uint32_to_str(num, &str[count]);
 
 	return count;
 }
 
-uint32_t uint32_to_str(uint32_t num, char* buf)
+size_t uint32_to_str(uint32_t num, string str)
 {
 	volatile int bufpos = 0;
 	volatile int count = 0;
 	if (num == 0)
 	{
-		strcpy(buf, "0");
+		strcpy(str, "0");
 		return 1;
 	}
 
@@ -69,22 +69,22 @@ uint32_t uint32_to_str(uint32_t num, char* buf)
 
 	while (--bufpos >= 0)
 	{
-		buf[count++] = num_convert_buf[bufpos];
+		str[count++] = num_convert_buf[bufpos];
 	}
-	buf[count] = '\0';
+	str[count] = '\0';
 
 	return count;
 }
 
-char hex_table[16] =
+uint8_t hex_table[16] =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
 				'e', 'f' };
 
-uint32_t uint32_to_hex_str(uint32_t num, char* buf)
+size_t uint32_to_hex_str(uint32_t num, string str)
 {
-	volatile int bufpos = 0;
-	volatile int count = 0;
-	strcpy(buf, "0x");
+	volatile uint32_t bufpos = 0;
+	volatile uint32_t count = 0;
+	strcpy(str, "0x");
 	count = count + 2;
 
 	while (bufpos < 8)
@@ -93,46 +93,55 @@ uint32_t uint32_to_hex_str(uint32_t num, char* buf)
 		num = (num >> 4);
 	}
 
-	while (--bufpos >= 0)
+	while (bufpos-- > 0)
 	{
-		buf[count++] = num_convert_buf[bufpos];
+		str[count++] = num_convert_buf[bufpos];
 	}
-	buf[count] = '\0';
+	str[count] = '\0';
 
 	return count;
 }
 
-uint32_t str_to_uint32(const char* buf)
+size_t str_to_uint32(const_string str)
 {
 	volatile uint32_t num = 0;
-	volatile uint32_t base = 1;
-	volatile char* ptr = buf;
-	while (*(++ptr) != '\0')
+	volatile uint32_t place = 1;
+	volatile uint32_t base = 10;
+	volatile const_string ptr = str + strlen(str);
+
+	if (str[0] == '0')
 	{
-		// no operation
+		switch (str[1])
+		{
+		case 'x':
+		case 'X':
+			base = 16;
+			break;
+		default:
+			base = 8;
+			break;
+		}
 	}
 
-	while (ptr-- > buf)
+	while (ptr-- > str)
 	{
-		num += (((*ptr) - '0') * base);
-		base *= 10;
-	}
-	return num;
-}
+		uint8_t ch = *ptr;
+		uint32_t val = 0;
+		if ('0' <= ch && ch <= '9')
+		{
+			val = ch - '0';
+		}
+		else if ('a' <= ch && ch <= 'f')
+		{
+			val = ch - 'a' + 9;
+		}
+		else if ('A' <= ch && ch <= 'F')
+		{
+			val = ch - 'A' + 9;
+		}
 
-uint32_t str_to_uint32_len(const char* buf, uint32_t len)
-{
-	volatile uint32_t num = 0;
-	volatile uint32_t base = 1;
-	volatile const char* ptr = buf;
-	volatile const char* buf_end = buf + len;
-	while ((*(++ptr) != '\0') && (ptr < buf_end))
-		;
-
-	while (ptr-- > buf)
-	{
-		num += (((*ptr) - '0') * base);
-		base *= 10;
+		num += (val * place);
+		place *= base;
 	}
 	return num;
 }

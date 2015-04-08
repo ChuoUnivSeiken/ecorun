@@ -8,17 +8,14 @@
 #ifndef ADLER32_H_
 #define ADLER32_H_
 
-#include <stdint.h>
-#include <stddef.h>
-
-#define MOD_ADLER 65521
+#include "../system/common_types.h"
 
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
-uint32_t adler32(const uint8_t *data, size_t len);
+uint32_t adler32(const_buffer data, size_t len);
 
 #if defined(__cplusplus)
 }

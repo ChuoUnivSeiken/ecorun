@@ -8,8 +8,6 @@
 #include "../cmsis/LPC13Uxx.h"
 #include "timer.h"
 
-#define _BV(n) ((uint32_t)0x1 << n)
-
 void timer32_enable(uint32_t timer)
 {
 	if (timer == 0)
@@ -75,11 +73,10 @@ void timer32_init(uint32_t timer, uint32_t interval)
 	}
 	else
 	{
-
 		LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 10);
 		LPC_CT32B1->PR = 0;
 		LPC_CT32B1->MR0 = interval;
-		LPC_CT32B1->MR1 = interval / 2;
+		LPC_CT32B1->MR1 = interval;
 		LPC_CT32B1->MR2 = interval;
 		LPC_CT32B1->MR3 = interval;
 

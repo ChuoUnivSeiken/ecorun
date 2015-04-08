@@ -35,19 +35,18 @@
 #ifndef INTEGER_H_
 #define INTEGER_H_
 
-#include <stdint.h>
+#include "system/common_types.h"
 
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
-uint32_t int32_to_str(int32_t num, char* buf);
-uint32_t uint32_to_str(uint32_t num, char* buf);
-uint32_t uint32_to_hex_str(uint32_t num, char* buf);
+size_t int32_to_str(int32_t num, string str);
+size_t uint32_to_str(uint32_t num, string str);
+size_t uint32_to_hex_str(uint32_t num, string str);
 
-uint32_t str_to_uint32(const char* buf);
-uint32_t str_to_uint32_len(const char* buf, uint32_t len);
+size_t str_to_uint32(const_string str);
 
 #if defined(__cplusplus)
 }

@@ -25,7 +25,7 @@ typedef struct command_identity
 
 static command_identity command_table[MAX_COMMAND];
 
-int register_command(const char* cmd, command_func func)
+command_id register_command(const_string cmd, command_func func)
 {
 	if (registered_command_count < MAX_COMMAND)
 	{
@@ -36,7 +36,7 @@ int register_command(const char* cmd, command_func func)
 	err_func(cmd, func);
 	return -1;
 }
-int get_command_id(const char* cmd)
+command_id get_command_id(const_string cmd)
 {
 	int i;
 	for (i = 0; i < registered_command_count; i++)
@@ -48,19 +48,7 @@ int get_command_id(const char* cmd)
 	}
 	return -1;
 }
-int get_command_id_len(const char* cmd, uint32_t cmd_length)
-{
-	int i;
-	for (i = 0; i < registered_command_count; i++)
-	{
-		if (strncmp(command_table[i].command_name, cmd, cmd_length) == 0)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-int get_registered_command_count()
+uint32_t get_registered_command_count()
 {
 	return registered_command_count;
 }
@@ -77,7 +65,8 @@ void execute_all_command(void)
 void execute_one_command(void)
 {
 	command_data* cmd = dequeue_command();
-	if (cmd != NULL && cmd->command_id >= 0 && cmd->command_id < registered_command_count)
+	if (cmd != NULL && cmd->command_id >= 0
+			&& cmd->command_id < registered_command_count)
 	{
 		command_table[cmd->command_id].command_func(cmd);
 		delete_command(cmd);
@@ -158,20 +147,5 @@ void delete_command(command_data* command)
 uint32_t get_queue_command_count(void)
 {
 	return queue_command_count;
-}
-
-uint32_t get_command_length(uint8_t* cmd, uint32_t len)
-{
-	volatile uint8_t* ptr = cmd;
-	volatile uint8_t* last = &cmd[len];
-	while ((*ptr != '\0') && (ptr < last))
-	{
-		if (*ptr == ' ')
-		{
-			break;
-		}
-		ptr++;
-	}
-	return (uint32_t) (ptr - cmd);
 }
 

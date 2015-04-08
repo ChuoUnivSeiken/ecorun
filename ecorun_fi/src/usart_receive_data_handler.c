@@ -6,11 +6,12 @@
  */
 
 #include <string.h>
+#include "system/common_types.h"
 #include "system/peripheral/usart.h"
 #include "core/command.h"
 
 // see system/peripheral/usart_handler.c
-void usart_receive_data_handler(uint8_t* buf, uint32_t count)
+void usart_receive_data_handler(string buf, uint32_t count)
 {
 	command_data* cmd;
 
@@ -18,20 +19,22 @@ void usart_receive_data_handler(uint8_t* buf, uint32_t count)
 	{
 		return;
 	}
-	int32_t cmd_length = get_command_length(buf, count);
-	if (cmd_length <= 0)
+
+	volatile string last;
+	const_string cmd_name = strtok_r(buf, " ", (char**) &last);
+	if (cmd_name == NULL)
 	{
-		usart_write_string("invalid_command : ");
+		usart_write_string("msg <invalid_command : ");
 		usart_write_string(buf);
-		usart_writeln_string("\n");
+		usart_writeln_string(">");
 		return;
 	}
-	uint32_t cmd_id = get_command_id_len(buf, cmd_length);
+	uint32_t cmd_id = get_command_id(cmd_name);
 	if (cmd_id == -1)
 	{
-		usart_write_string("not registerd command : ");
+		usart_write_string("msg <not registerd command : ");
 		usart_write_string(buf);
-		usart_writeln_string("\n");
+		usart_writeln_string(">");
 		return;
 	}
 
@@ -41,26 +44,20 @@ void usart_receive_data_handler(uint8_t* buf, uint32_t count)
 		usart_write_string("not accepted : ");
 		usart_write_string(buf);
 		usart_write_string(". ");
-		usart_write_string("command queue is fully used.");
-		usart_writeln_string("\n");
+		usart_writeln_string("command queue is fully used.");
 		return;
 	}
 	cmd->command_id = cmd_id;
-	strncpy(cmd->data, buf, count);
-	volatile char* ptr = &cmd->data[cmd_length + 1];
-	volatile char* end_args = &cmd->data[count];
+	strcpy(cmd->data, last);
+	string args = cmd->data;
 	cmd->args_count = 0;
-	volatile char* start_current_arg = ptr;
-	while (ptr < end_args)
+
+	volatile string arg_str;
+	while ((arg_str = strtok_r(last, " ", (char**) &last)) != NULL)
 	{
-		if (((*ptr) == ' ') || (*ptr == '\0') || (ptr == (end_args - 1)))
-		{
-			command_arg* arg = &cmd->args[cmd->args_count++];
-			arg->arg_value = start_current_arg;
-			arg->arg_value_length = ptr - start_current_arg;
-			start_current_arg = ptr + 1;
-		}
-		ptr++;
+		command_arg* arg = &cmd->args[cmd->args_count++];
+		arg->arg_value = arg_str;
+		arg->arg_value_length = strlen(arg_str);
 	}
 	enqueue_command(cmd);
 }

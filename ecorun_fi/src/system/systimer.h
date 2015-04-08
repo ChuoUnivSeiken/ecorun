@@ -13,9 +13,15 @@ extern "C"
 {
 #endif
 
-void systimer_init(uint32_t freq);
+void systimer_init(void);
 
-uint32_t systimer_tick(void);
+typedef struct
+{
+	uint32_t seconds;
+	uint32_t counts;
+} systime_t;
+
+systime_t systimer_tick(void);
 uint32_t systimer_freq(void);
 
 #if defined(__cplusplus)

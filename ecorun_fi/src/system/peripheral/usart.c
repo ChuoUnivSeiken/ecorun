@@ -134,23 +134,20 @@ void usart_write_char(uint8_t c)
 	LPC_USART->THR = c;
 }
 
-uint32_t usart_writeln_string(const char* s)
+uint32_t usart_writeln_string(const_string s)
 {
 	volatile uint32_t n;
-	for (n = 0; *s; s++, n++)
-	{
-		usart_write_char(*s);
-	}
+	n = usart_write_string(s);
 	usart_endln();
 	return n;
 }
 
-uint32_t usart_write_string(const char* s)
+uint32_t usart_write_string(const_string s)
 {
 	volatile uint32_t n;
-	for (n = 0; *s; s++, n++)
+	for (n = 0; s[n] != '\0'; n++)
 	{
-		usart_write_char(*s);
+		usart_write_char(s[n]);
 	}
 	return n;
 }
