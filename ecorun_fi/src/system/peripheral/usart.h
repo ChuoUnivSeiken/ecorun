@@ -70,16 +70,12 @@ extern "C"
 // first initalization
 void usart_init(uint32_t baudrate);
 
-// send one character
 void usart_write_char(uint8_t c);
 
-// send caracters
 uint32_t usart_write_string(const_string s);
 
-// send string with '\0'
 uint32_t usart_writeln_string(const_string s);
 
-// send UART_ETX
 void usart_endln(void);
 
 #if defined(__cplusplus)

@@ -17,8 +17,8 @@ void systimer_init(void);
 
 typedef struct
 {
-	uint32_t seconds;
-	uint32_t counts;
+	uint32_t high_part;
+	uint32_t low_part;
 } systime_t;
 
 systime_t systimer_tick(void);

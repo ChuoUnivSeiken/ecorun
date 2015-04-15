@@ -18,6 +18,7 @@
 #include "carsystem/car_info.h"
 #include "carsystem/injection.h"
 #include "carsystem/fi_settings.h"
+#include "carsystem/accessible_data.h"
 #include <string.h>
 
 void timer32_1_handler(uint8_t timer, uint8_t num)
@@ -35,97 +36,61 @@ void command_error_func(const char* id, command_func func)
 	usart_writeln_string(">");
 }
 
-/**
- * @remarks put (data)
- * 			data = (id 4bytes)(space 1byte)(base64 encoded binary nbytes)(checksum 4bytes)
- */
-void put_data(const uint8_t* data, uint32_t size, const char* id)
+static const named_data register_data_table[] =
 {
-	systime_t time = systimer_tick();
-	usart_write_string("put ");
-	usart_write_string(id);
-	usart_write_string(" ");
-	usart_write_uint32(size);
-	usart_write_string(" ");
-	usart_write_base64(data, size);
-	usart_write_string(" ");
-	usart_write_uint32_hex(adler32(data, size));
-	usart_write_string(" ");
-	usart_write_uint32(time.seconds);
-	usart_write_string(" ");
-	usart_write_uint32(time.counts);
-	usart_writeln_string("");
-}
-
-typedef struct named_data_t
-{
-	const uint8_t* name;
-	void* data_ptr;
-	uint32_t data_size;
-	bool is_read_only;
-}volatile named_data;
-
-static volatile named_data registered_data[] =
-{
-{ "engine_data", &eg_data, sizeof(engine_data), true },
-{ "car_data", &cr_data, sizeof(car_data), true } };
-static uint32_t registered_data_count = sizeof(registered_data)
-		/ sizeof(registered_data[0]);
+{ "engine_data", (void*) &eg_data, sizeof(engine_data), true },
+{ "car_data", (void*) &cr_data, sizeof(car_data), true } };
 
 void command_get(command_data* data)
 {
-	const uint8_t* id = data->args[0].arg_value;
-	volatile uint32_t i = 0;
-	for (i = 0; i < registered_data_count; i++)
-	{
-		if (strcmp(id, registered_data[i].name) == 0)
-		{
-			put_data((uint8_t*) registered_data[i].data_ptr,
-					registered_data[i].data_size, registered_data[i].name);
-		}
-	}
+	const_string id = data->args[0].arg_value;
+	find_and_put_data(id);
 }
 
 uint8_t buf[128];
+
+static inline void write_message(const_string msg)
+{
+	usart_write_string("msg <");
+	usart_write_string(msg);
+	usart_writeln_string(">");
+}
 
 void command_put(command_data* data)
 {
 	const uint8_t* id = data->args[0].arg_value;
 	const uint32_t encoded_size = str_to_uint32(data->args[1].arg_value);
-	const uint8_t* encoded_data = data->args[2].arg_value;
+	const_string encoded_data = data->args[2].arg_value;
 	const uint32_t sum = str_to_uint32(data->args[3].arg_value);
-	volatile uint32_t i = 0;
-	for (i = 0; i < registered_data_count; i++)
+
+	named_data registered_data;
+	if (find_data(id, &registered_data))
 	{
-		if (strcmp(id, registered_data[i].name) == 0)
+		if (registered_data.is_read_only)
 		{
-			if (registered_data[i].is_read_only)
-			{
-				usart_writeln_string("msg <the data is readonly.>");
-				return;
-			}
-			uint32_t decoded_size = decode_base64(encoded_data, NULL);
-			uint32_t size = registered_data[i].data_size;
-			if (size != decoded_size)
-			{
-				usart_writeln_string("msg <don't match the data size.>");
-				return;
-			}
-			decode_base64_s(encoded_data, strlen(encoded_data), (uint8_t*) buf,
-					size);
-
-			uint32_t check_sum = adler32(buf, decoded_size);
-
-			if (check_sum != sum)
-			{
-				usart_writeln_string("msg <don't match the check sum.>");
-				return;
-			}
-
-			memcpy((uint8_t*) registered_data[i].data_ptr, buf,
-					registered_data[i].data_size);
-
+			write_message("the data is readonly.");
+			return;
 		}
+		uint32_t decoded_size = decode_base64(encoded_data, NULL);
+		uint32_t size = registered_data.data_size;
+		if (size != decoded_size)
+		{
+			write_message("don't match the data size.");
+			return;
+		}
+		decode_base64_s(encoded_data, strlen(encoded_data), (uint8_t*) buf,
+				size);
+
+		uint32_t check_sum = adler32(buf, decoded_size);
+
+		if (check_sum != sum)
+		{
+			write_message("don't match the check sum.");
+			return;
+		}
+
+		memcpy((uint8_t*) registered_data.data_ptr, buf,
+				registered_data.data_size);
 	}
 }
 
@@ -144,6 +109,9 @@ int main(void)
 
 	initialize_command_system(command_error_func);
 
+	uint32_t registered_data_count = sizeof(register_data_table)
+			/ sizeof(register_data_table[0]);
+	register_data(register_data_table, registered_data_count);
 	register_command("get", command_get);
 	register_command("put", command_put);
 

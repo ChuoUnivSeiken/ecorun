@@ -9,6 +9,7 @@
 #define COMMAND_H_
 
 #include "../system/common_types.h"
+#include "../system/systimer.h"
 
 #if defined(__cplusplus)
 extern "C"
@@ -18,22 +19,23 @@ extern "C"
 #define MAX_COMMAND 20
 #define MAX_COMMAND_QUEUE 5
 
-typedef struct command_arg
+typedef struct command_arg_t
 {
-	const char* arg_value;
-	uint32_t arg_value_length;
-	struct command_arg* next;
+	const_string arg_value;
+	//uint32_t arg_value_length;
+	struct command_arg_t* next;
 } command_arg;
 
 // containing command and parameters
-typedef struct command_data
+typedef struct command_data_t
 {
 	int command_id;
 	int datasize;
 	uint8_t data[512];
 	command_arg args[10];
 	int args_count;
-	struct command_data* next;
+	systime_t accept_time;
+	struct command_data_t* next;
 } command_data;
 
 typedef void (*command_func)(command_data*);

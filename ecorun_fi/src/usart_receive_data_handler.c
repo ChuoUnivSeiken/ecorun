@@ -8,12 +8,13 @@
 #include <string.h>
 #include "system/common_types.h"
 #include "system/peripheral/usart.h"
+#include "system/systimer.h"
 #include "core/command.h"
 
 // see system/peripheral/usart_handler.c
 void usart_receive_data_handler(string buf, uint32_t count)
 {
-	command_data* cmd;
+	//systime_t receive_time = systimer_tick();
 
 	if (strlen(buf) == 0)
 	{
@@ -38,7 +39,7 @@ void usart_receive_data_handler(string buf, uint32_t count)
 		return;
 	}
 
-	cmd = create_command();
+	command_data* cmd = create_command();
 	if (cmd == NULL)
 	{
 		usart_write_string("not accepted : ");
@@ -48,8 +49,8 @@ void usart_receive_data_handler(string buf, uint32_t count)
 		return;
 	}
 	cmd->command_id = cmd_id;
+	//cmd->accept_time = receive_time;
 	strcpy(cmd->data, last);
-	string args = cmd->data;
 	cmd->args_count = 0;
 
 	volatile string arg_str;
@@ -57,7 +58,6 @@ void usart_receive_data_handler(string buf, uint32_t count)
 	{
 		command_arg* arg = &cmd->args[cmd->args_count++];
 		arg->arg_value = arg_str;
-		arg->arg_value_length = strlen(arg_str);
 	}
 	enqueue_command(cmd);
 }
