@@ -1,0 +1,179 @@
+/* CSS file placeholder. */
+.header {
+	width: 1080px;
+	height: 50px;
+	margin: 0 auto;
+	background-color: #FF0000;
+}
+
+.tabbox {
+	margin: 0 auto;
+}
+
+table.connection_table {
+	width: 100%;
+	margin: 20px 0px 5px;
+	border-top: 1px solid #CCC;
+	border-left: 1px solid #CCC;
+	border-spacing: 0px;
+}
+
+table.connection_table tr th {
+	background: #E6EAFF;
+}
+
+table.connection_table tr th, table.connection_table tr td {
+	font-size: 12px;
+	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	padding: 7px;
+}
+
+table.common_table {
+	width: 100%;
+	margin: 20px 0px 5px;
+	border-top: 1px solid #CCC;
+	border-left: 1px solid #CCC;
+	border-spacing: 0px;
+}
+
+table.common_table tr th {
+	background: #E6EAFF;
+}
+
+table.common_table tr th, table.common_table tr td {
+	font-size: 12px;
+	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	padding: 7px;
+}
+
+#tab1 {
+	background-image: url("../images/btn057_01.png");
+}
+
+#tab2 {
+	background-image: url("../images/btn057_02.png");
+}
+
+#tab3 {
+	background-image: url("../images/btn057_03.png");
+}
+
+#tab4 {
+	background-image: url("../images/btn057_04.png");
+}
+
+#tab5 {
+	background-image: url("../images/btn057_06.png");
+}
+
+#tab6 {
+	background-image: url("../images/btn057_08.png");
+}
+
+.menu {
+	position: relative;
+	width: 1080px;
+	margin: 0 auto;
+}
+
+.mainMenu {
+	display: block;
+	float: left;
+	list-style: none;
+	position: relative;
+	width: 1080px;
+	height: 30px;
+	clear: both;
+	margin: 0;
+	padding: 0;
+}
+
+.mainMenu li {
+	float: left;
+	padding: 0;
+}
+
+.mainMenu li a {
+	width: 180px;
+	height: 30px;
+	line-height: 30px;
+	display: block;
+	padding: 0;
+	text-decoration: none;
+	font-size: 15px;
+	font-family: 繝｡繧､繝ｪ繧ｪ;
+	text-align: center; //
+	border-left: 1px solid #000; /* 蛹ｺ蛻�繧顔ｷ� */
+	background-repeat: no-repeat;
+}
+
+.mainMenu li:hover>a {
+	background: #66ccff;
+}
+
+.contents {
+	width: 1080px;
+	margin: 0 auto;
+}
+
+#mainContents {
+	width: 1000px;
+	margin: 0 auto;
+}
+
+.imageArea {
+	margin: 0 auto;
+	background: blue;
+	width: 1000px;
+	height: 300px;
+	overflow: hidden;
+}
+
+#contentsArea {
+	margin: 0 auto;
+	width: 1000px;
+	height: 1000px;
+}
+
+#leftArea {
+	float: left;
+	width: 600px;
+	height: 900px;
+}
+
+#rightArea {
+	float: left;
+	width: 400px;
+	height: 1000px;
+}
+
+#footer {
+	margin: 0 auto;
+	background: #66ccff;
+	width: 1000px;
+	height: 100px;
+}
+
+#bread {
+	width: 1000px;
+	margin: 0 auto;
+	list-style-type: none;
+	padding-top: 70px;
+	padding-left: 0px;
+}
+
+#bread li {
+	display: inline;
+	font-size: 13px;
+	color: #339900;
+}
+
+#bread li a {
+	color: #339900;
+}
+
+#breadArea {
+	margin: 0 auto;
+}
