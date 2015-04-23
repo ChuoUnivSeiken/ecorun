@@ -64,76 +64,13 @@ var serialport = null;
 var serialStates = {};
 var uart_buf = [];
 var carcomm = require("./carcomm");
-var date = new Date();
 var uart_message_received = function (msg) {
-    var line = msg.split(' ');
-    if (line === null || line.length === 0) {
-        console.log('Invalid msg :', msg);
-        return;
+    var received = carcomm.CarTransmitter.parseCommandLine(msg);
+    if (received.cmd == 'put') {
+        io.sockets.emit('data', received.data);
     }
-    var command = line[0];
-    var obj;
-    switch (command) {
-        case 'msg':
-            if (line.length < 2) {
-                console.log('Invalid parameter length :', msg);
-                return;
-            }
-            var message = line.slice(1).join(' ').replace("<", "").replace(">", "");
-            console.log(message);
-            break;
-        case 'put':
-            if (line.length !== 7) {
-                console.log('Invalid parameter length :', msg);
-                return;
-            }
-            var id = line[1];
-            var data_size = parseInt(line[2]);
-            var data = line[3];
-            var sum = parseInt(line[4]);
-            var seconds = parseInt(line[5]);
-            var counter = parseInt(line[6]);
-            console.log(seconds);
-            var buf = new Buffer(data, 'base64');
-            if (buf.length != data_size) {
-                console.log('Invalid data size :', msg);
-            }
-            var stream = new carcomm.StructReader(buf);
-            switch (id) {
-                case 'engine_data':
-                    console.log('date : ', new Date().getSeconds() - date.getSeconds());
-                    console.log('receive : ', id);
-                    obj = stream
-                        .readUInt32('rev')
-                        .readUInt32('is_fuel_cut')
-                        .readUInt32('is_af_rich')
-                        .readUInt32('th')
-                        .readUInt32('oil_temp')
-                        .readUInt32('current_total_injected_time')
-                        .readUInt32('current_inject_started_count')
-                        .readUInt32('current_inject_ended_count')
-                        .structs();
-                    break;
-                case 'car_data':
-                    console.log('receive : ' + id);
-                    obj = stream
-                        .readUInt32('vattery_voltage')
-                        .readUInt32('wheel_count')
-                        .readUInt32('wheel_rotation_period')
-                        .structs();
-                    break;
-            }
-            var check_sum = adler32.buf(buf);
-            if (check_sum === sum && !(obj === null || obj === undefined)) {
-                io.sockets.emit('data', {
-                    id: id,
-                    value: obj
-                });
-            }
-            break;
-        default:
-            console.log('Invalid command : ', command);
-            break;
+    else if (received.cmd == 'msg') {
+        io.sockets.emit('mst', received.message);
     }
 };
 var uart_received = function (data) {
@@ -164,8 +101,6 @@ var serial_write = function (data) {
 setInterval(function () {
     if (serialport !== null) {
         serial_write('get car_data');
-        date = new Date();
-        console.log('send : ', date);
         serial_write('get engine_data');
     }
 }, 100);
