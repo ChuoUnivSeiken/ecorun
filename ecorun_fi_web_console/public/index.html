@@ -1,6 +1,8 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="utf-8" />
     <title></title>
@@ -8,6 +10,7 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/epoch.min.css">
 </head>
+
 <body>
     <script src="javascripts/jquery-2.1.3.min.js" type="text/javascript"></script>
     <script src="javascripts/socket.io.js" type="text/javascript"></script>
@@ -15,8 +18,8 @@
     <script src="javascripts/lodash.min.js" type="text/javascript"></script>
     <script src="javascripts/epoch.min.js" type="text/javascript"></script>
     <script src="javascripts/common.js" type="text/javascript"></script>
-    <script src="javascripts/data.js" type="text/javascript"></script>
-    <script src="javascripts/serial.js" type="text/javascript"></script>
+    <script src="javascripts/car_visualize.js" type="text/javascript"></script>
+    <script src="javascripts/car_access.js" type="text/javascript"></script>
     <div class="header"></div>
     <div class="tabbox">
         <div id="l1Menu" class="menu">
@@ -83,7 +86,7 @@
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_speed" value="0" max="100">
                                 <span>0</span>
                                 %
                             </progress>
@@ -97,7 +100,7 @@
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_vattery_voltage" value="0" max="15">
                                 <span>0</span>
                                 %
                             </progress>
@@ -107,11 +110,11 @@
                 </tr>
                 <tr>
                     <th>平均車速 [km/s]</th>
-                    <td>0.0</td>
+                    <td id="td_average_speed">0.0</td>
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_average_speed" value="50" max="100">
                                 <span>0</span>
                                 %
                             </progress>
@@ -121,7 +124,7 @@
                 </tr>
                 <tr>
                     <th>距離 [km]</th>
-                    <td>0.0</td>
+                    <td id="td_distance">0.0</td>
                     <td></td>
                 </tr>
             </table>
@@ -130,17 +133,13 @@
                 <a>--- 推移 ---</a>
             </div>
             <a>車速</a>
-            <div id="chart_speed" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_speed" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>電源電圧</a>
-            <div id="chart_vattery_voltage" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_vattery_voltage" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>平均車速</a>
-            <div id="chart_ave_speed" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_ave_speed" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>距離</a>
-            <div id="chart_distance" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_distance" class="epoch" style="width: 1080px; height: 200px"></div>
         </div>
 
         <!-- タブ3 -->
@@ -155,11 +154,11 @@
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_rev" value="0" max="6000">
                                 <span>0</span>
                                 %
                             </progress>
-                            100
+                            6000
                         </label>
                     </td>
                 </tr>
@@ -169,7 +168,7 @@
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_th" value="0" max="100">
                                 <span>0</span>
                                 %
                             </progress>
@@ -183,36 +182,36 @@
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_oil_temp" value="50" max="100">
                                 <span>0</span>
                                 %
                             </progress>
-                            15
+                            100
                         </label>
                     </td>
                 </tr>
                 <tr>
                     <th>吸気温 [deg C]</th>
-                    <td>0.0</td>
+                    <td id="td_temp">0.0</td>
                     <td>
                         <label>
                             0
-                            <progress value="50" max="100">
+                            <progress id="progress_temp" value="50" max="100">
                                 <span>0</span>
                                 %
                             </progress>
-                            15
+                            100
                         </label>
                     </td>
                 </tr>
                 <tr>
                     <th>空燃比</th>
-                    <td>Rich</td>
+                    <td id="td_af">Rich</td>
                     <td></td>
                 </tr>
                 <tr>
                     <th>燃料カット</th>
-                    <td>True</td>
+                    <td id="td_fuel_cut">True</td>
                     <td></td>
                 </tr>
             </table>
@@ -221,17 +220,13 @@
                 <a>--- 推移 ---</a>
             </div>
             <a>回転数</a>
-            <div id="chart_rev" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_rev" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>スロットル開度</a>
-            <div id="chart_throttle" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_throttle" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>油温</a>
-            <div id="chart_oil_temp" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_oil_temp" class="epoch" style="width: 1080px; height: 200px"></div>
             <a>吸気温</a>
-            <div id="chart_temp" class="epoch"
-                 style="width: 1080px; height: 200px"></div>
+            <div id="chart_temp" class="epoch" style="width: 1080px; height: 200px"></div>
         </div>
         <div id="tab4_content" class="tab">
             <p>タブ4</p>
@@ -289,4 +284,5 @@
         </div>
     </div>
 </body>
+
 </html>

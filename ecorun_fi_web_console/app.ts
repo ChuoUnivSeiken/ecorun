@@ -1,4 +1,4 @@
-﻿/// <reference path="typings/tsd.d.ts" />
+/// <reference path="typings/tsd.d.ts" />
 /// <reference path="./carcomm.ts" />
 
 var express = require('express');
@@ -29,12 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-interface Error {
-    status?: number;
-};
-
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err['status'] = 404;
     next(err);
@@ -45,7 +41,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
+    app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -56,7 +52,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
@@ -64,137 +60,85 @@ app.use(function (err, req, res, next) {
     });
 });
 
-var server = app.listen(80, function () {
+var server = app.listen(80, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log('listening at http://%s:%s', host, port);
 });
 
-var io = require('socket.io').listen(server);
-
-var serial = require('serialport');
-var _ = require('lodash');
-var adler32 = require('adler-32');
+import socketio = require('socket.io');
+var io = socketio.listen(server);
+import _ = require('lodash');
 
 var idHash = {};
-var serialport = null;
-var serialStates = {};
 
-var uart_buf = [];
+import carcomm = require('./carcomm');
+import carserialize = require("./carserialize");
+carserialize.CarDatabase.connect();
+var carTransmitter: carcomm.CarTransmitter;
+var carSerialport: carcomm.CarSerialPort;
 
-import carcomm = require("./carcomm");
-
-var uart_message_received = function (msg) {
-    var received:any = carcomm.CarTransmitter.parseCommandLine(msg);
-    if (received.cmd == 'put') {
-        io.sockets.emit('data', received.data);
-    } else if (received.cmd == 'msg') {
-        io.sockets.emit('mst', received.message);
-    }
-};
-
-var uart_received = function (data) {
-    switch (data) {
-        case 0x03:
-            uart_message_received(_.reduce(uart_buf, function (result, ch) {
-                return result + String.fromCharCode(ch);
-            }, ""));
-            break;
-        case 0x02:
-            uart_buf = [];
-            break;
-        default:
-            uart_buf.push(data);
-            break;
-    }
-};
-
-var serial_write = function (data) {
-    var errfunc = function (error, results) {
-        if (error !== undefined && error !== null) {
-            console.log('serial port writing error : ' + error);
-        }
-    };
-    
-    var stx = String.fromCharCode(0x02);
-    var etx = String.fromCharCode(0x03);
-    serialport.write(stx + data + etx, errfunc);
-};
-
-setInterval(function () {
-    if (serialport !== null) {
-        serial_write('get car_data');
-        serial_write('get engine_data');
+setInterval(() => {
+    if (carTransmitter != null) {
+        carTransmitter.requestData('car_data');
+        carTransmitter.requestData('engine_data');
     }
 }, 100);
-
-io.sockets.on('connection', function (socket) {
-    socket.on('connected', function (id) {
+setInterval(() => {
+    if (carTransmitter != null) {
+        carTransmitter.requestData('basic_inject_time_map');
+    }
+}, 1000);
+io.sockets.on('connection', function(socket) {
+    socket.on('connected', (id) => {
         idHash[socket.id] = id;
         console.log('login : ' + id);
     });
-    
-    socket.on('serial_list_ports', function () {
-        serial.list(function (err, ports) {
-            var arr = _.map(ports, function (port) {
-                return {
-                    comName: port.comName,
-                    pnpId: port.pnpId,
-                    manufacturer: port.manufacturer,
-                    state: serialStates[port.comName]
-                };
-            });
+
+    socket.on('serial_list_ports', () => {
+        carcomm.CarSerialPort.getPortInfo((arr) => {
             io.sockets.emit('serial_ports', {
                 value: arr
             });
         });
     });
-    
-    socket.on('serial_connect', function (connection_data) {
-        var _serialport = new serial.SerialPort(connection_data.portName, {
-            baudrate: connection_data.bitRate,
-            dataBits: 8,
-            parity: 'none',
-            stopBits: 1,
-            flowControl: false
-        }, function (error) {
-            if (error !== undefined && error !== null) {
-                console.log('serial port opening error : ' + error);
-            }
-        });
-        _serialport.on('open', function () {
-            serialport = _serialport;
-            console.log(connection_data.portName + ' opened.');
-            serialport.on('data', function (data) {
-                _.forEach(data, function (item) {
-                    uart_received(item);
-                });
+
+    socket.on('serial_connect', (connection_data) => {
+        carSerialport = new carcomm.CarSerialPort(connection_data.portName, connection_data.bitRate);
+
+        carSerialport.addOpenedHandler((e) => {
+            carTransmitter = new carcomm.CarTransmitter(carSerialport)
+            carTransmitter.addDataReceivedHandler((e) => {
+                var data = e.value;
+                io.sockets.emit('data', data);
+                data.value['timestamp'] = new Date();
+                carserialize.CarDatabase.saveData(data.id, data.value)
             });
-            serialport.on('close', function () {
-                console.log(connection_data.portName + ' closed.');
-                serialStates[connection_data.portName] = undefined;
-                io.sockets.emit('serial_disconnected', {});
+            carTransmitter.addMessageReceivedHandler((e) => {
+                io.sockets.emit('msg', e.value);
             });
-            serialStates[connection_data.portName] = 'connect';
             io.sockets.emit('serial_connected', {});
         });
-    });
-    
-    socket.on('serial_disconnect', function () {
-        var _serialport = serialport;
-        serialport = null;
-        _serialport.close(function (error) {
-            if (error !== undefined && error !== null) {
-                console.log('serial port closing error : ' + error);
-            }
+        carSerialport.addClosedHandler((e) => {
+            io.sockets.emit('serial_disconnected', {});
         });
+        carSerialport.open();
     });
-    
-    socket.on('serial_write', function (data) {
-        serial_write(data.message);
+
+    socket.on('serial_disconnect', () => {
+        var _carSerialport = carSerialport;
+        carSerialport = null;
+        carTransmitter = null;
+        _carSerialport.close();
     });
-    
-    socket.on('disconnect', function () {
+
+    socket.on('serial_write', (data) => {
+        if (carSerialport != null) {
+            carSerialport.write(data.message);
+        }
+    });
+
+    socket.on('disconnect', () => {
         var id = idHash[socket.id];
         if (idHash[socket.id]) {
             delete idHash[socket.id];

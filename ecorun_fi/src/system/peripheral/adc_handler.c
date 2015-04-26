@@ -25,7 +25,7 @@ volatile uint32_t adc_done_interrupt = 0;
 volatile uint32_t adc_num_overrun = 0;
 volatile uint32_t adc_value[ADC_NUM];
 volatile uint32_t adc_burst_mask;
-#if ADC_BURST_MODE
+#if ADC_MODE_BURST
 volatile uint32_t channel_flag = 0;
 #endif
 
@@ -92,7 +92,7 @@ void ADC_IRQHandler(void)
 #endif
 			}
 		}
-#if ADC_BURST_MODE
+#if ADC_MODE_BURST
 		channel_flag |= (regVal & 0xFF);
 		if ((channel_flag & 0xFF) == 0xFF)
 		{

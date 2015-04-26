@@ -25,7 +25,7 @@ void timer32_1_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
-		adc_read(0);
+		adc_burst_read();
 	}
 }
 
@@ -38,8 +38,9 @@ void command_error_func(const char* id, command_func func)
 
 static const named_data register_data_table[] =
 {
-{ "engine_data", (void*) &eg_data, sizeof(engine_data), true },
-{ "car_data", (void*) &cr_data, sizeof(car_data), true } };
+{ "engine_data", (void*) &eg_data, sizeof(eg_data), true },
+{ "basic_inject_time_map", (void*) &fi_settings.basic_inject_time_map[0][0], sizeof(fi_settings.basic_inject_time_map), false },
+{ "car_data", (void*) &cr_data, sizeof(cr_data), true } };
 
 void command_get(command_data* data)
 {
@@ -47,7 +48,7 @@ void command_get(command_data* data)
 	find_and_put_data(id);
 }
 
-uint8_t buf[128];
+volatile uint8_t transaction_buf[512];
 
 static inline void write_message(const_string msg)
 {
@@ -78,10 +79,14 @@ void command_put(command_data* data)
 			write_message("don't match the data size.");
 			return;
 		}
-		decode_base64_s(encoded_data, strlen(encoded_data), (uint8_t*) buf,
-				size);
+		if (size > sizeof(transaction_buf))
+		{
+			write_message("the data size is too long.");
+			return;
+		}
+		decode_base64_s(encoded_data, (uint8_t*) transaction_buf, 512);
 
-		uint32_t check_sum = adler32(buf, decoded_size);
+		uint32_t check_sum = adler32(transaction_buf, decoded_size);
 
 		if (check_sum != sum)
 		{
@@ -89,8 +94,15 @@ void command_put(command_data* data)
 			return;
 		}
 
-		memcpy((uint8_t*) registered_data.data_ptr, buf,
-				registered_data.data_size);
+		memcpy((uint8_t*) registered_data.data_ptr, transaction_buf, size);
+	}
+}
+
+void adc_handler(uint8_t num, uint32_t value)
+{
+	if (num == 3)
+	{
+		eg_data.th = value;
 	}
 }
 
@@ -99,18 +111,18 @@ int main(void)
 	SystemCoreClockUpdate();
 
 	const uint32_t UART_BAUDRATE = 115200;
-
+	fi_set_default();
 	usart_init(UART_BAUDRATE);
 	timer32_init(1, SystemCoreClock / 100);
 	timer32_add_event(1, timer32_1_handler);
 	timer32_enable(1);
 	adc_init(ADC_CLK);
+	adc_add_event(adc_handler);
 	systimer_init();
 
 	initialize_command_system(command_error_func);
 
-	uint32_t registered_data_count = sizeof(register_data_table)
-			/ sizeof(register_data_table[0]);
+	uint32_t registered_data_count = sizeof(register_data_table) / sizeof(register_data_table[0]);
 	register_data(register_data_table, registered_data_count);
 	register_command("get", command_get);
 	register_command("put", command_put);

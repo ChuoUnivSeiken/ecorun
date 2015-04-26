@@ -22,7 +22,6 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
-;
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
@@ -55,115 +54,67 @@ var server = app.listen(80, function () {
     var port = server.address().port;
     console.log('listening at http://%s:%s', host, port);
 });
-var io = require('socket.io').listen(server);
-var serial = require('serialport');
-var _ = require('lodash');
-var adler32 = require('adler-32');
+var socketio = require('socket.io');
+var io = socketio.listen(server);
 var idHash = {};
-var serialport = null;
-var serialStates = {};
-var uart_buf = [];
-var carcomm = require("./carcomm");
-var uart_message_received = function (msg) {
-    var received = carcomm.CarTransmitter.parseCommandLine(msg);
-    if (received.cmd == 'put') {
-        io.sockets.emit('data', received.data);
-    }
-    else if (received.cmd == 'msg') {
-        io.sockets.emit('mst', received.message);
-    }
-};
-var uart_received = function (data) {
-    switch (data) {
-        case 0x03:
-            uart_message_received(_.reduce(uart_buf, function (result, ch) {
-                return result + String.fromCharCode(ch);
-            }, ""));
-            break;
-        case 0x02:
-            uart_buf = [];
-            break;
-        default:
-            uart_buf.push(data);
-            break;
-    }
-};
-var serial_write = function (data) {
-    var errfunc = function (error, results) {
-        if (error !== undefined && error !== null) {
-            console.log('serial port writing error : ' + error);
-        }
-    };
-    var stx = String.fromCharCode(0x02);
-    var etx = String.fromCharCode(0x03);
-    serialport.write(stx + data + etx, errfunc);
-};
+var carcomm = require('./carcomm');
+var carserialize = require("./carserialize");
+carserialize.CarDatabase.connect();
+var carTransmitter;
+var carSerialport;
 setInterval(function () {
-    if (serialport !== null) {
-        serial_write('get car_data');
-        serial_write('get engine_data');
+    if (carTransmitter != null) {
+        carTransmitter.requestData('car_data');
+        carTransmitter.requestData('engine_data');
     }
 }, 100);
+setInterval(function () {
+    if (carTransmitter != null) {
+        carTransmitter.requestData('basic_inject_time_map');
+    }
+}, 1000);
 io.sockets.on('connection', function (socket) {
     socket.on('connected', function (id) {
         idHash[socket.id] = id;
         console.log('login : ' + id);
     });
     socket.on('serial_list_ports', function () {
-        serial.list(function (err, ports) {
-            var arr = _.map(ports, function (port) {
-                return {
-                    comName: port.comName,
-                    pnpId: port.pnpId,
-                    manufacturer: port.manufacturer,
-                    state: serialStates[port.comName]
-                };
-            });
+        carcomm.CarSerialPort.getPortInfo(function (arr) {
             io.sockets.emit('serial_ports', {
                 value: arr
             });
         });
     });
     socket.on('serial_connect', function (connection_data) {
-        var _serialport = new serial.SerialPort(connection_data.portName, {
-            baudrate: connection_data.bitRate,
-            dataBits: 8,
-            parity: 'none',
-            stopBits: 1,
-            flowControl: false
-        }, function (error) {
-            if (error !== undefined && error !== null) {
-                console.log('serial port opening error : ' + error);
-            }
-        });
-        _serialport.on('open', function () {
-            serialport = _serialport;
-            console.log(connection_data.portName + ' opened.');
-            serialport.on('data', function (data) {
-                _.forEach(data, function (item) {
-                    uart_received(item);
-                });
+        carSerialport = new carcomm.CarSerialPort(connection_data.portName, connection_data.bitRate);
+        carSerialport.addOpenedHandler(function (e) {
+            carTransmitter = new carcomm.CarTransmitter(carSerialport);
+            carTransmitter.addDataReceivedHandler(function (e) {
+                var data = e.value;
+                io.sockets.emit('data', data);
+                data.value['timestamp'] = new Date();
+                carserialize.CarDatabase.saveData(data.id, data.value);
             });
-            serialport.on('close', function () {
-                console.log(connection_data.portName + ' closed.');
-                serialStates[connection_data.portName] = undefined;
-                io.sockets.emit('serial_disconnected', {});
+            carTransmitter.addMessageReceivedHandler(function (e) {
+                io.sockets.emit('msg', e.value);
             });
-            serialStates[connection_data.portName] = 'connect';
             io.sockets.emit('serial_connected', {});
         });
+        carSerialport.addClosedHandler(function (e) {
+            io.sockets.emit('serial_disconnected', {});
+        });
+        carSerialport.open();
     });
     socket.on('serial_disconnect', function () {
-        var _serialport = serialport;
-        serialport = null;
-        _serialport.close(function (error) {
-            if (error !== undefined && error !== null) {
-                console.log('serial port closing error : ' + error);
-            }
-        });
+        var _carSerialport = carSerialport;
+        carSerialport = null;
+        carTransmitter = null;
+        _carSerialport.close();
     });
     socket.on('serial_write', function (data) {
-        serial_write(data.message);
+        if (carSerialport != null) {
+            carSerialport.write(data.message);
+        }
     });
     socket.on('disconnect', function () {
         var id = idHash[socket.id];
@@ -174,3 +125,4 @@ io.sockets.on('connection', function (socket) {
     });
 });
 module.exports = app;
+//# sourceMappingURL=app.js.map

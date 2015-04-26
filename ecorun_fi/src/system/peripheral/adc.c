@@ -52,8 +52,9 @@ void adc_init(uint32_t clk)
 	LPC_IOCON->PIO0_23 |= 0x01;
 	/* Setup the ADC clock, conversion mode, etc. */
 	LPC_ADC->CR = (0x01 << 0) | ((SystemCoreClock / clk - 1) << 8) | /* CLKDIV = Fpclk / 1000000 - 1 */
-	(0 << 16) | /* BURST = 0, no BURST, software controlled */
-	(0 << 17) | /* CLKS = 0, 11 clocks/10 bits */
+#if ADC_MODE_BURST
+			(1 << 16) | /* BURST = 0, no BURST, software controlled */
+#endif
 #if ADC_MODE_LOWPOWER
 			(1 << 22) | /* Low-power mode */
 #endif
@@ -63,17 +64,17 @@ void adc_init(uint32_t clk)
 			(0 << 24) | /* START = 0 A/D conversion stops */
 			(0 << 27); /* EDGE = 0 (CAP/MAT rising edge, trigger A/D conversion) */
 
-#ifdef ADC_INTERRUP
+#ifdef ADC_INTERRUPT
 	/* If POLLING, no need to do the following */
 	NVIC_EnableIRQ(ADC_IRQn);
 	LPC_ADC->INTEN = 0xFF; /* Enable all interrupts */
-#if ADC_ADGINTEN
+#if (ADC_ADGINTEN && !ADC_MODE_BURST)
 	LPC_ADC->INTEN |= 0x100;
 #endif
 #endif
 	return;
 }
-void adc_read(uint8_t channel)
+uint32_t adc_read(uint8_t channel)
 {
 	/* channel number is 0 through 7 */
 	if (channel >= ADC_NUM)
@@ -83,6 +84,26 @@ void adc_read(uint8_t channel)
 	LPC_ADC->CR &= 0xFFFFFF00;
 	LPC_ADC->CR |= (1 << 24) | (1 << channel);
 	/* switch channel,start A/D convert */
+
+	/* Wait until the conversion is complete */
+	volatile uint32_t regVal;
+	while (1)
+	{
+		regVal = LPC_ADC->DR[channel];
+		if (regVal & ADC_DONE)
+		{
+			break;
+		}
+	}
+
+	/* Stop the ADC */
+	LPC_ADC->CR &= 0xF8FFFFFF;
+
+#if ADC_MODE_10BIT
+	return ( regVal >> 6 ) & 0x3FF;
+#else
+	return (regVal >> 4) & 0xFFF;
+#endif
 }
 void adc_read_mask(uint8_t mask)
 {
@@ -92,6 +113,7 @@ void adc_read_mask(uint8_t mask)
 }
 void adc_burst_read(void)
 {
+	adc_done_interrupt = 0;
 	if ( LPC_ADC->CR & (0x7 << 24))
 	{
 		LPC_ADC->CR &= ~(0x7 << 24);
