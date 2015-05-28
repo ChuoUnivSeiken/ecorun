@@ -9,7 +9,6 @@
 #include "adc.h"
 
 extern volatile uint32_t adc_value[ADC_NUM];
-extern volatile uint32_t adc_burst_mask;
 
 void adc_init(uint32_t clk)
 {
@@ -64,7 +63,7 @@ void adc_init(uint32_t clk)
 			(0 << 24) | /* START = 0 A/D conversion stops */
 			(0 << 27); /* EDGE = 0 (CAP/MAT rising edge, trigger A/D conversion) */
 
-#ifdef ADC_INTERRUPT
+#if ADC_INTERRUPT
 	/* If POLLING, no need to do the following */
 	NVIC_EnableIRQ(ADC_IRQn);
 	LPC_ADC->INTEN = 0xFF; /* Enable all interrupts */
@@ -105,12 +104,7 @@ uint32_t adc_read(uint8_t channel)
 	return (regVal >> 4) & 0xFFF;
 #endif
 }
-void adc_read_mask(uint8_t mask)
-{
-	LPC_ADC->CR &= 0xFFFFFF00;
-	LPC_ADC->CR |= (1 << 24) | mask;
-	/* switch channel,start A/D convert */
-}
+
 void adc_burst_read(void)
 {
 	adc_done_interrupt = 0;
@@ -121,20 +115,6 @@ void adc_burst_read(void)
 	/* Read all channels, 0 through 7. Be careful that if the ADCx pins is shared
 	 with SWD CLK or SWD IO. */
 	LPC_ADC->CR |= (0xFF);
-	LPC_ADC->CR |= (0x1 << 16); /* Set burst mode and start A/D convert */
-	return; /* the ADC reading is done inside the
-	 handler, return 0. */
-}
-void adc_burst_read_channel(uint32_t channel)
-{
-	adc_burst_mask = channel;
-	if ( LPC_ADC->CR & (0x7 << 24))
-	{
-		LPC_ADC->CR &= ~(0x7 << 24);
-	}
-	/* Read all channels, 0 through 7. Be careful that if the ADCx pins is shared
-	 with SWD CLK or SWD IO. */
-	LPC_ADC->CR |= channel;
 	LPC_ADC->CR |= (0x1 << 16); /* Set burst mode and start A/D convert */
 	return; /* the ADC reading is done inside the
 	 handler, return 0. */

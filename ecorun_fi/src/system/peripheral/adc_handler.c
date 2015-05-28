@@ -24,7 +24,6 @@ adc_event_handler* event_adc;
 volatile uint32_t adc_done_interrupt = 0;
 volatile uint32_t adc_num_overrun = 0;
 volatile uint32_t adc_value[ADC_NUM];
-volatile uint32_t adc_burst_mask;
 #if ADC_MODE_BURST
 volatile uint32_t channel_flag = 0;
 #endif

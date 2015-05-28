@@ -1,5 +1,6 @@
-$(function() {
-    var socketio = io.connect('http://localhost:80');
+$(function () {
+    var host = window.location.host;
+    var socketio = io.connect('http://' + host + ':80');
 
     socketio.json.on('serial_ports', function(data) {
         var arr = data.value;

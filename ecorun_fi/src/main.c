@@ -9,6 +9,7 @@
 #include "system/peripheral/usart.h"
 #include "system/peripheral/timer.h"
 #include "system/peripheral/adc.h"
+#include "system/peripheral/ssp.h"
 #include "system/systimer.h"
 #include "util/usart_util.h"
 #include "core/command.h"
@@ -21,11 +22,53 @@
 #include "carsystem/accessible_data.h"
 #include <string.h>
 
+// vattery
+volatile uint32_t sum_mvoltage_adc = 0;
+volatile uint32_t mvoltage_samples = 0;
+
+// engine oil temperature
+volatile uint32_t sum_oil_temperature_adc = 0;
+volatile uint32_t oil_temperature_samples = 0;
+volatile uint32_t ave_oil_temperature_registance = 0;
+
 void timer32_1_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
-		adc_burst_read();
+		adc_burst_read();/*
+		 adc_read(1);
+		 eg_data.th = adc_read(2);
+		 adc_read(3);
+		 adc_read(4);
+		 adc_read(5);*/
+	}
+}
+static volatile uint8_t ssp_buffer[2];
+void timer32_0_handler(uint8_t timer, uint8_t num)
+{
+	if (num == 0)
+	{
+		// vattery
+		if (mvoltage_samples != 0)
+		{
+			uint32_t ave_mvoltage_adc = sum_mvoltage_adc / mvoltage_samples;
+
+			uint32_t ave_mvoltage = ave_mvoltage_adc * 18810; // ave_mvoltage_adc * 3300 / 1023 * R12 / R1
+			cr_data.vattery_voltage = ave_mvoltage >> 12;
+		}
+		sum_mvoltage_adc = 0;
+		mvoltage_samples = 0;
+
+		// engine oil temperature
+		if (oil_temperature_samples != 0)
+		{
+			uint32_t ave_temp_adc = sum_oil_temperature_adc / oil_temperature_samples;
+
+			ave_oil_temperature_registance = ave_temp_adc * 1000 / (4096 - ave_temp_adc);
+			eg_data.oil_temp = ave_oil_temperature_registance;
+		}
+		sum_oil_temperature_adc = 0;
+		oil_temperature_samples = 0;
 	}
 }
 
@@ -100,9 +143,22 @@ void command_put(command_data* data)
 
 void adc_handler(uint8_t num, uint32_t value)
 {
-	if (num == 3)
+	switch (num)
 	{
+	case 1:
+		sum_mvoltage_adc += value;
+		mvoltage_samples++;
+		break;
+	case 2:
 		eg_data.th = value;
+		break;
+	case 4:
+		sum_oil_temperature_adc += value;
+		oil_temperature_samples++;
+		break;
+	case 5:
+		eg_data.vacuum = value;
+		break;
 	}
 }
 
@@ -113,6 +169,11 @@ int main(void)
 	const uint32_t UART_BAUDRATE = 115200;
 	fi_set_default();
 	usart_init(UART_BAUDRATE);
+	//ssp_init();
+
+	timer32_init(0, SystemCoreClock);
+	timer32_add_event(0, timer32_0_handler);
+	timer32_enable(0);
 	timer32_init(1, SystemCoreClock / 100);
 	timer32_add_event(1, timer32_1_handler);
 	timer32_enable(1);
@@ -139,6 +200,33 @@ int main(void)
 	cr_data.vattery_voltage = 1;
 	cr_data.wheel_count = 2;
 	cr_data.wheel_rotation_period = 3;
+
+	LPC_IOCON->PIO0_2 = 0x10;
+	LPC_IOCON->PIO1_10 = 0x10;
+	LPC_IOCON->PIO1_26 = 0x10;
+	LPC_IOCON->PIO1_27 = 0x10;
+	LPC_IOCON->PIO1_4 = 0x10;
+
+	LPC_GPIO->DIR[0] &= ~_BV(2);
+	LPC_GPIO->DIR[1] &= ~_BV(10);
+	LPC_GPIO->DIR[1] &= ~_BV(26);
+	LPC_GPIO->DIR[1] &= ~_BV(27);
+	LPC_GPIO->DIR[1] &= ~_BV(4);
+
+	LPC_IOCON->PIO1_0 = 0x10;
+	LPC_IOCON->PIO1_25 = 0x10;
+	LPC_IOCON->PIO1_19 = 0x10;
+	LPC_IOCON->PIO1_7 = 0x10;
+
+	LPC_GPIO->DIR[1] |= _BV(0);
+	LPC_GPIO->DIR[1] |= _BV(25);
+	LPC_GPIO->DIR[1] |= _BV(19);
+	LPC_GPIO->DIR[1] |= _BV(7);
+
+	LPC_GPIO->SET[1] |= _BV(0);
+	LPC_GPIO->SET[1] |= _BV(25);
+	LPC_GPIO->SET[1] |= _BV(19);
+	LPC_GPIO->SET[1] |= _BV(7);
 
 	while (1)
 	{

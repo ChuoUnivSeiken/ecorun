@@ -38,7 +38,7 @@
 #include "../cmsis/LPC13Uxx.h"
 #include "usart.h"
 
-#define USE_BLUETOOTH 0
+#define USE_BLUETOOTH 1
 
 static uint32_t is_start_of_txt = 0;
 

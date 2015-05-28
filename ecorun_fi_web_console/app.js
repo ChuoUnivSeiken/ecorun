@@ -1,5 +1,4 @@
 /// <reference path="typings/tsd.d.ts" />
-/// <reference path="./carcomm.ts" />
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -57,8 +56,8 @@ var server = app.listen(80, function () {
 var socketio = require('socket.io');
 var io = socketio.listen(server);
 var idHash = {};
-var carcomm = require('./carcomm');
-var carserialize = require("./carserialize");
+var carcomm = require('./car_comm');
+var carserialize = require("./car_serialize");
 carserialize.CarDatabase.connect();
 var carTransmitter;
 var carSerialport;

@@ -1,5 +1,4 @@
 /// <reference path="typings/tsd.d.ts" />
-/// <reference path="./carcomm.ts" />
 
 var express = require('express');
 var path = require('path');
@@ -72,8 +71,8 @@ import _ = require('lodash');
 
 var idHash = {};
 
-import carcomm = require('./carcomm');
-import carserialize = require("./carserialize");
+import carcomm = require('./car_comm');
+import carserialize = require("./car_serialize");
 carserialize.CarDatabase.connect();
 var carTransmitter: carcomm.CarTransmitter;
 var carSerialport: carcomm.CarSerialPort;

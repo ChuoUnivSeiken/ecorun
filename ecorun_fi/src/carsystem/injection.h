@@ -22,6 +22,8 @@ typedef volatile struct engine_data_t
 	uint32_t is_af_rich;
 	uint32_t th;
 	uint32_t oil_temp;
+	uint32_t intake_temp;
+	uint32_t vacuum;
 	uint32_t current_total_injected_time;
 	uint32_t current_inject_started_count;
 	uint32_t current_inject_ended_count;
