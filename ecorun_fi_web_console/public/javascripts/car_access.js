@@ -1,4 +1,4 @@
-$(function () {
+module.exports = function() {
     var host = window.location.host;
     var socketio = io.connect('http://' + host + ':80');
 
@@ -85,4 +85,4 @@ $(function () {
     var id = Math.floor(Math.random() * 100);
     socketio.emit('connected', id);
     socketio.emit('serial_list_ports');
-});
+};

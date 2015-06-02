@@ -96,8 +96,8 @@ export class Event {
 }
 
 export class CarSerialPort {
-    private eventDispatcher = new EventDispatcher();
-    public serialport: any = null;
+    protected eventDispatcher = new EventDispatcher();
+    private serialport: any = null;
 
     constructor(public portName: string, public bitRate: number) {
     }
@@ -106,7 +106,7 @@ export class CarSerialPort {
         return this.serialport != null;
     }
 
-    public open() {
+    open() {
         var _serialport = new serialport.SerialPort(this.portName, {
             baudrate: this.bitRate,
             dataBits: 8,
@@ -123,7 +123,7 @@ export class CarSerialPort {
             console.log(this.portName + ' opened.');
             this.serialport = _serialport;
             this.serialport.on('data', (data) => {
-                this.eventDispatcher.dispatchEvent(new Event('DataReceived', { data: data }));
+                this.eventDispatcher.dispatchEvent(new Event('Received', { data: data }));
             });
             this.serialport.on('close', () => {
                 CarSerialPort.serialStates[this.portName] = undefined;
@@ -150,8 +150,8 @@ export class CarSerialPort {
     public addClosedHandler(handler: Function) {
         this.eventDispatcher.addEventListener('Closed', handler);
     }
-    public addDataReceivedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('DataReceived', handler);
+    public addReceivedHandler(handler: Function) {
+        this.eventDispatcher.addEventListener('Received', handler);
     }
     public removeOpenedHandler(handler: Function) {
         this.eventDispatcher.removeEventListener('Opened', handler);
@@ -159,12 +159,12 @@ export class CarSerialPort {
     public removeClosedHandler(handler: Function) {
         this.eventDispatcher.removeEventListener('Closed', handler);
     }
-    public removeDataReceivedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('DataReceived', handler);
+    public removeReceivedHandler(handler: Function) {
+        this.eventDispatcher.removeEventListener('Received', handler);
     }
 
     public write(str: String) {
-        if (this.serialport == null) {
+        if (!this.isOpening) {
             throw new Error("This port is not opening.");
         }
         var errfunc = function(error, results) {
@@ -195,8 +195,7 @@ export class CarSerialPort {
     }
 }
 
-export class CarTransmitter {
-    private eventDispatcher = new EventDispatcher();
+export class CarTransmitter extends CarSerialPort {
     public addDataReceivedHandler(handler: Function) {
         this.eventDispatcher.addEventListener('DataReceived', handler);
     }
@@ -237,8 +236,9 @@ export class CarTransmitter {
         }
     }
 
-    constructor(private carSerialport: CarSerialPort) {
-        carSerialport.addDataReceivedHandler((e) => {
+    constructor(portName: string, bitRate: number) {
+        super(portName, bitRate);
+        this.addReceivedHandler((e) => {
             var data: Array<number> = e.value.data;
             _.forEach(data, (byte: number) => this.byteReceived(byte));
         });
@@ -254,8 +254,8 @@ export class CarTransmitter {
     }
 
     public requestData(id: String) {
-        if (serialport != null) {
-            this.carSerialport.write('get ' + id);
+        if (this.isOpening) {
+            this.write('get ' + id);
         }
     }
 

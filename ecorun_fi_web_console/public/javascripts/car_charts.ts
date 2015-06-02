@@ -1,6 +1,8 @@
 ﻿/// <reference path="typings/tsd.d.ts" />
 
-class rect {
+import d3 = require("d3");
+
+export class rect {
     constructor(top: number = 0, right: number = 0, bottom: number = 0, left: number = 0) {
         this.top = top;
         this.right = right;
@@ -14,7 +16,7 @@ class rect {
     left: number;
 }
 
-class vec2d {
+export class vec2d {
     constructor(x: number = 0, y: number = 0) {
         this.x = x;
         this.y = y;
@@ -24,7 +26,7 @@ class vec2d {
     y: number;
 }
 
-class margins {
+export class margins {
     constructor(top: number = 0, right: number = 0, bottom: number = 0, left: number = 0) {
         this.top = top;
         this.right = right;
@@ -38,7 +40,7 @@ class margins {
     left: number;
 }
 
-class size2d {
+export class size2d {
     constructor(width: number = 0, height: number = 0) {
         this.width = width;
         this.height = height;
@@ -48,10 +50,14 @@ class size2d {
     height: number = 0;
 }
 
-class ChartElement {
-    protected size: size2d = new size2d(300, 300);
+export class ChartElement {
     protected margins: margins = new margins(25, 50, 25, 50);
     protected el: D3.Selection;
+    protected domel: HTMLElement;
+
+    get size(): size2d {
+        return new size2d(this.domel.clientWidth, this.domel.clientHeight);
+    }
 
     get clientSize(): size2d {
         return new size2d(this.size.width - (this.margins.left + this.margins.right), this.size.height - (this.margins.top + this.margins.bottom));
@@ -71,17 +77,18 @@ class ChartElement {
         }
 
         if (el != null) {
-            this.el = d3.select(el);
-            this.size = new size2d(parseInt(el.style.width), parseInt(el.style.height));
+            this.domel = el;
+            this.el = d3.select(this.domel);
         } else {
-            this.el = d3.select(document.createElement('div'))
-                .attr('width', this.size.width)
-                .attr('height', this.size.height)
+            this.domel = document.createElement('div');
+            this.el = d3.select(this.domel)
+                .attr('width', 300)
+                .attr('height', 300)
         }
     }
 }
 
-class ChartSVG extends ChartElement {
+export class ChartSVG extends ChartElement {
     protected svg: D3.Selection;
 
     constructor(el: HTMLElement, options?: Object) {
@@ -94,7 +101,7 @@ class ChartSVG extends ChartElement {
     }
 }
 
-class ChartCanvas extends ChartElement {
+export class ChartCanvas extends ChartElement {
     protected canvas: D3.Selection;
     protected context: CanvasRenderingContext2D;
 
@@ -103,20 +110,35 @@ class ChartCanvas extends ChartElement {
 
         this.canvas = d3.select(document.createElement("canvas"));
         this.canvas.style({
-            width: this.clientSize.width.toString() + "px",
-            height: this.clientSize.height.toString() + "px",
             top: this.margins.top + "px",
             left: this.margins.left + "px",
-        })
-            .attr("width", this.clientSize.width)
+        }).attr("width", this.clientSize.width)
             .attr("height", this.clientSize.height);
+
         this.el.node().appendChild(this.canvas.node());
         var c = <HTMLCanvasElement>this.canvas.node();
         this.context = c.getContext("2d");
+
+        var queue = null, // キューをストック 
+            wait = 300; // 0.3秒後に実行の場合 
+ 
+        window.addEventListener('resize', () => {
+            // イベント発生の都度、キューをキャンセル 
+            clearTimeout(queue);
+ 
+            // waitで指定したミリ秒後に所定の処理を実行 
+            // 経過前に再度イベントが発生した場合
+            // キューをキャンセルして再カウント 
+            queue = setTimeout(() => {
+                this.canvas
+                    .attr("width", this.clientSize.width)
+                    .attr("height", this.clientSize.height);
+            }, wait);
+        }, false);
     }
 }
 
-class Chart extends ChartCanvas {
+export class Chart extends ChartCanvas {
     protected svg: D3.Selection;
     protected values: vec2d[] = [];
     private _querySize: number = 250;

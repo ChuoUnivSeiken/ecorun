@@ -141,7 +141,7 @@ var CarSerialPort = (function () {
             console.log(_this.portName + ' opened.');
             _this.serialport = _serialport;
             _this.serialport.on('data', function (data) {
-                _this.eventDispatcher.dispatchEvent(new Event('DataReceived', { data: data }));
+                _this.eventDispatcher.dispatchEvent(new Event('Received', { data: data }));
             });
             _this.serialport.on('close', function () {
                 CarSerialPort.serialStates[_this.portName] = undefined;
@@ -168,8 +168,8 @@ var CarSerialPort = (function () {
     CarSerialPort.prototype.addClosedHandler = function (handler) {
         this.eventDispatcher.addEventListener('Closed', handler);
     };
-    CarSerialPort.prototype.addDataReceivedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('DataReceived', handler);
+    CarSerialPort.prototype.addReceivedHandler = function (handler) {
+        this.eventDispatcher.addEventListener('Received', handler);
     };
     CarSerialPort.prototype.removeOpenedHandler = function (handler) {
         this.eventDispatcher.removeEventListener('Opened', handler);
@@ -177,11 +177,11 @@ var CarSerialPort = (function () {
     CarSerialPort.prototype.removeClosedHandler = function (handler) {
         this.eventDispatcher.removeEventListener('Closed', handler);
     };
-    CarSerialPort.prototype.removeDataReceivedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('DataReceived', handler);
+    CarSerialPort.prototype.removeReceivedHandler = function (handler) {
+        this.eventDispatcher.removeEventListener('Received', handler);
     };
     CarSerialPort.prototype.write = function (str) {
-        if (this.serialport == null) {
+        if (!this.isOpening) {
             throw new Error("This port is not opening.");
         }
         var errfunc = function (error, results) {
@@ -209,13 +209,13 @@ var CarSerialPort = (function () {
     return CarSerialPort;
 })();
 exports.CarSerialPort = CarSerialPort;
-var CarTransmitter = (function () {
-    function CarTransmitter(carSerialport) {
+var CarTransmitter = (function (_super) {
+    __extends(CarTransmitter, _super);
+    function CarTransmitter(portName, bitRate) {
         var _this = this;
-        this.carSerialport = carSerialport;
-        this.eventDispatcher = new EventDispatcher();
+        _super.call(this, portName, bitRate);
         this.byteBuffer = [];
-        carSerialport.addDataReceivedHandler(function (e) {
+        this.addReceivedHandler(function (e) {
             var data = e.value.data;
             _.forEach(data, function (byte) { return _this.byteReceived(byte); });
         });
@@ -265,8 +265,8 @@ var CarTransmitter = (function () {
         return ab;
     };
     CarTransmitter.prototype.requestData = function (id) {
-        if (serialport != null) {
-            this.carSerialport.write('get ' + id);
+        if (this.isOpening) {
+            this.write('get ' + id);
         }
     };
     CarTransmitter.parseCommandLine = function (line) {
@@ -338,7 +338,7 @@ var CarTransmitter = (function () {
         }
     };
     return CarTransmitter;
-})();
+})(CarSerialPort);
 exports.CarTransmitter = CarTransmitter;
 var ObjectReader = (function () {
     function ObjectReader(buffer, offset, values, names) {

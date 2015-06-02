@@ -5,6 +5,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var d3 = require("d3");
 var rect = (function () {
     function rect(top, right, bottom, left) {
         if (top === void 0) { top = 0; }
@@ -18,6 +19,7 @@ var rect = (function () {
     }
     return rect;
 })();
+exports.rect = rect;
 var vec2d = (function () {
     function vec2d(x, y) {
         if (x === void 0) { x = 0; }
@@ -27,6 +29,7 @@ var vec2d = (function () {
     }
     return vec2d;
 })();
+exports.vec2d = vec2d;
 var margins = (function () {
     function margins(top, right, bottom, left) {
         if (top === void 0) { top = 0; }
@@ -40,6 +43,7 @@ var margins = (function () {
     }
     return margins;
 })();
+exports.margins = margins;
 var size2d = (function () {
     function size2d(width, height) {
         if (width === void 0) { width = 0; }
@@ -51,9 +55,9 @@ var size2d = (function () {
     }
     return size2d;
 })();
+exports.size2d = size2d;
 var ChartElement = (function () {
     function ChartElement(el, options) {
-        this.size = new size2d(300, 300);
         this.margins = new margins(25, 50, 25, 50);
         this.el = d3.select(el);
         if (options) {
@@ -62,13 +66,21 @@ var ChartElement = (function () {
             }
         }
         if (el != null) {
-            this.el = d3.select(el);
-            this.size = new size2d(parseInt(el.style.width), parseInt(el.style.height));
+            this.domel = el;
+            this.el = d3.select(this.domel);
         }
         else {
-            this.el = d3.select(document.createElement('div')).attr('width', this.size.width).attr('height', this.size.height);
+            this.domel = document.createElement('div');
+            this.el = d3.select(this.domel).attr('width', 300).attr('height', 300);
         }
     }
+    Object.defineProperty(ChartElement.prototype, "size", {
+        get: function () {
+            return new size2d(this.domel.clientWidth, this.domel.clientHeight);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ChartElement.prototype, "clientSize", {
         get: function () {
             return new size2d(this.size.width - (this.margins.left + this.margins.right), this.size.height - (this.margins.top + this.margins.bottom));
@@ -85,6 +97,7 @@ var ChartElement = (function () {
     });
     return ChartElement;
 })();
+exports.ChartElement = ChartElement;
 var ChartSVG = (function (_super) {
     __extends(ChartSVG, _super);
     function ChartSVG(el, options) {
@@ -93,23 +106,35 @@ var ChartSVG = (function (_super) {
     }
     return ChartSVG;
 })(ChartElement);
+exports.ChartSVG = ChartSVG;
 var ChartCanvas = (function (_super) {
     __extends(ChartCanvas, _super);
     function ChartCanvas(el, options) {
+        var _this = this;
         _super.call(this, el, options);
         this.canvas = d3.select(document.createElement("canvas"));
         this.canvas.style({
-            width: this.clientSize.width.toString() + "px",
-            height: this.clientSize.height.toString() + "px",
             top: this.margins.top + "px",
             left: this.margins.left + "px",
         }).attr("width", this.clientSize.width).attr("height", this.clientSize.height);
         this.el.node().appendChild(this.canvas.node());
         var c = this.canvas.node();
         this.context = c.getContext("2d");
+        var queue = null, wait = 300; // 0.3秒後に実行の場合 
+        window.addEventListener('resize', function () {
+            // イベント発生の都度、キューをキャンセル 
+            clearTimeout(queue);
+            // waitで指定したミリ秒後に所定の処理を実行 
+            // 経過前に再度イベントが発生した場合
+            // キューをキャンセルして再カウント 
+            queue = setTimeout(function () {
+                _this.canvas.attr("width", _this.clientSize.width).attr("height", _this.clientSize.height);
+            }, wait);
+        }, false);
     }
     return ChartCanvas;
 })(ChartElement);
+exports.ChartCanvas = ChartCanvas;
 var Chart = (function (_super) {
     __extends(Chart, _super);
     function Chart(el, options) {
@@ -212,4 +237,5 @@ var Chart = (function (_super) {
     };
     return Chart;
 })(ChartCanvas);
+exports.Chart = Chart;
 //# sourceMappingURL=car_charts.js.map

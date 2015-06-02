@@ -7,142 +7,118 @@
     <meta charset="utf-8" />
     <title></title>
     <link rel="stylesheet" href="stylesheets/normalize.css">
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/epoch.min.css">
     <script src="javascripts/jquery-2.1.3.min.js" type="text/javascript"></script>
     <script src="javascripts/socket.io.js" type="text/javascript"></script>
-    <script src="javascripts/d3.js" type="text/javascript"></script>
     <script src="javascripts/lodash.min.js" type="text/javascript"></script>
-    <script src="javascripts/car_charts.js" type="text/javascript"></script>
-    <script src="javascripts/common.js" type="text/javascript"></script>
-    <script src="javascripts/car_visualize.js" type="text/javascript"></script>
-    <script src="javascripts/car_access.js" type="text/javascript"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="javascripts/build/app.js" type="text/javascript"></script>
 </head>
 
-<body>
-
-    <style type="text/css">
-        div.bar {
-            display: inline-block;
-            width: 20px;
-            height: 75px; /* この数値は実行時に上書きされます */
-            background-color: teal;
-        }
-
-        .axis path,
-.axis line {
-   fill: none;
-   stroke: black;
-   shape-rendering: crispEdges;
-}
-
-.axis text {
-   font-family: sans-serif;
-   font-size: 11px;
-}
-    </style>
-
-    <div class="header"></div>
-    <div class="tabbox">
-        <div id="l1Menu" class="menu">
-            <ul class="mainMenu">
-                <li title="接続設定">
-                    <a id="tab1" href="#tab1">接続設定</a>
-                </li>
-                <li title="基本情報">
-                    <a id="tab2" href="#tab2">基本情報</a>
-                </li>
-                <li title="エンジン情報">
-                    <a id="tab3" href="#tab3">エンジン情報</a>
-                </li>
-                <li title="基本設定">
-                    <a id="tab4" href="#tab4">基本設定</a>
-                </li>
-                <li title="エンジン設定">
-                    <a id="tab5" href="#tab5">エンジン設定</a>
-                </li>
-            </ul>
+<body data-spy="scroll" data-target=".scroll-spy-sample">
+    <nav id="navbar" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Car Console</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse scroll-spy-sample">
+                <ul class="nav navbar-nav">
+                    <li><a id="tab_home" href="#home">Home</a></li>
+                    <li><a id="tab1" href="#connection">Commection</a></li>
+                    <li><a id="tab2" href="#basicinfo">Basic Info</a></li>
+                    <li><a id="tab3" href="#engineinfo">Engine Info</a></li>
+                    <li><a id="tab4" href="#basicsettings">Basic Settings</a></li>
+                    <li><a id="tab5" href="#enginesettings">Engine Settings</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#help">Help</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
         </div>
-    </div>
-    <br />
-    <br />
-    <div id="contents" class="contents">
+    </nav>
+    <div id="contents" class="container">
         <!-- タブ1 -->
-        <div id="tab1_content" class="tab">
-            <table class="connection_table">
-                <tr>
-                    <th>ポート</th>
-                    <td>
-                        <label for="ports">ポートを選択してください：</label>
-                        <input type="button" id="list" value="ポートを取得">
-                        <select id="port" name="port"></select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>ボーレート</th>
-                    <td id="connection_baudrate">
-                        <select id="baudrate" name="baudrate">
-                            <option value='115200'>115200</option>
-                            <option value='9600'>9600</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>状態</th>
-                    <td id="connection_state">未接続</td>
-                </tr>
-            </table>
-            <input type="button" id="connect_start_stop" value="シリアル通信開始">
-            <br />
-        </div>
+        <section id="connection" class="connection-section">
+            <h1 class="page-header">
+                Connection
+            </h1>
+            <div class="row">
+                <table class="table">
+                    <tr>
+                        <th>ポート</th>
+                        <td>
+                            <label for="ports">ポートを選択してください：</label>
+                            <input type="button" id="list" value="ポートを取得">
+                            <select id="port" name="port"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ボーレート</th>
+                        <td id="connection_baudrate">
+                            <select id="baudrate" name="baudrate">
+                                <option value='115200'>115200</option>
+                                <option value='9600'>9600</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>状態</th>
+                        <td id="connection_state">未接続</td>
+                    </tr>
+                </table>
+                <input type="button" id="connect_start_stop" value="シリアル通信開始">
+            </div>
+        </section>
 
         <!-- タブ2 -->
-        <div id="tab2_content" class="tab">
-            <div>
-                <a>--- 情報 ---</a>
-            </div>
-            <table class="common_table">
+        <section id="basicinfo" class="basicinfo-section">
+            <h1 class="page-header">
+                Basic Information
+            </h1>
+
+            <table class="table">
                 <tr>
                     <th>車速 [km/s]</th>
                     <td id="td_speed">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress id="progress_speed" value="0" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
+                    <td style="width:50%">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_speed" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>電源電圧 [V]</th>
                     <td id="td_vattery_voltage">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress id="progress_vattery_voltage" value="0" max="15">
-                                <span>0</span>
-                                %
-                            </progress>
-                            15
-                        </label>
+                    <td style="width:50%">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_vattery_voltage" aria-valuenow="0" aria-valuemin="0" aria-valuemax="15">
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>平均車速 [km/s]</th>
                     <td id="td_average_speed">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress id="progress_average_speed" value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
-                    </td>
+                    <td> </td>
                 </tr>
                 <tr>
                     <th>距離 [km]</th>
@@ -151,75 +127,70 @@
                 </tr>
             </table>
 
-            <div>
-                <a>--- 推移 ---</a>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">車速</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_speed" style="width: 100%; height: 250px"></div>
+                </div>
             </div>
-            <a>車速</a>
-            <div  id="chart_speed" class="epoch" style="width: 1080px; height: 200px"></div>
-            <a>電源電圧</a>
-            <div id="chart_vattery_voltage" class="epoch" style="width: 1080px; height: 200px"></div>
-        </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">電源電圧</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_vattery_voltage" style="width: 100%; height: 250px"></div>
+                </div>
+            </div>
+        </section>
 
         <!-- タブ3 -->
-        <div id="tab3_content" class="tab">
-            <div>
-                <a>--- 情報 ---</a>
-            </div>
-            <table class="common_table">
+        <section id="engineinfo" class="engineinfo-section">
+            <h1 class="page-header">
+                Engine Information
+            </h1>
+            <table class="table">
                 <tr>
                     <th>回転数 [rpm]</th>
                     <td id="td_rev">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress id="progress_rev" value="0" max="6000">
-                                <span>0</span>
-                                %
-                            </progress>
-                            6000
-                        </label>
+                    <td style="width:50%">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_rev" aria-valuenow="0" aria-valuemin="0" aria-valuemax="6000">
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>スロットル開度</th>
                     <td id="td_th">0</td>
                     <td>
-                        <label>
-                            0
-                            <progress id="progress_th" value="0" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_th" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>油温 [deg C]</th>
                     <td id="td_oil_temp">0.0</td>
                     <td>
-                        <label>
-                            0
-                            <progress id="progress_oil_temp" value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_oil_temp" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>吸気温 [deg C]</th>
                     <td id="td_temp">0.0</td>
                     <td>
-                        <label>
-                            0
-                            <progress id="progress_temp" value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="progress_temp" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <span class="sr-only">0</span>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -234,73 +205,60 @@
                 </tr>
             </table>
 
-            <div>
-                <a>--- 推移 ---</a>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">回転数</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_rev" style="width: 100%; height: 250px"></div>
+                </div>
             </div>
-            <a>回転数</a>
-            <div id="chart_rev" class="epoch" style="width: 1080px; height: 200px"></div>
-            <a>スロットル開度</a>
-            <div id="chart_throttle" style="width: 1080px; height: 200px"></div>
-            <a>油温</a>
-            <div id="chart_oil_temp" class="epoch" style="width: 1080px; height: 200px"></div>
-            <a>吸気温</a>
-            <div id="chart_temp" class="epoch" style="width: 1080px; height: 200px"></div>
-        </div>
-        <div id="tab4_content" class="tab">
-            <p>タブ4</p>
-        </div>
-        <div id="tab5_content" class="tab">
-            <table class="common_table">
-                <tr>
-                    <th>車速 [km/s]</th>
-                    <td id="td_speed">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th>電源電圧 [V]</th>
-                    <td id="td_vattery_voltage">0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            15
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th>平均車速 [km/s]</th>
-                    <td>0.0</td>
-                    <td>
-                        <label>
-                            0
-                            <progress value="50" max="100">
-                                <span>0</span>
-                                %
-                            </progress>
-                            100
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th>距離 [km]</th>
-                    <td>0.0</td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">スロットル開度</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_throttle" style="width: 100%; height: 250px"></div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">油温</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_oil_temp" style="width: 100%; height: 250px"></div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">吸気温</div>
+                </div>
+                <div class="panel-body">
+                    <div id="chart_temp" style="width: 100%; height: 250px"></div>
+                </div>
+            </div>
+        </section>
+        <section id="basicsettings" class="basicsettings-section">
+            <div class="container">
+                <div class="row">
+                    <h1 class="page-header">
+                        Basic Settings
+                    </h1>
+                </div>
+            </div>
+        </section>
+        <section id="enginesettings" class="enginesettings-section">
+            <div class="container">
+                <div class="row">
+                    <h1 class="page-header">
+                        Engine Settings
+                    </h1>
+                </div>
+            </div>
+        </section>
     </div>
 </body>
-
 </html>

@@ -75,7 +75,6 @@ import carcomm = require('./car_comm');
 import carserialize = require("./car_serialize");
 carserialize.CarDatabase.connect();
 var carTransmitter: carcomm.CarTransmitter;
-var carSerialport: carcomm.CarSerialPort;
 
 setInterval(() => {
     if (carTransmitter != null) {
@@ -103,10 +102,9 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('serial_connect', (connection_data) => {
-        carSerialport = new carcomm.CarSerialPort(connection_data.portName, connection_data.bitRate);
+        carTransmitter = new carcomm.CarTransmitter(connection_data.portName, connection_data.bitRate);
 
-        carSerialport.addOpenedHandler((e) => {
-            carTransmitter = new carcomm.CarTransmitter(carSerialport)
+        carTransmitter.addOpenedHandler((e) => {
             carTransmitter.addDataReceivedHandler((e) => {
                 var data = e.value;
                 io.sockets.emit('data', data);
@@ -118,22 +116,21 @@ io.sockets.on('connection', function(socket) {
             });
             io.sockets.emit('serial_connected', {});
         });
-        carSerialport.addClosedHandler((e) => {
+        carTransmitter.addClosedHandler((e) => {
             io.sockets.emit('serial_disconnected', {});
         });
-        carSerialport.open();
+        carTransmitter.open();
     });
 
     socket.on('serial_disconnect', () => {
-        var _carSerialport = carSerialport;
-        carSerialport = null;
+        var _carSerialport = carTransmitter;
         carTransmitter = null;
         _carSerialport.close();
     });
 
     socket.on('serial_write', (data) => {
-        if (carSerialport != null) {
-            carSerialport.write(data.message);
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.write(data.message);
         }
     });
 
