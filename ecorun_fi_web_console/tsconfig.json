@@ -1,0 +1,26 @@
+{
+    "version": "1.5.0-alpha",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./app.ts",
+        "./carcomm.ts",
+        "./carserialize.ts",
+        "./typings/express/express.d.ts",
+        "./typings/lodash/lodash.d.ts",
+        "./typings/mongoose/mongoose.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/socket.io/socket.io.d.ts",
+        "./typings/tsd.d.ts"
+    ]
+}
