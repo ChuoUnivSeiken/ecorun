@@ -1,4 +1,6 @@
-module.exports = function() {
+module.exports = function () {
+    var $ = require('jquery');
+
     var host = window.location.host;
     var socketio = io.connect('http://' + host + ':80');
 
