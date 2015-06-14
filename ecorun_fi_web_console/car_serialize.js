@@ -43,4 +43,3 @@ var CarDatabase = (function () {
     return CarDatabase;
 })();
 exports.CarDatabase = CarDatabase;
-//# sourceMappingURL=car_serialize.js.map

@@ -49,12 +49,12 @@ void ssp_clock_slow()
 	/* (PCLK / (CPSDVSR * [SCR+1])) = (4,800,000 / (2 x [5 + 1])) = 400 KHz */
 	LPC_SSP0->CR0 = ((7u << 0)     // Data size = 8-bit  (bits 3:0)
 	| (0 << 4)             // Frame format = SPI (bits 5:4)
-#if CFG_SSP_CPOL0 == 1
+#if SSP0_CPOL == 1
 			| (1 << 6)            // CPOL = 1           (bit 6)
 #else
 			| (0 << 6)            // CPOL = 0           (bit 6)
 #endif
-#if CFG_SSP_CPHA0 == 1
+#if SSP0_CPHA == 1
 			| (1 << 7)             // CPHA = 1           (bit 7)
 #else
 			| (0 << 7)             // CPHA = 0           (bit 7)
@@ -78,12 +78,12 @@ void ssp_clock_fast()
 	/* (PCLK / (CPSDVSR * [SCR+1])) = (72,000,000 / (2 * [5 + 1])) = 6.0 MHz */
 	LPC_SSP0->CR0 = ((7u << 0)     // Data size = 8-bit  (bits 3:0)
 	| (0 << 4)             // Frame format = SPI (bits 5:4)
-#if CFG_SSP_CPOL0 == 1
+#if SSP0_CPOL == 1
 			| (1 << 6)            // CPOL = 1           (bit 6)
 #else
 			| (0 << 6)            // CPOL = 0           (bit 6)
 #endif
-#if CFG_SSP_CPHA0 == 1
+#if SSP0_CPHA == 1
 			| (1 << 7)             // CPHA = 1           (bit 7)
 #else
 			| (0 << 7)             // CPHA = 0           (bit 7)
@@ -101,7 +101,7 @@ void ssp_clock_fast()
 /**************************************************************************/
 void ssp_init(void)
 {
-	uint8_t i, Dummy = Dummy;
+	volatile uint8_t i, Dummy = Dummy;
 
 	/* Reset SSP */
 	LPC_SYSCON->PRESETCTRL &= ~0x1;
@@ -109,28 +109,6 @@ void ssp_init(void)
 
 	/* Enable AHB clock to the SSP domain. */
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
-
-	/* Set P0.8 to SSP MISO0 */
-	LPC_IOCON->PIO0_8 &= ~0x07;
-	LPC_IOCON->PIO0_8 |= 0x01;
-
-	/* Set P0.9 to SSP MOSI0 */
-	LPC_IOCON->PIO0_9 &= ~0x07;
-	LPC_IOCON->PIO0_9 |= 0x01;
-
-	/* No LPC_IOCON->SCKLOC register on LPC11Uxx/13Uxx? */
-#if (SSP0_SCK0_LOCATION == SSP0_SCK0_1_29)
-	/* Set 1.29 to SSP SCK0 (0.6 is often used by USB and 0.10 for SWD) */
-	LPC_IOCON->PIO1_29 = 0x01;
-#elif (SSP0_SCK0_LOCATION == SSP0_SCK0_0_10)
-	/* Set 0.10 to SSP SCK0 (may be required for SWD!) */
-	LPC_IOCON->SWCLK_PIO0_10 = 0x02;
-#elif (SSP0_SCK0_LOCATION == SSP0_SCK0_0_6)
-	/* Set 0.6 to SSP SCK0 (may be required for USB!) */
-	LPC_IOCON->PIO0_6 = 0x02;
-#else
-#error "Invalid CFG_SSP_SCK0_LOCATION"
-#endif
 
 	/* Set SPI clock to high-speed by default */
 	ssp_clock_fast();
@@ -141,8 +119,7 @@ void ssp_init(void)
 		Dummy = LPC_SSP0->DR;
 	}
 	/* Enable the SSP Interrupt */
-	NVIC_EnableIRQ(SSP0_IRQn);
-
+	//NVIC_EnableIRQ(SSP0_IRQn);
 	/* Enable device and set it to master mode, no loopback */
 	LPC_SSP0->CR1 = SSP0_CR1_SSE_ENABLED | SSP0_CR1_MS_MASTER | SSP0_CR1_LBM_NORMAL;
 }
@@ -159,8 +136,8 @@ void ssp_init(void)
 /**************************************************************************/
 void ssp_send(uint8_t *buf, uint32_t length)
 {
-	uint32_t i;
-	uint8_t Dummy = Dummy;
+	volatile uint32_t i;
+	volatile uint8_t Dummy = Dummy;
 
 	for (i = 0; i < length; i++)
 	{
@@ -193,7 +170,7 @@ void ssp_send(uint8_t *buf, uint32_t length)
 /**************************************************************************/
 void ssp_receive(uint8_t *buf, uint32_t length)
 {
-	uint32_t i;
+	volatile uint32_t i;
 
 	for (i = 0; i < length; i++)
 	{
@@ -206,6 +183,24 @@ void ssp_receive(uint8_t *buf, uint32_t length)
 
 		*buf = LPC_SSP0->DR;
 		buf++;
+	}
+
+	return;
+}
+void ssp_exchange(uint8_t *buf, uint32_t length)
+{
+	volatile uint32_t i;
+
+	for (i = 0; i < length; i++)
+	{
+		/* As long as the receive FIFO is not empty, data can be received. */
+		LPC_SSP0->DR = buf[i];
+
+		/* Wait until the Busy bit is cleared */
+		while ((LPC_SSP0->SR & (SSP0_SR_BSY_BUSY | SSP0_SR_RNE_NOTEMPTY)) != SSP0_SR_RNE_NOTEMPTY)
+			;
+
+		buf[i] = LPC_SSP0->DR;
 	}
 
 	return;

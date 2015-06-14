@@ -38,31 +38,11 @@
 #include "../cmsis/LPC13Uxx.h"
 #include "usart.h"
 
-#define USE_BLUETOOTH 1
-
 static uint32_t is_start_of_txt = 0;
 
 void usart_init(uint32_t baudrate)
 {
 	volatile uint32_t fdiv, regVal;
-
-#if USE_BLUETOOTH
-	/* Set 1.13 UART RXD */
-	LPC_IOCON->PIO1_13 &= ~0x07;
-	LPC_IOCON->PIO1_13 |= 0x03;
-
-	/* Set 1.14 UART TXD */
-	LPC_IOCON->PIO1_14 &= ~0x07;
-	LPC_IOCON->PIO1_14 |= 0x03;
-#else
-	/* Set 0.18 UART RXD */
-	LPC_IOCON->PIO0_18 &= ~0x07;
-	LPC_IOCON->PIO0_18 |= 0x01;
-
-	/* Set 0.19 UART TXD */
-	LPC_IOCON->PIO0_19 &= ~0x07;
-	LPC_IOCON->PIO0_19 |= 0x01;
-#endif
 
 	/* Enable UART clock */
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
@@ -100,8 +80,7 @@ void usart_init(uint32_t baudrate)
 	regVal = LPC_USART->LSR;
 
 	/* Ensure a clean start, no data in either TX or RX FIFO. */
-	while (( LPC_USART->LSR & (USART_LSR_THRE | USART_LSR_TEMT))
-			!= (USART_LSR_THRE | USART_LSR_TEMT))
+	while (( LPC_USART->LSR & (USART_LSR_THRE | USART_LSR_TEMT)) != (USART_LSR_THRE | USART_LSR_TEMT))
 		;
 	while ( LPC_USART->LSR & USART_LSR_RDR_DATA)
 	{
@@ -110,8 +89,7 @@ void usart_init(uint32_t baudrate)
 	}
 
 	NVIC_EnableIRQ(USART_IRQn);
-	LPC_USART->IER = USART_IER_RBR_Interrupt_Enabled
-			| USART_IER_RLS_Interrupt_Enabled;
+	LPC_USART->IER = USART_IER_RBR_Interrupt_Enabled | USART_IER_RLS_Interrupt_Enabled;
 
 	is_start_of_txt = 1;
 }

@@ -2,6 +2,7 @@ module.exports = function () {
     var $ = require('jquery');
 
     var host = window.location.host;
+    var io = require('socket.io-client');
     var socketio = io.connect('http://' + host + ':80');
 
     socketio.json.on('serial_ports', function(data) {

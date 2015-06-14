@@ -17,16 +17,16 @@ extern "C"
 
 typedef volatile struct engine_data_t
 {
-	uint32_t rev;
-	uint32_t is_fuel_cut;
-	uint32_t is_af_rich;
-	uint32_t th;
-	uint32_t oil_temp;
-	uint32_t intake_temp;
-	uint32_t vacuum;
-	uint32_t current_total_injected_time;
-	uint32_t current_inject_started_count;
-	uint32_t current_inject_ended_count;
+	volatile uint32_t rev;
+	volatile uint32_t is_fuel_cut;
+	volatile uint32_t is_af_rich;
+	volatile uint32_t th;
+	volatile uint32_t oil_temp;
+	volatile uint32_t intake_temp;
+	volatile uint32_t vacuum;
+	volatile uint32_t current_total_injected_time;
+	volatile uint32_t current_inject_started_count;
+	volatile uint32_t current_inject_ended_count;
 } engine_data;
 
 extern volatile engine_data eg_data;

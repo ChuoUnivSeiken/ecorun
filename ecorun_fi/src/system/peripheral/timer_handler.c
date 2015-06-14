@@ -109,21 +109,21 @@ void CT32B1_IRQHandler(void)
 timer_event_handler* event_timer16_0;
 timer_event_handler* event_timer16_1;
 
-int timer_add_event_16_0(void (*func)(uint8_t timer, uint8_t num))
+uint32_t timer16_add_event(uint32_t timer, timer_event_func func)
 {
+	timer_event_handler** events;
+	if (timer == 0)
+	{
+		events = &event_timer16_0;
+	}
+	else
+	{
+		events = &event_timer16_1;
+	}
 	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
 	new_event->func = func;
-	new_event->next = event_timer16_0;
-	event_timer16_0 = new_event;
-	return timer_event_count++;
-}
-
-int timer_add_event_16_1(void (*func)(uint8_t timer, uint8_t num))
-{
-	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
-	new_event->func = func;
-	new_event->next = event_timer16_1;
-	event_timer16_1 = new_event;
+	new_event->next = *events;
+	*events = new_event;
 	return timer_event_count++;
 }
 
@@ -194,5 +194,4 @@ void CT16B1_IRQHandler(void)
 		LPC_CT16B1->IR = _BV(3);
 	}
 }
-
 

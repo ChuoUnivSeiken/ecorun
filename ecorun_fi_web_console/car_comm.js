@@ -391,4 +391,3 @@ var ObjectReaderNone = (function (_super) {
     return ObjectReaderNone;
 })(ObjectReader);
 exports.ObjectReaderNone = ObjectReaderNone;
-//# sourceMappingURL=car_comm.js.map

@@ -121,4 +121,3 @@ io.sockets.on('connection', function (socket) {
     });
 });
 module.exports = app;
-//# sourceMappingURL=app.js.map

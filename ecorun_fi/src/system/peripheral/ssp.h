@@ -8,12 +8,10 @@ extern "C"
 {
 #endif
 
-#define SSP0_SCK0_1_29 0
-#define SSP0_SCK0_0_10 1
-#define SSP0_SCK0_0_6 2
-#define SSP0_SCK0_LOCATION SSP0_SCK0_0_10
-
 #define SSP0_FIFOSIZE            8       /* SPI read and write buffer size */
+
+#define SSP0_CPOL 1
+#define SSP0_CPHA 1
 
 /* SSP Clock div (0..255) */
 #define SCB_CLKDIV_DISABLE (0x00000000)
@@ -81,6 +79,7 @@ void ssp_clock_fast(void);
 void ssp_init(void);
 void ssp_send(uint8_t *buf, uint32_t length);
 void ssp_receive(uint8_t *buf, uint32_t length);
+void ssp_exchange(uint8_t *buf, uint32_t length);
 
 #ifdef __cplusplus
 }

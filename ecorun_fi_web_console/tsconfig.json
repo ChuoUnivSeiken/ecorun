@@ -14,8 +14,11 @@
     ],
     "files": [
         "./app.ts",
-        "./carcomm.ts",
-        "./carserialize.ts",
+        "./car_comm.ts",
+        "./car_serialize.ts",
+        "./public/javascripts/car_charts.ts",
+        "./public/javascripts/typings/d3/d3.d.ts",
+        "./public/javascripts/typings/tsd.d.ts",
         "./typings/express/express.d.ts",
         "./typings/lodash/lodash.d.ts",
         "./typings/mongoose/mongoose.d.ts",

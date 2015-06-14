@@ -25,30 +25,6 @@ void adc_init(uint32_t clk)
 		adc_value[i] = 0x0;
 	}
 
-	/* P0.11 = ADC0 */
-	LPC_IOCON->TDI_PIO0_11 &= ~0x9F;
-	LPC_IOCON->TDI_PIO0_11 |= 0x02;
-	/* P0.12 = ADC1 */
-	LPC_IOCON->TMS_PIO0_12 &= ~0x9F;
-	LPC_IOCON->TMS_PIO0_12 |= 0x02;
-	/* P0.13 = ADC2 */
-	LPC_IOCON->TDO_PIO0_13 &= ~0x9F;
-	LPC_IOCON->TDO_PIO0_13 |= 0x02;
-	/* P0.14 = ADC3 */
-	LPC_IOCON->TRST_PIO0_14 &= ~0x9F;
-	LPC_IOCON->TRST_PIO0_14 |= 0x02;
-	/* P0.15 = ADC4 ... this is also SWDIO so be careful with this pin! */
-	LPC_IOCON->SWDIO_PIO0_15 &= ~0x9F;
-	LPC_IOCON->SWDIO_PIO0_15 |= 0x02;
-	/* P0.16 = ADC5 */
-	LPC_IOCON->PIO0_16 &= ~0x9F;
-	LPC_IOCON->PIO0_16 |= 0x01;
-	/* P0.22 = ADC6 */
-	LPC_IOCON->PIO0_22 &= ~0x9F;
-	LPC_IOCON->PIO0_22 |= 0x01;
-	/* P0.23 = ADC7 */
-	LPC_IOCON->PIO0_23 &= ~0x9F;
-	LPC_IOCON->PIO0_23 |= 0x01;
 	/* Setup the ADC clock, conversion mode, etc. */
 	LPC_ADC->CR = (0x01 << 0) | ((SystemCoreClock / clk - 1) << 8) | /* CLKDIV = Fpclk / 1000000 - 1 */
 #if ADC_MODE_BURST

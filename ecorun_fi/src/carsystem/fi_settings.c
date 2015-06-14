@@ -40,6 +40,7 @@ void fi_set_default(void)
 			case 10:
 			case 11:
 			default:
+				time = th * 20;
 				break;
 			}
 
@@ -51,8 +52,8 @@ void fi_set_default(void)
 uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev)
 {
 	volatile uint32_t num, thIndex, th2, revIndex;
-	th2 = th;
-	if (th < 150)
+	th2 = th >> 2;
+	if (th2 < 150)
 	{
 		th2 = 150;
 	}

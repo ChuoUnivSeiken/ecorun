@@ -11,6 +11,20 @@ body {
     height: 100%;
 }
 
+.tooltip-inner {
+    max-height: 80px;
+    /* If max-width does not work, try using width instead */
+    height: 80px;
+    font-size: 30px;
+    font-weight: normal;
+    font-family: 'Arial';
+    text-align: center;
+    background-color: white;
+    color: black;
+    display: table-cell;
+    vertical-align: middle;
+}
+
 .axis path,
 .axis line {
    fill: none;
@@ -62,5 +76,3 @@ body {
     text-align: center;
     background: #fff;
 }
-
-
