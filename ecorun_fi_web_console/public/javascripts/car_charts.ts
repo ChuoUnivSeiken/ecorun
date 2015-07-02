@@ -119,16 +119,16 @@ export class ChartCanvas extends ChartElement {
         var c = <HTMLCanvasElement>this.canvas.node();
         this.context = c.getContext("2d");
 
-        var queue = null, // キューをストック 
-            wait = 300; // 0.3秒後に実行の場合 
- 
+        var queue = null, // キューをストック
+            wait = 300; // 0.3秒後に実行の場合
+
         window.addEventListener('resize', () => {
-            // イベント発生の都度、キューをキャンセル 
+            // イベント発生の都度、キューをキャンセル
             clearTimeout(queue);
- 
-            // waitで指定したミリ秒後に所定の処理を実行 
+
+            // waitで指定したミリ秒後に所定の処理を実行
             // 経過前に再度イベントが発生した場合
-            // キューをキャンセルして再カウント 
+            // キューをキャンセルして再カウント
             queue = setTimeout(() => {
                 this.canvas
                     .attr("width", this.clientSize.width)
@@ -148,7 +148,7 @@ export class Chart extends ChartCanvas {
     get queueSize(): number {
         return this._querySize;
     }
-    
+
     protected get xScale(): D3.Scale.LinearScale {
         var now = new Date();
         return d3.scale.linear()
@@ -162,7 +162,7 @@ export class Chart extends ChartCanvas {
             if (this.values.length == 1) {
                 max = d3.max([this.values[0].y, 0]);
             } else {
-                max = d3.max(this.values,(d) => d.y);
+                max = d3.max(this.values, (d) => d.y);
             }
         }
         max = 100;
@@ -176,9 +176,9 @@ export class Chart extends ChartCanvas {
             .scale(this.xScale)
             .orient("bottom")
             .tickFormat((value) => {
-                var date = new Date(value);
-                return date.toLocaleTimeString();
-            })
+            var date = new Date(value);
+            return date.toLocaleTimeString();
+        })
             .ticks(5);
     }
 

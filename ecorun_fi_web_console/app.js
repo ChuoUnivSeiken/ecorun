@@ -66,11 +66,6 @@ setInterval(function () {
         carTransmitter.requestData('engine_data');
     }
 }, 100);
-setInterval(function () {
-    if (carTransmitter != null) {
-        carTransmitter.requestData('basic_inject_time_map');
-    }
-}, 1000);
 io.sockets.on('connection', function (socket) {
     socket.on('connected', function (id) {
         idHash[socket.id] = id;
@@ -85,19 +80,18 @@ io.sockets.on('connection', function (socket) {
     });
     socket.on('serial_connect', function (connection_data) {
         carTransmitter = new carcomm.CarTransmitter(connection_data.portName, connection_data.bitRate);
-        carTransmitter.addOpenedHandler(function (e) {
-            carTransmitter.addDataReceivedHandler(function (e) {
-                var data = e.value;
+        carTransmitter.on('opened', function () {
+            carTransmitter.on('obj', function (data) {
                 io.sockets.emit('data', data);
                 data.value['timestamp'] = new Date();
                 carserialize.CarDatabase.saveData(data.id, data.value);
             });
-            carTransmitter.addMessageReceivedHandler(function (e) {
-                io.sockets.emit('msg', e.value);
+            carTransmitter.on('msg', function (msg) {
+                io.sockets.emit('msg', msg);
             });
             io.sockets.emit('serial_connected', {});
         });
-        carTransmitter.addClosedHandler(function (e) {
+        carTransmitter.on('closed', function () {
             io.sockets.emit('serial_disconnected', {});
         });
         carTransmitter.open();
@@ -110,6 +104,16 @@ io.sockets.on('connection', function (socket) {
     socket.on('serial_write', function (data) {
         if (carTransmitter != null && carTransmitter.isOpening) {
             carTransmitter.write(data.message);
+        }
+    });
+    socket.on('request_data', function (data) {
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.requestData(data.id);
+        }
+    });
+    socket.on('send_data', function (data) {
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.sendData(data.id, data.data);
         }
     });
     socket.on('disconnect', function () {

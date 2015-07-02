@@ -1,109 +1,39 @@
 /// <reference path="typings/tsd.d.ts" />
 
 import _ = require('lodash');
-var adler32 = require('adler-32');
 var serialport = require('serialport');
+var adler32 = require('adler-32');
+import events = require('events');
 
-export class EventDispatcher {
-    listeners: any = {};
-    dispatchEvent(event: any): void {
-        var e: Event;
-        var type: string;
-        if (event instanceof Event) {
-            type = event.type;
-            e = event;
-        } else {
-            type = event;
-            e = new Event(type);
-        }
-
-        if (this.listeners[type] != null) {
-            e.currentTarget = this;
-            for (var i: number = 0; i < this.listeners[type].length; i++) {
-                var listener: EventListener = this.listeners[type][i];
-                try {
-                    listener.handler(e);
-                } catch (error) {
-                    console.error(error.stack);
-                }
-            }
-        }
-    }
-
-    addEventListener(type: string, callback: Function, priolity: number = 0): void {
-        if (this.listeners[type] == null) {
-            this.listeners[type] = [];
-        }
-
-        this.listeners[type].push(new EventListener(type, callback, priolity));
-        this.listeners[type].sort(function(listener1: EventListener, listener2: EventListener) {
-            return listener2.priolity - listener1.priolity;
-        });
-    }
-
-    removeEventListener(type: string, callback: Function): void {
-        if (this.hasEventListener(type, callback)) {
-            for (var i: number = 0; i < this.listeners[type].length; i++) {
-                var listener: EventListener = this.listeners[type][i];
-                if (listener.equalCurrentListener(type, callback)) {
-                    listener.handler = null;
-                    this.listeners[type].splice(i, 1);
-                    return;
-                }
-            }
-        }
-    }
-
-    clearEventListener(): void {
-        this.listeners = {};
-    }
-
-    containEventListener(type: string): boolean {
-        if (this.listeners[type] == null) return false;
-        return this.listeners[type].length > 0;
-    }
-
-    hasEventListener(type: string, callback: Function): boolean {
-        if (this.listeners[type] == null) return false;
-        for (var i: number = 0; i < this.listeners[type].length; i++) {
-            var listener: EventListener = this.listeners[type][i];
-            if (listener.equalCurrentListener(type, callback)) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
-
-class EventListener {
-    constructor(public type: string = null, public handler: Function = null, public priolity: number = 0) {
-    }
-    equalCurrentListener(type: string, handler: Function): boolean {
-        if (this.type == type && this.handler == handler) {
-            return true;
-        }
-        return false;
-    }
-}
-
-export class Event {
-    currentTarget: any;
-    static COMPLETE: string = "complete";
-    static CHANGE_PROPERTY: string = "changeProperty";
-    constructor(public type: string = null, public value: any = null) {
-
-    }
-}
-
-export class CarSerialPort {
-    protected eventDispatcher = new EventDispatcher();
+export class CarSerialPort extends events.EventEmitter {
     private serialport: any = null;
 
     constructor(public portName: string, public bitRate: number) {
+        super();
     }
 
     get isOpening(): boolean {
         return this.serialport != null;
+    }
+
+    private byteBuffer = [];
+
+    private byteReceived(byte: number) {
+        switch (byte) {
+            case 0x03:
+                this.dataReceived(_.reduce(this.byteBuffer, (result, ch) => result + String.fromCharCode(ch), ""));
+                break;
+            case 0x02:
+                this.byteBuffer = [];
+                break;
+            default:
+                this.byteBuffer.push(byte);
+                break;
+        }
+    }
+
+    protected dataReceived(data: string) {
+        this.emit('data', data);
     }
 
     open() {
@@ -123,51 +53,35 @@ export class CarSerialPort {
             console.log(this.portName + ' opened.');
             this.serialport = _serialport;
             this.serialport.on('data', (data) => {
-                this.eventDispatcher.dispatchEvent(new Event('Received', { data: data }));
+                _.forEach(data, (byte: number) => this.byteReceived(byte));
             });
+
             this.serialport.on('close', () => {
                 CarSerialPort.serialStates[this.portName] = undefined;
                 console.log(this.portName + ' closed.');
-                this.eventDispatcher.dispatchEvent('Closed');
+                this.emit('closed')
             });
-            this.eventDispatcher.dispatchEvent('Opened');
+            this.emit('opened')
         });
     }
-    public close() {
+
+    close() {
         if (this.isOpening) {
             var _serialport = this.serialport;
             this.serialport = null;
-            _serialport.close(function(error) {
+            _serialport.close((error) => {
                 if (error !== undefined && error !== null) {
                     console.log('Serial port closing error : ' + error);
                 }
             });
         }
     }
-    public addOpenedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('Opened', handler);
-    }
-    public addClosedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('Closed', handler);
-    }
-    public addReceivedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('Received', handler);
-    }
-    public removeOpenedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('Opened', handler);
-    }
-    public removeClosedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('Closed', handler);
-    }
-    public removeReceivedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('Received', handler);
-    }
 
-    public write(str: String) {
+    write(str: String) {
         if (!this.isOpening) {
             throw new Error("This port is not opening.");
         }
-        var errfunc = function(error, results) {
+        var errfunc = (error, results) => {
             if (error !== undefined && error !== null) {
                 console.log('Serial port writing error : ' + error);
             }
@@ -178,17 +92,18 @@ export class CarSerialPort {
         this.serialport.write(stx + str + etx, errfunc);
     }
 
+    private static serialStates: { [key: string]: string; } = {};
 
-    private static serialStates = {};
-
-    public static getPortInfo(callback: Function) {
+    static getPortInfo(callback: Function) {
         serialport.list((err, ports) => {
-            callback(_.map(ports,(port: { comName: string; pnpId: string; manufacturer: string; }) => {
+            callback(_.map(ports, (port: { comName: string; pnpId: string; manufacturer: string; }) => {
+                var state = CarSerialPort.serialStates[port.comName];
+                console.log(state == undefined ? 'disconnect' : state);
                 return {
                     comName: port.comName,
                     pnpId: port.pnpId,
                     manufacturer: port.manufacturer,
-                    state: CarSerialPort.serialStates[port.comName]
+                    state: state == undefined ? 'disconnect' : state
                 };
             }));
         });
@@ -196,55 +111,25 @@ export class CarSerialPort {
 }
 
 export class CarTransmitter extends CarSerialPort {
-    public addDataReceivedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('DataReceived', handler);
-    }
-    public removeDataReceivedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('DataReceived', handler);
-    }
-    public addMessageReceivedHandler(handler: Function) {
-        this.eventDispatcher.addEventListener('MessageReceived', handler);
-    }
-    public removeMessageReceivedHandler(handler: Function) {
-        this.eventDispatcher.removeEventListener('MessageReceived', handler);
+
+    constructor(portName: string, bitRate: number) {
+        super(portName, bitRate);
     }
 
-    private messageReceived(msg) {
-        var received: any = CarTransmitter.parseCommandLine(msg);
+    protected dataReceived(data: string) {
+        super.dataReceived(data);
+
+        var received: any = CarTransmitter.parseCommandLine(data);
         if (received != undefined && received.cmd != undefined) {
             if (received.cmd == 'put') {
-                this.eventDispatcher.dispatchEvent(new Event('DataReceived', received.data));
+                this.emit('obj', received.data);
             } else if (received.cmd == 'msg') {
-                this.eventDispatcher.dispatchEvent(new Event('MessageReceived', received.message));
+                this.emit('msg', received.message);
             }
         }
     }
 
-    private byteBuffer = [];
-
-    private byteReceived(byte: number) {
-        switch (byte) {
-            case 0x03:
-                this.messageReceived(_.reduce(this.byteBuffer, (result, ch) => result + String.fromCharCode(ch), ""));
-                break;
-            case 0x02:
-                this.byteBuffer = [];
-                break;
-            default:
-                this.byteBuffer.push(byte);
-                break;
-        }
-    }
-
-    constructor(portName: string, bitRate: number) {
-        super(portName, bitRate);
-        this.addReceivedHandler((e) => {
-            var data: Array<number> = e.value.data;
-            _.forEach(data, (byte: number) => this.byteReceived(byte));
-        });
-    }
-
-    private static toArrayBuffer(buffer: Buffer): ArrayBuffer {
+    private static toByteBuffer(buffer: Buffer) {
         var ab = new ArrayBuffer(buffer.length);
         var view = new Uint8Array(ab);
         for (var i = 0; i < buffer.length; ++i) {
@@ -253,9 +138,22 @@ export class CarTransmitter extends CarSerialPort {
         return ab;
     }
 
-    public requestData(id: String) {
+    requestData(id: string) {
         if (this.isOpening) {
             this.write('get ' + id);
+        }
+    }
+
+    sendData(id: string, data: string) {
+        if (this.isOpening) {
+            switch (id) {
+                case 'basic_inject_time_map':
+                    var buffer = new Buffer(data, 'base64');
+                    var command = "put " + id + " " + buffer.length.toString() + " " + data + " " + (adler32.buf(buffer) >>> 0);
+                    console.log(command);
+                    this.write(command);
+                    break;
+            }
         }
     }
 
@@ -326,10 +224,13 @@ export class CarTransmitter extends CarSerialPort {
                             .toObject();
                         break;
                     case 'basic_inject_time_map':
-                        obj = { value: CarTransmitter.toArrayBuffer(buf) }
+                        obj = {
+                            basic_inject_time_map: data
+                        };
                         break;
                 }
-                var check_sum = adler32.buf(buf);
+                var check_sum = adler32.buf(buf) >>> 0;
+
                 if (check_sum === sum && !(obj === null || obj === undefined)) {
                     return {
                         cmd: 'put',
@@ -357,8 +258,8 @@ export class ObjectReader {
     constructor(
         private buffer: Buffer,
         private offset: number = 0,
-        private values: number[]= [],
-        private names: string[]= []) {
+        private values: number[] = [],
+        private names: string[] = []) {
     }
 
     public readInt8(name: string): ObjectReader {

@@ -204,7 +204,7 @@ void timer16_init(uint32_t timer, uint32_t prescale, uint32_t interval)
 		LPC_CT16B0->PR = prescale;
 		LPC_CT16B0->MR0 = interval;
 
-		LPC_CT16B0->MCR = 3;
+		LPC_CT16B0->MCR = _BV(0) | _BV(1) | _BV(3) | _BV(6) | _BV(9);
 
 #if ENABLE_INTERRUPT
 		NVIC_EnableIRQ(CT16B0_IRQn);
@@ -216,7 +216,7 @@ void timer16_init(uint32_t timer, uint32_t prescale, uint32_t interval)
 		LPC_CT16B1->PR = prescale;
 		LPC_CT16B1->MR0 = interval;
 
-		LPC_CT16B1->MCR = 3;
+		LPC_CT16B1->MCR = _BV(0) | _BV(1) | _BV(3) | _BV(6) | _BV(9);
 
 #if ENABLE_INTERRUPT
 		NVIC_EnableIRQ(CT16B1_IRQn);
@@ -229,7 +229,46 @@ void timer16_set_pwm(uint32_t timer, uint32_t interval)
 }
 void timer16_set_match(uint32_t timer, uint32_t num, uint32_t value)
 {
-
+	if (timer)
+	{
+		switch (num)
+		{
+		case 0:
+			LPC_CT16B1->MR0 = value;
+			break;
+		case 1:
+			LPC_CT16B1->MR1 = value;
+			break;
+		case 2:
+			LPC_CT16B1->MR2 = value;
+			break;
+		case 3:
+			LPC_CT16B1->MR3 = value;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (num)
+		{
+		case 0:
+			LPC_CT16B0->MR0 = value;
+			break;
+		case 1:
+			LPC_CT16B0->MR1 = value;
+			break;
+		case 2:
+			LPC_CT16B0->MR2 = value;
+			break;
+		case 3:
+			LPC_CT16B0->MR3 = value;
+			break;
+		default:
+			break;
+		}
+	}
 }
 void timer16_enable(uint32_t timer)
 {

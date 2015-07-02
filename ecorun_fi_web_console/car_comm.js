@@ -6,115 +6,17 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var _ = require('lodash');
-var adler32 = require('adler-32');
 var serialport = require('serialport');
-var EventDispatcher = (function () {
-    function EventDispatcher() {
-        this.listeners = {};
-    }
-    EventDispatcher.prototype.dispatchEvent = function (event) {
-        var e;
-        var type;
-        if (event instanceof Event) {
-            type = event.type;
-            e = event;
-        }
-        else {
-            type = event;
-            e = new Event(type);
-        }
-        if (this.listeners[type] != null) {
-            e.currentTarget = this;
-            for (var i = 0; i < this.listeners[type].length; i++) {
-                var listener = this.listeners[type][i];
-                try {
-                    listener.handler(e);
-                }
-                catch (error) {
-                    console.error(error.stack);
-                }
-            }
-        }
-    };
-    EventDispatcher.prototype.addEventListener = function (type, callback, priolity) {
-        if (priolity === void 0) { priolity = 0; }
-        if (this.listeners[type] == null) {
-            this.listeners[type] = [];
-        }
-        this.listeners[type].push(new EventListener(type, callback, priolity));
-        this.listeners[type].sort(function (listener1, listener2) {
-            return listener2.priolity - listener1.priolity;
-        });
-    };
-    EventDispatcher.prototype.removeEventListener = function (type, callback) {
-        if (this.hasEventListener(type, callback)) {
-            for (var i = 0; i < this.listeners[type].length; i++) {
-                var listener = this.listeners[type][i];
-                if (listener.equalCurrentListener(type, callback)) {
-                    listener.handler = null;
-                    this.listeners[type].splice(i, 1);
-                    return;
-                }
-            }
-        }
-    };
-    EventDispatcher.prototype.clearEventListener = function () {
-        this.listeners = {};
-    };
-    EventDispatcher.prototype.containEventListener = function (type) {
-        if (this.listeners[type] == null)
-            return false;
-        return this.listeners[type].length > 0;
-    };
-    EventDispatcher.prototype.hasEventListener = function (type, callback) {
-        if (this.listeners[type] == null)
-            return false;
-        for (var i = 0; i < this.listeners[type].length; i++) {
-            var listener = this.listeners[type][i];
-            if (listener.equalCurrentListener(type, callback)) {
-                return true;
-            }
-        }
-        return false;
-    };
-    return EventDispatcher;
-})();
-exports.EventDispatcher = EventDispatcher;
-var EventListener = (function () {
-    function EventListener(type, handler, priolity) {
-        if (type === void 0) { type = null; }
-        if (handler === void 0) { handler = null; }
-        if (priolity === void 0) { priolity = 0; }
-        this.type = type;
-        this.handler = handler;
-        this.priolity = priolity;
-    }
-    EventListener.prototype.equalCurrentListener = function (type, handler) {
-        if (this.type == type && this.handler == handler) {
-            return true;
-        }
-        return false;
-    };
-    return EventListener;
-})();
-var Event = (function () {
-    function Event(type, value) {
-        if (type === void 0) { type = null; }
-        if (value === void 0) { value = null; }
-        this.type = type;
-        this.value = value;
-    }
-    Event.COMPLETE = "complete";
-    Event.CHANGE_PROPERTY = "changeProperty";
-    return Event;
-})();
-exports.Event = Event;
-var CarSerialPort = (function () {
+var adler32 = require('adler-32');
+var events = require('events');
+var CarSerialPort = (function (_super) {
+    __extends(CarSerialPort, _super);
     function CarSerialPort(portName, bitRate) {
+        _super.call(this);
         this.portName = portName;
         this.bitRate = bitRate;
-        this.eventDispatcher = new EventDispatcher();
         this.serialport = null;
+        this.byteBuffer = [];
     }
     Object.defineProperty(CarSerialPort.prototype, "isOpening", {
         get: function () {
@@ -123,6 +25,22 @@ var CarSerialPort = (function () {
         enumerable: true,
         configurable: true
     });
+    CarSerialPort.prototype.byteReceived = function (byte) {
+        switch (byte) {
+            case 0x03:
+                this.dataReceived(_.reduce(this.byteBuffer, function (result, ch) { return result + String.fromCharCode(ch); }, ""));
+                break;
+            case 0x02:
+                this.byteBuffer = [];
+                break;
+            default:
+                this.byteBuffer.push(byte);
+                break;
+        }
+    };
+    CarSerialPort.prototype.dataReceived = function (data) {
+        this.emit('data', data);
+    };
     CarSerialPort.prototype.open = function () {
         var _this = this;
         var _serialport = new serialport.SerialPort(this.portName, {
@@ -141,14 +59,14 @@ var CarSerialPort = (function () {
             console.log(_this.portName + ' opened.');
             _this.serialport = _serialport;
             _this.serialport.on('data', function (data) {
-                _this.eventDispatcher.dispatchEvent(new Event('Received', { data: data }));
+                _.forEach(data, function (byte) { return _this.byteReceived(byte); });
             });
             _this.serialport.on('close', function () {
                 CarSerialPort.serialStates[_this.portName] = undefined;
                 console.log(_this.portName + ' closed.');
-                _this.eventDispatcher.dispatchEvent('Closed');
+                _this.emit('closed');
             });
-            _this.eventDispatcher.dispatchEvent('Opened');
+            _this.emit('opened');
         });
     };
     CarSerialPort.prototype.close = function () {
@@ -161,24 +79,6 @@ var CarSerialPort = (function () {
                 }
             });
         }
-    };
-    CarSerialPort.prototype.addOpenedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('Opened', handler);
-    };
-    CarSerialPort.prototype.addClosedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('Closed', handler);
-    };
-    CarSerialPort.prototype.addReceivedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('Received', handler);
-    };
-    CarSerialPort.prototype.removeOpenedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('Opened', handler);
-    };
-    CarSerialPort.prototype.removeClosedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('Closed', handler);
-    };
-    CarSerialPort.prototype.removeReceivedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('Received', handler);
     };
     CarSerialPort.prototype.write = function (str) {
         if (!this.isOpening) {
@@ -196,67 +96,39 @@ var CarSerialPort = (function () {
     CarSerialPort.getPortInfo = function (callback) {
         serialport.list(function (err, ports) {
             callback(_.map(ports, function (port) {
+                var state = CarSerialPort.serialStates[port.comName];
+                console.log(state == undefined ? 'disconnect' : state);
                 return {
                     comName: port.comName,
                     pnpId: port.pnpId,
                     manufacturer: port.manufacturer,
-                    state: CarSerialPort.serialStates[port.comName]
+                    state: state == undefined ? 'disconnect' : state
                 };
             }));
         });
     };
     CarSerialPort.serialStates = {};
     return CarSerialPort;
-})();
+})(events.EventEmitter);
 exports.CarSerialPort = CarSerialPort;
 var CarTransmitter = (function (_super) {
     __extends(CarTransmitter, _super);
     function CarTransmitter(portName, bitRate) {
-        var _this = this;
         _super.call(this, portName, bitRate);
-        this.byteBuffer = [];
-        this.addReceivedHandler(function (e) {
-            var data = e.value.data;
-            _.forEach(data, function (byte) { return _this.byteReceived(byte); });
-        });
     }
-    CarTransmitter.prototype.addDataReceivedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('DataReceived', handler);
-    };
-    CarTransmitter.prototype.removeDataReceivedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('DataReceived', handler);
-    };
-    CarTransmitter.prototype.addMessageReceivedHandler = function (handler) {
-        this.eventDispatcher.addEventListener('MessageReceived', handler);
-    };
-    CarTransmitter.prototype.removeMessageReceivedHandler = function (handler) {
-        this.eventDispatcher.removeEventListener('MessageReceived', handler);
-    };
-    CarTransmitter.prototype.messageReceived = function (msg) {
-        var received = CarTransmitter.parseCommandLine(msg);
+    CarTransmitter.prototype.dataReceived = function (data) {
+        _super.prototype.dataReceived.call(this, data);
+        var received = CarTransmitter.parseCommandLine(data);
         if (received != undefined && received.cmd != undefined) {
             if (received.cmd == 'put') {
-                this.eventDispatcher.dispatchEvent(new Event('DataReceived', received.data));
+                this.emit('obj', received.data);
             }
             else if (received.cmd == 'msg') {
-                this.eventDispatcher.dispatchEvent(new Event('MessageReceived', received.message));
+                this.emit('msg', received.message);
             }
         }
     };
-    CarTransmitter.prototype.byteReceived = function (byte) {
-        switch (byte) {
-            case 0x03:
-                this.messageReceived(_.reduce(this.byteBuffer, function (result, ch) { return result + String.fromCharCode(ch); }, ""));
-                break;
-            case 0x02:
-                this.byteBuffer = [];
-                break;
-            default:
-                this.byteBuffer.push(byte);
-                break;
-        }
-    };
-    CarTransmitter.toArrayBuffer = function (buffer) {
+    CarTransmitter.toByteBuffer = function (buffer) {
         var ab = new ArrayBuffer(buffer.length);
         var view = new Uint8Array(ab);
         for (var i = 0; i < buffer.length; ++i) {
@@ -267,6 +139,18 @@ var CarTransmitter = (function (_super) {
     CarTransmitter.prototype.requestData = function (id) {
         if (this.isOpening) {
             this.write('get ' + id);
+        }
+    };
+    CarTransmitter.prototype.sendData = function (id, data) {
+        if (this.isOpening) {
+            switch (id) {
+                case 'basic_inject_time_map':
+                    var buffer = new Buffer(data, 'base64');
+                    var command = "put " + id + " " + buffer.length.toString() + " " + data + " " + (adler32.buf(buffer) >>> 0);
+                    console.log(command);
+                    this.write(command);
+                    break;
+            }
         }
     };
     CarTransmitter.parseCommandLine = function (line) {
@@ -313,10 +197,12 @@ var CarTransmitter = (function (_super) {
                         obj = stream.readUInt32('vattery_voltage').readUInt32('wheel_count').readUInt32('wheel_rotation_period').toObject();
                         break;
                     case 'basic_inject_time_map':
-                        obj = { value: CarTransmitter.toArrayBuffer(buf) };
+                        obj = {
+                            basic_inject_time_map: data
+                        };
                         break;
                 }
-                var check_sum = adler32.buf(buf);
+                var check_sum = adler32.buf(buf) >>> 0;
                 if (check_sum === sum && !(obj === null || obj === undefined)) {
                     return {
                         cmd: 'put',

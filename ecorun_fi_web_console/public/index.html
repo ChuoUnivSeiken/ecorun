@@ -1,4 +1,3 @@
-﻿
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -38,7 +37,8 @@
                     <li><a href="#about">About</a></li>
                     <li><a href="#help">Help</a></li>
                 </ul>
-            </div><!--/.nav-collapse -->
+            </div>
+            <!--/.nav-collapse -->
         </div>
     </nav>
     <div id="contents" class="container">
@@ -51,16 +51,14 @@
                 <table class="table">
                     <tr>
                         <th>ポート</th>
-                        <td>
-                            <label for="ports">ポートを選択してください：</label>
-                            <input type="button" id="list" value="ポートを取得">
-                            <select id="port" name="port"></select>
+                        <td id="port-td">
+                            <select id="port" name="port" class="form-control"></select>
                         </td>
                     </tr>
                     <tr>
                         <th>ボーレート</th>
                         <td id="connection_baudrate">
-                            <select id="baudrate" name="baudrate">
+                            <select id="baudrate" name="baudrate" class="form-control">
                                 <option value='115200'>115200</option>
                                 <option value='9600'>9600</option>
                             </select>
@@ -71,7 +69,10 @@
                         <td id="connection_state">未接続</td>
                     </tr>
                 </table>
-                <input type="button" id="connect_start_stop" value="シリアル通信開始">
+                <div class="row">
+                    <input type="button" class="btn btn-default" id="list" value="ポートを取得">
+                    <input type="button" class="btn btn-primary" id="connect_start_stop" value="シリアル通信開始">
+                </div>
             </div>
         </section>
 
@@ -238,40 +239,59 @@
             </div>
         </section>
         <section id="enginesettings" class="enginesettings-section">
+            <h1 class="page-header">
+                Engine Settings
+            </h1>
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="panel-title">基本噴射時間</div>
+                <div class="panel-heading clearfix">
+                    <div>
+                        <div class="col-xs-3">
+                        </div>
+                        <div class="panel-title col-xs-6">
+                            基本噴射時間
+                        </div>
+                        <div class="pull-right">
+                            <button id="update_basic_inject_time" class="btn btn-primary btn-md">
+                                更新
+                            </button>
+                            <button id="apply_basic_inject_time" class="btn btn-primary btn-md">
+                                適用
+                            </button>
+                            <button id="save_basic_inject_time" class="btn btn-primary btn-md">
+                                保存
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <div class="container" id="basic_inject_time_matrix">
+                <div class="panel-body clearfix">
+                    <div id="basic_inject_time_matrix">
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
     </div>
-    <div class="modal" id="modal-example" tabindex="-1">
-    <div class="modal-dialog">
-
-        <!-- 3.モーダルのコンテンツ -->
-        <div class="modal-content">
-            <!-- 4.モーダルのヘッダ -->
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="modal-label">ダイアログ</h4>
-            </div>
-            <!-- 5.モーダルのボディ -->
-            <div class="modal-body">
-                ここに内容を書く
-            </div>
-            <!-- 6.モーダルのフッタ -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">保存</button>
+    <div class="modal" id="time-setting-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modal-label">時間設定</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="range" min="0.0" max="5.0" step="0.1" class="form-control" id="time-input" placeholder="0.0" required>
+                        <div class="input-group-addon" id="time-view">1.0ms</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="modal-close">閉じる</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </body>
+
 </html>

@@ -20,13 +20,13 @@ export class CarDatabase {
             wheel_rotation_period: Number,
         }),
         basic_inject_time_map: new mongoose.Schema({
-            value:Buffer,
+            value: Buffer,
         })
     };
 
     private static Models: { [key: string]: mongoose.Model<mongoose.Document>; } = {}
 
-    public static connect() {
+    static connect() {
         mongoose.connect('mongodb://localhost/cardb');
         for (var name in CarDatabase.Schemes) {
             CarDatabase.Models[name] = mongoose.model(name + '_coll', CarDatabase.Schemes[name]);
@@ -34,7 +34,7 @@ export class CarDatabase {
 
     }
 
-    public static saveData(id: string, data: Object): void {
+    static saveData(id: string, data: Object): void {
         if (!CarDatabase.Models.hasOwnProperty(id)) {
             throw new Error(id + " can't serialize");
         }
@@ -42,7 +42,7 @@ export class CarDatabase {
         model.save();
     }
 
-    public static disconnect() {
+    static disconnect() {
         mongoose.disconnect();
     }
 }

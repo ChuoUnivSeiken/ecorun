@@ -1,0 +1,1002 @@
+<html><body>
+<pre>
+ 
+cpldfit:  version P.20131013                        Xilinx Inc.
+                                  Fitter Report
+Design Name: Main                                Date:  6-18-2015,  1:21AM
+Device Used: XC9572XL-10-VQ44
+Fitting Status: Successful
+
+*************************  Mapped Resource Summary  **************************
+
+Macrocells     Product Terms    Function Block   Registers      Pins           
+Used/Tot       Used/Tot         Inps Used/Tot    Used/Tot       Used/Tot       
+71 /72  ( 99%) 214 /360  ( 59%) 98 /216 ( 45%)   59 /72  ( 82%) 18 /34  ( 53%)
+
+** Function Block Resources **
+
+Function    Mcells      FB Inps     Pterms      IO          
+Block       Used/Tot    Used/Tot    Used/Tot    Used/Tot    
+FB1          18/18*      30/54       77/90       5/ 9
+FB2          18/18*      22/54       45/90       7/ 9
+FB3          18/18*      22/54       59/90       6/ 9
+FB4          17/18       24/54       33/90       0/ 7
+             -----       -----       -----      -----    
+             71/72       98/216     214/360     18/34 
+
+* - Resource is exhausted
+
+** Global Control Resources **
+
+Signal 'clk' mapped onto global clock net GCK1.
+Global output enable net(s) unused.
+Global set/reset net(s) unused.
+
+** Pin Resources **
+
+Signal Type    Required     Mapped  |  Pin Type            Used    Total 
+------------------------------------|------------------------------------
+Input         :    7           7    |  I/O              :    14      28
+Output        :   10          10    |  GCK/IO           :     1       3
+Bidirectional :    0           0    |  GTS/IO           :     2       2
+GCK           :    1           1    |  GSR/IO           :     1       1
+GTS           :    0           0    |
+GSR           :    0           0    |
+                 ----        ----
+        Total     18          18
+
+** Power Data **
+
+There are 71 macrocells in high performance mode (MCHP).
+There are 0 macrocells in low power mode (MCLP).
+End of Mapped Resource Summary
+**************************  Errors and Warnings  ***************************
+
+WARNING:Cpld - Unable to retrieve the path to the iSE Project Repository. Will
+   use the default filename of 'Main.ise'.
+INFO:Cpld - Inferring BUFG constraint for signal 'clk' based upon the LOC
+   constraint 'P43'. It is recommended that you declare this BUFG explicitedly
+   in your design. Note that for certain device families the output of a BUFG
+   constraint can not drive a gated clock, and the BUFG constraint will be
+   ignored.
+*************************  Summary of Mapped Logic  ************************
+
+** 10 Outputs **
+
+Signal                                                                                                          Total Total Loc     Pin  Pin     Pin     Pwr  Slew Reg Init
+Name                                                                                                            Pts   Inps          No.  Type    Use     Mode Rate State
+iac_out<0>                                                                                                      1     3     FB1_2   39   I/O     O       STD  FAST 
+fi_pulse                                                                                                        4     5     FB1_17  3    I/O     O       STD  FAST RESET
+iac_out<7>                                                                                                      1     3     FB2_6   31   I/O     O       STD  FAST 
+iac_out<6>                                                                                                      1     3     FB2_8   32   I/O     O       STD  FAST 
+iac_out<5>                                                                                                      1     3     FB2_9   33   GSR/I/O O       STD  FAST 
+iac_out<4>                                                                                                      1     3     FB2_11  34   GTS/I/O O       STD  FAST 
+iac_out<3>                                                                                                      1     3     FB2_14  36   GTS/I/O O       STD  FAST 
+iac_out<2>                                                                                                      1     3     FB2_15  37   I/O     O       STD  FAST 
+iac_out<1>                                                                                                      1     3     FB2_17  38   I/O     O       STD  FAST 
+miso                                                                                                            4     5     FB3_8   7    I/O     O       STD  FAST RESET
+
+** 61 Buried Nodes **
+
+Signal                                                                                                          Total Total Loc     Pwr  Reg Init
+Name                                                                                                            Pts   Inps          Mode State
+fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2  15    7     FB1_1   STD  
+fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2      7     6     FB1_3   STD  
+fi_pulse_gen/counter<3>                                                                                         5     7     FB1_4   STD  RESET
+fi_pulse_gen/counter<0>                                                                                         4     5     FB1_5   STD  RESET
+fi_pulse_gen/counter<2>                                                                                         4     6     FB1_6   STD  RESET
+BUF_fi_pulse_gen/enabled<0>                                                                                     8     12    FB1_7   STD  
+fi_pulse_gen/counter<4>                                                                                         4     8     FB1_8   STD  RESET
+fi_pulse_gen/counter<5>                                                                                         4     9     FB1_9   STD  RESET
+fi_pulse_gen/counter<6>                                                                                         4     10    FB1_10  STD  RESET
+fi_pulse_gen/counter<7>                                                                                         4     11    FB1_11  STD  RESET
+fi_pulse_gen/counter<1>                                                                                         3     5     FB1_12  STD  RESET
+fi_pulse_gen/enabled<0>                                                                                         2     3     FB1_13  STD  RESET
+fi_pulse_gen/match_cache<0>                                                                                     2     3     FB1_14  STD  RESET
+fi_pulse_gen/match_cache<1>                                                                                     2     3     FB1_15  STD  RESET
+fi_pulse_gen/match_cache<2>                                                                                     2     3     FB1_16  STD  RESET
+fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2                                            2     11    FB1_18  STD  
+st/phase<0>                                                                                                     1     1     FB2_1   STD  RESET
+st/phase<1>                                                                                                     3     3     FB2_2   STD  RESET
+spi/mosi_cache                                                                                                  3     3     FB2_3   STD  RESET
+spi/first<0>                                                                                                    3     3     FB2_4   STD  SET
+spi/reg<6>                                                                                                      4     5     FB2_5   STD  RESET
+spi/reg<5>                                                                                                      4     5     FB2_7   STD  RESET
+spi/reg<4>                                                                                                      4     5     FB2_10  STD  RESET
+spi/reg<3>                                                                                                      4     5     FB2_12  STD  RESET
+spi/reg<2>                                                                                                      4     5     FB2_13  STD  RESET
+spi/reg<1>                                                                                                      4     5     FB2_16  STD  RESET
+spi/reg<0>                                                                                                      4     5     FB2_18  STD  RESET
+time_stamp<3>                                                                                                   2     3     FB3_1   STD  RESET
+time_stamp<2>                                                                                                   2     3     FB3_2   STD  RESET
+spi/out_data<7>                                                                                                 2     2     FB3_3   STD  RESET
+spi/out_data<6>                                                                                                 2     2     FB3_4   STD  RESET
+spi/out_data<5>                                                                                                 2     2     FB3_5   STD  RESET
+spi/out_data<4>                                                                                                 2     2     FB3_6   STD  RESET
+sw/state_FSM_FFd1                                                                                               3     13    FB3_7   STD  RESET
+sw/counter<9>                                                                                                   4     14    FB3_9   STD  RESET
+sw/counter<8>                                                                                                   4     14    FB3_10  STD  RESET
+sw/counter<7>                                                                                                   4     14    FB3_11  STD  RESET
+sw/counter<6>                                                                                                   4     14    FB3_12  STD  RESET
+sw/counter<5>                                                                                                   4     14    FB3_13  STD  RESET
+sw/counter<4>                                                                                                   4     14    FB3_14  STD  RESET
+
+Signal                                                                                                          Total Total Loc     Pwr  Reg Init
+Name                                                                                                            Pts   Inps          Mode State
+sw/counter<3>                                                                                                   4     14    FB3_15  STD  RESET
+sw/counter<2>                                                                                                   4     14    FB3_16  STD  RESET
+sw/counter<1>                                                                                                   4     14    FB3_17  STD  RESET
+sw/counter<0>                                                                                                   4     14    FB3_18  STD  RESET
+sw/state_FSM_FFd3                                                                                               1     1     FB4_2   STD  RESET
+time_stamp<7>                                                                                                   2     3     FB4_3   STD  RESET
+time_stamp<6>                                                                                                   2     3     FB4_4   STD  RESET
+time_stamp<5>                                                                                                   2     3     FB4_5   STD  RESET
+time_stamp<4>                                                                                                   2     3     FB4_6   STD  RESET
+time_stamp<1>                                                                                                   2     3     FB4_7   STD  RESET
+time_stamp<0>                                                                                                   2     3     FB4_8   STD  RESET
+sw/state_FSM_FFd2                                                                                               2     2     FB4_9   STD  RESET
+spi/out_data<3>                                                                                                 2     2     FB4_10  STD  RESET
+spi/out_data<2>                                                                                                 2     2     FB4_11  STD  RESET
+spi/out_data<1>                                                                                                 2     2     FB4_12  STD  RESET
+spi/out_data<0>                                                                                                 2     2     FB4_13  STD  RESET
+fi_pulse_gen/match_cache<7>                                                                                     2     3     FB4_14  STD  RESET
+fi_pulse_gen/match_cache<6>                                                                                     2     3     FB4_15  STD  RESET
+fi_pulse_gen/match_cache<5>                                                                                     2     3     FB4_16  STD  RESET
+fi_pulse_gen/match_cache<4>                                                                                     2     3     FB4_17  STD  RESET
+fi_pulse_gen/match_cache<3>                                                                                     2     3     FB4_18  STD  RESET
+
+** 8 Inputs **
+
+Signal                                                                                                          Loc     Pin  Pin     Pin     
+Name                                                                                                                    No.  Type    Use     
+enable                                                                                                          FB1_5   40   I/O     I
+clk                                                                                                             FB1_9   43   GCK/I/O GCK
+timing_pulse                                                                                                    FB1_15  2    I/O     I
+sck                                                                                                             FB3_2   5    I/O     I
+ssel                                                                                                            FB3_5   6    I/O     I
+mosi                                                                                                            FB3_9   8    I/O     I
+iac_pulse                                                                                                       FB3_11  12   I/O     I
+iac_clockwise                                                                                                   FB3_14  13   I/O     I
+
+Legend:
+Pin No. - ~ - User Assigned
+**************************  Function Block Details  ************************
+Legend:
+Total Pt     - Total product terms used by the macrocell signal
+Imp Pt       - Product terms imported from other macrocells
+Exp Pt       - Product terms exported to other macrocells
+               in direction shown
+Unused Pt    - Unused local product terms remaining in macrocell
+Loc          - Location where logic was mapped in device
+Pin Type/Use - I  - Input             GCK - Global Clock
+               O  - Output            GTS - Global Output Enable
+              (b) - Buried macrocell  GSR - Global Set/Reset
+X            - Signal used as input to the macrocell logic.
+Pin No.      - ~  - User Assigned
+*********************************** FB1  ***********************************
+Number of function block inputs used/remaining:               30/24
+Number of signals used by logic mapping into function block:  30
+Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
+Name                Pt      Pt    Pt  Pt               #    Type    Use
+fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+                     15      10<-   0   0     FB1_1         (b)     (b)
+iac_out<0>            1       1<- /\5   0     FB1_2   39    I/O     O
+fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+                      7       3<- /\1   0     FB1_3         (b)     (b)
+fi_pulse_gen/counter<3>
+                      5       3<- /\3   0     FB1_4         (b)     (b)
+fi_pulse_gen/counter<0>
+                      4       2<- /\3   0     FB1_5   40    I/O     I
+fi_pulse_gen/counter<2>
+                      4       1<- /\2   0     FB1_6   41    I/O     (b)
+BUF_fi_pulse_gen/enabled<0>
+                      8       4<- /\1   0     FB1_7         (b)     (b)
+fi_pulse_gen/counter<4>
+                      4       3<- /\4   0     FB1_8   42    I/O     (b)
+fi_pulse_gen/counter<5>
+                      4       2<- /\3   0     FB1_9   43    GCK/I/O GCK
+fi_pulse_gen/counter<6>
+                      4       1<- /\2   0     FB1_10        (b)     (b)
+fi_pulse_gen/counter<7>
+                      4       0   /\1   0     FB1_11  44    GCK/I/O (b)
+fi_pulse_gen/counter<1>
+                      3       0     0   2     FB1_12        (b)     (b)
+fi_pulse_gen/enabled<0>
+                      2       0     0   3     FB1_13        (b)     (b)
+fi_pulse_gen/match_cache<0>
+                      2       0     0   3     FB1_14  1     GCK/I/O (b)
+fi_pulse_gen/match_cache<1>
+                      2       0     0   3     FB1_15  2     I/O     I
+fi_pulse_gen/match_cache<2>
+                      2       0   \/1   2     FB1_16        (b)     (b)
+fi_pulse              4       1<- \/2   0     FB1_17  3     I/O     O
+fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+                      2       2<- \/5   0     FB1_18        (b)     (b)
+
+Signals Used by Logic in Function Block
+  1: BUF_fi_pulse_gen/enabled<0>                                                                                     11: fi_pulse_gen/counter<5>      21: fi_pulse_gen/match_cache<6> 
+  2: enable                                                                                                          12: fi_pulse_gen/counter<6>      22: fi_pulse_gen/match_cache<7> 
+  3: fi_pulse                                                                                                        13: fi_pulse_gen/counter<7>      23: fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 
+  4: fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2      14: fi_pulse_gen/enabled<0>      24: iac_pulse 
+  5: fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2  15: fi_pulse_gen/match_cache<0>  25: spi/out_data<0> 
+  6: fi_pulse_gen/counter<0>                                                                                         16: fi_pulse_gen/match_cache<1>  26: spi/out_data<1> 
+  7: fi_pulse_gen/counter<1>                                                                                         17: fi_pulse_gen/match_cache<2>  27: spi/out_data<2> 
+  8: fi_pulse_gen/counter<2>                                                                                         18: fi_pulse_gen/match_cache<3>  28: st/phase<0> 
+  9: fi_pulse_gen/counter<3>                                                                                         19: fi_pulse_gen/match_cache<4>  29: st/phase<1> 
+ 10: fi_pulse_gen/counter<4>                                                                                         20: fi_pulse_gen/match_cache<5>  30: timing_pulse 
+
+Signal                        1         2         3         4 FB
+Name                0----+----0----+----0----+----0----+----0 Inputs
+fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2 
+                     ...X....XXX......XXX.................... 7
+iac_out<0>           .......................X...XX........... 3
+fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2 
+                     .....XXX......XXX....................... 6
+fi_pulse_gen/counter<3> 
+                     XX...XXXX....................X.......... 7
+fi_pulse_gen/counter<0> 
+                     XX...X................X......X.......... 5
+fi_pulse_gen/counter<2> 
+                     XX...XXX.....................X.......... 6
+BUF_fi_pulse_gen/enabled<0> 
+                     ....XXXXXXXXXX......XX.................. 12
+fi_pulse_gen/counter<4> 
+                     XX...XXXXX...................X.......... 8
+fi_pulse_gen/counter<5> 
+                     XX...XXXXXX..................X.......... 9
+fi_pulse_gen/counter<6> 
+                     XX...XXXXXXX.................X.......... 10
+fi_pulse_gen/counter<7> 
+                     XX...XXXXXXXX................X.......... 11
+fi_pulse_gen/counter<1> 
+                     XX...XX......................X.......... 5
+fi_pulse_gen/enabled<0> 
+                     XX...........................X.......... 3
+fi_pulse_gen/match_cache<0> 
+                     ..............X.......X.X............... 3
+fi_pulse_gen/match_cache<1> 
+                     ...............X......X..X.............. 3
+fi_pulse_gen/match_cache<2> 
+                     ................X.....X...X............. 3
+fi_pulse             XXX...................X......X.......... 5
+fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 
+                     .X...XXXXXXXXX...............X.......... 11
+                    0----+----1----+----2----+----3----+----4
+                              0         0         0         0
+*********************************** FB2  ***********************************
+Number of function block inputs used/remaining:               22/32
+Number of signals used by logic mapping into function block:  22
+Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
+Name                Pt      Pt    Pt  Pt               #    Type    Use
+st/phase<0>           1       0     0   4     FB2_1         (b)     (b)
+st/phase<1>           3       0     0   2     FB2_2   29    I/O     (b)
+spi/mosi_cache        3       0     0   2     FB2_3         (b)     (b)
+spi/first<0>          3       0     0   2     FB2_4         (b)     (b)
+spi/reg<6>            4       0     0   1     FB2_5   30    I/O     (b)
+iac_out<7>            1       0     0   4     FB2_6   31    I/O     O
+spi/reg<5>            4       0     0   1     FB2_7         (b)     (b)
+iac_out<6>            1       0     0   4     FB2_8   32    I/O     O
+iac_out<5>            1       0     0   4     FB2_9   33    GSR/I/O O
+spi/reg<4>            4       0     0   1     FB2_10        (b)     (b)
+iac_out<4>            1       0     0   4     FB2_11  34    GTS/I/O O
+spi/reg<3>            4       0     0   1     FB2_12        (b)     (b)
+spi/reg<2>            4       0     0   1     FB2_13        (b)     (b)
+iac_out<3>            1       0     0   4     FB2_14  36    GTS/I/O O
+iac_out<2>            1       0     0   4     FB2_15  37    I/O     O
+spi/reg<1>            4       0     0   1     FB2_16        (b)     (b)
+iac_out<1>            1       0     0   4     FB2_17  38    I/O     O
+spi/reg<0>            4       0     0   1     FB2_18        (b)     (b)
+
+Signals Used by Logic in Function Block
+  1: iac_clockwise      9: spi/reg<2>        16: time_stamp<0> 
+  2: iac_pulse         10: spi/reg<3>        17: time_stamp<1> 
+  3: mosi              11: spi/reg<4>        18: time_stamp<2> 
+  4: sck               12: spi/reg<5>        19: time_stamp<3> 
+  5: spi/first<0>      13: ssel              20: time_stamp<4> 
+  6: spi/mosi_cache    14: st/phase<0>       21: time_stamp<5> 
+  7: spi/reg<0>        15: st/phase<1>       22: time_stamp<6> 
+  8: spi/reg<1>       
+
+Signal                        1         2         3         4 FB
+Name                0----+----0----+----0----+----0----+----0 Inputs
+st/phase<0>          .X...................................... 1
+st/phase<1>          XX...........X.......................... 3
+spi/mosi_cache       ..XX........X........................... 3
+spi/first<0>         ...XX.......X........................... 3
+spi/reg<6>           ...XX......XX........X.................. 5
+iac_out<7>           .X...........XX......................... 3
+spi/reg<5>           ...XX.....X.X.......X................... 5
+iac_out<6>           .X...........XX......................... 3
+iac_out<5>           .X...........XX......................... 3
+spi/reg<4>           ...XX....X..X......X.................... 5
+iac_out<4>           .X...........XX......................... 3
+spi/reg<3>           ...XX...X...X.....X..................... 5
+spi/reg<2>           ...XX..X....X....X...................... 5
+iac_out<3>           .X...........XX......................... 3
+iac_out<2>           .X...........XX......................... 3
+spi/reg<1>           ...XX.X.....X...X....................... 5
+iac_out<1>           .X...........XX......................... 3
+spi/reg<0>           ...XXX......X..X........................ 5
+                    0----+----1----+----2----+----3----+----4
+                              0         0         0         0
+*********************************** FB3  ***********************************
+Number of function block inputs used/remaining:               22/32
+Number of signals used by logic mapping into function block:  22
+Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
+Name                Pt      Pt    Pt  Pt               #    Type    Use
+time_stamp<3>         2       0     0   3     FB3_1         (b)     (b)
+time_stamp<2>         2       0     0   3     FB3_2   5     I/O     I
+spi/out_data<7>       2       0     0   3     FB3_3         (b)     (b)
+spi/out_data<6>       2       0     0   3     FB3_4         (b)     (b)
+spi/out_data<5>       2       0     0   3     FB3_5   6     I/O     I
+spi/out_data<4>       2       0     0   3     FB3_6         (b)     (b)
+sw/state_FSM_FFd1     3       0     0   2     FB3_7         (b)     (b)
+miso                  4       0     0   1     FB3_8   7     I/O     O
+sw/counter<9>         4       0     0   1     FB3_9   8     I/O     I
+sw/counter<8>         4       0     0   1     FB3_10        (b)     (b)
+sw/counter<7>         4       0     0   1     FB3_11  12    I/O     I
+sw/counter<6>         4       0     0   1     FB3_12        (b)     (b)
+sw/counter<5>         4       0     0   1     FB3_13        (b)     (b)
+sw/counter<4>         4       0     0   1     FB3_14  13    I/O     I
+sw/counter<3>         4       0     0   1     FB3_15  14    I/O     (b)
+sw/counter<2>         4       0     0   1     FB3_16  18    I/O     (b)
+sw/counter<1>         4       0     0   1     FB3_17  16    I/O     (b)
+sw/counter<0>         4       0     0   1     FB3_18        (b)     (b)
+
+Signals Used by Logic in Function Block
+  1: sck                9: sw/counter<1>     16: sw/counter<8> 
+  2: spi/first<0>      10: sw/counter<2>     17: sw/counter<9> 
+  3: spi/reg<3>        11: sw/counter<3>     18: sw/state_FSM_FFd1 
+  4: spi/reg<4>        12: sw/counter<4>     19: sw/state_FSM_FFd2 
+  5: spi/reg<5>        13: sw/counter<5>     20: sw/state_FSM_FFd3 
+  6: spi/reg<6>        14: sw/counter<6>     21: time_stamp<7> 
+  7: ssel              15: sw/counter<7>     22: timing_pulse 
+  8: sw/counter<0>    
+
+Signal                        1         2         3         4 FB
+Name                0----+----0----+----0----+----0----+----0 Inputs
+time_stamp<3>        ............X......X.X.................. 3
+time_stamp<2>        ...........X.......X.X.................. 3
+spi/out_data<7>      .....XX................................. 2
+spi/out_data<6>      ....X.X................................. 2
+spi/out_data<5>      ...X..X................................. 2
+spi/out_data<4>      ..X...X................................. 2
+sw/state_FSM_FFd1    .......XXXXXXXXXXXX..X.................. 13
+miso                 XX...XX.............X................... 5
+sw/counter<9>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<8>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<7>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<6>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<5>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<4>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<3>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<2>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<1>        .......XXXXXXXXXXXXX.X.................. 14
+sw/counter<0>        .......XXXXXXXXXXXXX.X.................. 14
+                    0----+----1----+----2----+----3----+----4
+                              0         0         0         0
+*********************************** FB4  ***********************************
+Number of function block inputs used/remaining:               24/30
+Number of signals used by logic mapping into function block:  24
+Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
+Name                Pt      Pt    Pt  Pt               #    Type    Use
+(unused)              0       0     0   5     FB4_1         (b)     
+sw/state_FSM_FFd3     1       0     0   4     FB4_2   19    I/O     (b)
+time_stamp<7>         2       0     0   3     FB4_3         (b)     (b)
+time_stamp<6>         2       0     0   3     FB4_4         (b)     (b)
+time_stamp<5>         2       0     0   3     FB4_5   20    I/O     (b)
+time_stamp<4>         2       0     0   3     FB4_6         (b)     (b)
+time_stamp<1>         2       0     0   3     FB4_7         (b)     (b)
+time_stamp<0>         2       0     0   3     FB4_8   21    I/O     (b)
+sw/state_FSM_FFd2     2       0     0   3     FB4_9         (b)     (b)
+spi/out_data<3>       2       0     0   3     FB4_10        (b)     (b)
+spi/out_data<2>       2       0     0   3     FB4_11  22    I/O     (b)
+spi/out_data<1>       2       0     0   3     FB4_12        (b)     (b)
+spi/out_data<0>       2       0     0   3     FB4_13        (b)     (b)
+fi_pulse_gen/match_cache<7>
+                      2       0     0   3     FB4_14  23    I/O     (b)
+fi_pulse_gen/match_cache<6>
+                      2       0     0   3     FB4_15  27    I/O     (b)
+fi_pulse_gen/match_cache<5>
+                      2       0     0   3     FB4_16        (b)     (b)
+fi_pulse_gen/match_cache<4>
+                      2       0     0   3     FB4_17  28    I/O     (b)
+fi_pulse_gen/match_cache<3>
+                      2       0     0   3     FB4_18        (b)     (b)
+
+Signals Used by Logic in Function Block
+  1: fi_pulse_gen/match_cache<3>                                            9: spi/out_data<4>   17: sw/counter<2> 
+  2: fi_pulse_gen/match_cache<4>                                           10: spi/out_data<5>   18: sw/counter<3> 
+  3: fi_pulse_gen/match_cache<5>                                           11: spi/out_data<6>   19: sw/counter<6> 
+  4: fi_pulse_gen/match_cache<6>                                           12: spi/out_data<7>   20: sw/counter<7> 
+  5: fi_pulse_gen/match_cache<7>                                           13: spi/reg<0>        21: sw/counter<8> 
+  6: fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  14: spi/reg<1>        22: sw/counter<9> 
+  7: spi/mosi_cache                                                        15: spi/reg<2>        23: sw/state_FSM_FFd3 
+  8: spi/out_data<3>                                                       16: ssel              24: timing_pulse 
+
+Signal                        1         2         3         4 FB
+Name                0----+----0----+----0----+----0----+----0 Inputs
+sw/state_FSM_FFd3    .......................X................ 1
+time_stamp<7>        .....................XXX................ 3
+time_stamp<6>        ....................X.XX................ 3
+time_stamp<5>        ...................X..XX................ 3
+time_stamp<4>        ..................X...XX................ 3
+time_stamp<1>        .................X....XX................ 3
+time_stamp<0>        ................X.....XX................ 3
+sw/state_FSM_FFd2    ......................XX................ 2
+spi/out_data<3>      ..............XX........................ 2
+spi/out_data<2>      .............X.X........................ 2
+spi/out_data<1>      ............X..X........................ 2
+spi/out_data<0>      ......X........X........................ 2
+fi_pulse_gen/match_cache<7> 
+                     ....XX.....X............................ 3
+fi_pulse_gen/match_cache<6> 
+                     ...X.X....X............................. 3
+fi_pulse_gen/match_cache<5> 
+                     ..X..X...X.............................. 3
+fi_pulse_gen/match_cache<4> 
+                     .X...X..X............................... 3
+fi_pulse_gen/match_cache<3> 
+                     X....X.X................................ 3
+                    0----+----1----+----2----+----3----+----4
+                              0         0         0         0
+*******************************  Equations  ********************************
+
+********** Mapped Logic **********
+
+
+BUF_fi_pulse_gen/enabled(0) <= ((fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
+	fi_pulse_gen/match_cache(7) AND fi_pulse_gen/match_cache(6))
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
+	fi_pulse_gen/match_cache(7) AND 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
+	OR (fi_pulse_gen/enabled(0) AND 
+	fi_pulse_gen/match_cache(7) AND fi_pulse_gen/match_cache(6) AND 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
+	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
+	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+	NOT fi_pulse_gen/counter(7))
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(7) AND 
+	fi_pulse_gen/match_cache(7))
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
+	NOT fi_pulse_gen/counter(7) AND fi_pulse_gen/match_cache(6))
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
+	NOT fi_pulse_gen/counter(7) AND 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(7) AND 
+	fi_pulse_gen/match_cache(6) AND 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2));
+
+FDCPE_fi_pulse: FDCPE port map (fi_pulse,fi_pulse_D,clk,'0','0');
+fi_pulse_D <= ((timing_pulse AND NOT fi_pulse AND enable)
+	OR (NOT timing_pulse AND NOT BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (NOT enable AND NOT BUF_fi_pulse_gen/enabled(0)));
+
+
+fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2 <= ((fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/match_cache(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	NOT fi_pulse_gen/match_cache(2) AND NOT fi_pulse_gen/match_cache(0))
+	OR (fi_pulse_gen/counter(0) AND 
+	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(2) AND 
+	NOT fi_pulse_gen/match_cache(0))
+	OR (fi_pulse_gen/counter(2) AND 
+	NOT fi_pulse_gen/match_cache(2))
+	OR (fi_pulse_gen/counter(1) AND fi_pulse_gen/counter(2) AND 
+	NOT fi_pulse_gen/match_cache(1))
+	OR (fi_pulse_gen/counter(1) AND 
+	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(2))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(2) AND 
+	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(0)));
+
+
+fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2 <= ((NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(5))
+	OR (NOT fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4) AND 
+	fi_pulse_gen/match_cache(5))
+	OR (NOT fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(5) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (fi_pulse_gen/match_cache(3) AND 
+	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4))
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/match_cache(4) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(3) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(5) AND 
+	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(5) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
+	OR (NOT fi_pulse_gen/counter(5) AND 
+	fi_pulse_gen/match_cache(5))
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(4))
+	OR (NOT fi_pulse_gen/counter(4) AND 
+	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5))
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
+	NOT fi_pulse_gen/counter(4) AND fi_pulse_gen/match_cache(3))
+	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
+	NOT fi_pulse_gen/counter(4) AND 
+	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2));
+
+FDCPE_fi_pulse_gen/counter0: FDCPE port map (fi_pulse_gen/counter(0),fi_pulse_gen/counter_D(0),clk,'0','0');
+fi_pulse_gen/counter_D(0) <= ((
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (NOT fi_pulse_gen/counter(0) AND NOT timing_pulse AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(0) AND NOT enable AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND timing_pulse AND enable));
+
+FTCPE_fi_pulse_gen/counter1: FTCPE port map (fi_pulse_gen/counter(1),fi_pulse_gen/counter_T(1),clk,'0','0');
+fi_pulse_gen/counter_T(1) <= ((NOT fi_pulse_gen/counter(0) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(1) AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (timing_pulse AND enable));
+
+FTCPE_fi_pulse_gen/counter2: FTCPE port map (fi_pulse_gen/counter(2),fi_pulse_gen/counter_T(2),clk,'0','0');
+fi_pulse_gen/counter_T(2) <= ((NOT fi_pulse_gen/counter(2) AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(0) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(1) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (timing_pulse AND enable));
+
+FTCPE_fi_pulse_gen/counter3: FTCPE port map (fi_pulse_gen/counter(3),fi_pulse_gen/counter_T(3),clk,'0','0');
+fi_pulse_gen/counter_T(3) <= ((NOT fi_pulse_gen/counter(1) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(2) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(3) AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (NOT fi_pulse_gen/counter(0) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (timing_pulse AND enable));
+
+FTCPE_fi_pulse_gen/counter4: FTCPE port map (fi_pulse_gen/counter(4),fi_pulse_gen/counter_T(4),clk,'0','0');
+fi_pulse_gen/counter_T(4) <= ((NOT timing_pulse AND fi_pulse_gen/counter(4) AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(4) AND NOT enable AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	NOT timing_pulse AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND NOT enable AND 
+	BUF_fi_pulse_gen/enabled(0)));
+
+FTCPE_fi_pulse_gen/counter5: FTCPE port map (fi_pulse_gen/counter(5),fi_pulse_gen/counter_T(5),clk,'0','0');
+fi_pulse_gen/counter_T(5) <= ((fi_pulse_gen/counter(5) AND NOT timing_pulse AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(5) AND NOT enable AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	NOT timing_pulse AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/counter(4) AND BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+	NOT enable AND BUF_fi_pulse_gen/enabled(0)));
+
+FTCPE_fi_pulse_gen/counter6: FTCPE port map (fi_pulse_gen/counter(6),fi_pulse_gen/counter_T(6),clk,'0','0');
+fi_pulse_gen/counter_T(6) <= ((fi_pulse_gen/counter(6) AND NOT timing_pulse AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(6) AND NOT enable AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(5) AND NOT timing_pulse AND fi_pulse_gen/counter(2) AND 
+	fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
+	fi_pulse_gen/counter(4) AND NOT enable AND BUF_fi_pulse_gen/enabled(0)));
+
+FTCPE_fi_pulse_gen/counter7: FTCPE port map (fi_pulse_gen/counter(7),fi_pulse_gen/counter_T(7),clk,'0','0');
+fi_pulse_gen/counter_T(7) <= ((NOT timing_pulse AND fi_pulse_gen/counter(7) AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(7) AND NOT enable AND 
+	NOT BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND NOT timing_pulse AND 
+	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+	BUF_fi_pulse_gen/enabled(0))
+	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND fi_pulse_gen/counter(2) AND 
+	fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND NOT enable AND 
+	BUF_fi_pulse_gen/enabled(0)));
+
+FDCPE_fi_pulse_gen/enabled0: FDCPE port map (fi_pulse_gen/enabled(0),BUF_fi_pulse_gen/enabled(0),clk,'0',fi_pulse_gen/enabled_PRE(0));
+fi_pulse_gen/enabled_PRE(0) <= (timing_pulse AND enable);
+
+FDCPE_fi_pulse_gen/match_cache0: FDCPE port map (fi_pulse_gen/match_cache(0),fi_pulse_gen/match_cache_D(0),clk,'0','0');
+fi_pulse_gen/match_cache_D(0) <= ((fi_pulse_gen/match_cache(0) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(0) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache1: FDCPE port map (fi_pulse_gen/match_cache(1),fi_pulse_gen/match_cache_D(1),clk,'0','0');
+fi_pulse_gen/match_cache_D(1) <= ((fi_pulse_gen/match_cache(1) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(1) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache2: FDCPE port map (fi_pulse_gen/match_cache(2),fi_pulse_gen/match_cache_D(2),clk,'0','0');
+fi_pulse_gen/match_cache_D(2) <= ((fi_pulse_gen/match_cache(2) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(2) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache3: FDCPE port map (fi_pulse_gen/match_cache(3),fi_pulse_gen/match_cache_D(3),clk,'0','0');
+fi_pulse_gen/match_cache_D(3) <= ((fi_pulse_gen/match_cache(3) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(3) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache4: FDCPE port map (fi_pulse_gen/match_cache(4),fi_pulse_gen/match_cache_D(4),clk,'0','0');
+fi_pulse_gen/match_cache_D(4) <= ((fi_pulse_gen/match_cache(4) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(4) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache5: FDCPE port map (fi_pulse_gen/match_cache(5),fi_pulse_gen/match_cache_D(5),clk,'0','0');
+fi_pulse_gen/match_cache_D(5) <= ((fi_pulse_gen/match_cache(5) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(5) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache6: FDCPE port map (fi_pulse_gen/match_cache(6),fi_pulse_gen/match_cache_D(6),clk,'0','0');
+fi_pulse_gen/match_cache_D(6) <= ((fi_pulse_gen/match_cache(6) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(6) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+FDCPE_fi_pulse_gen/match_cache7: FDCPE port map (fi_pulse_gen/match_cache(7),fi_pulse_gen/match_cache_D(7),clk,'0','0');
+fi_pulse_gen/match_cache_D(7) <= ((fi_pulse_gen/match_cache(7) AND 
+	NOT fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
+	OR (spi/out_data(7) AND 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
+
+
+fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 <= ((fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
+	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
+	NOT timing_pulse AND NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND 
+	NOT fi_pulse_gen/counter(4) AND NOT fi_pulse_gen/counter(7))
+	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
+	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
+	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+	NOT fi_pulse_gen/counter(7) AND NOT enable));
+
+
+iac_out(0) <= (iac_pulse AND st/phase(0) AND NOT st/phase(1));
+
+
+iac_out(1) <= (iac_pulse AND st/phase(0) AND st/phase(1));
+
+
+iac_out(2) <= (iac_pulse AND st/phase(0) AND st/phase(1));
+
+
+iac_out(3) <= (iac_pulse AND st/phase(0) AND NOT st/phase(1));
+
+
+iac_out(4) <= (iac_pulse AND NOT st/phase(0) AND NOT st/phase(1));
+
+
+iac_out(5) <= (iac_pulse AND NOT st/phase(0) AND st/phase(1));
+
+
+iac_out(6) <= (iac_pulse AND NOT st/phase(0) AND st/phase(1));
+
+
+iac_out(7) <= (iac_pulse AND NOT st/phase(0) AND NOT st/phase(1));
+
+FDCPE_miso: FDCPE port map (miso_I,miso,NOT sck,'0','0');
+miso <= ((spi/first(0) AND time_stamp(7))
+	OR (NOT spi/first(0) AND spi/reg(6)));
+miso <= miso_I when miso_OE = '1' else 'Z';
+miso_OE <= NOT ssel;
+
+FDCPE_spi/first0: FDCPE port map (spi/first(0),'0',NOT sck,'0',ssel,spi/first(0));
+
+FDCPE_spi/mosi_cache: FDCPE port map (spi/mosi_cache,mosi,sck,'0','0',NOT ssel);
+
+FDCPE_spi/out_data0: FDCPE port map (spi/out_data(0),spi/mosi_cache,ssel,'0','0');
+
+FDCPE_spi/out_data1: FDCPE port map (spi/out_data(1),spi/reg(0),ssel,'0','0');
+
+FDCPE_spi/out_data2: FDCPE port map (spi/out_data(2),spi/reg(1),ssel,'0','0');
+
+FDCPE_spi/out_data3: FDCPE port map (spi/out_data(3),spi/reg(2),ssel,'0','0');
+
+FDCPE_spi/out_data4: FDCPE port map (spi/out_data(4),spi/reg(3),ssel,'0','0');
+
+FDCPE_spi/out_data5: FDCPE port map (spi/out_data(5),spi/reg(4),ssel,'0','0');
+
+FDCPE_spi/out_data6: FDCPE port map (spi/out_data(6),spi/reg(5),ssel,'0','0');
+
+FDCPE_spi/out_data7: FDCPE port map (spi/out_data(7),spi/reg(6),ssel,'0','0');
+
+FDCPE_spi/reg0: FDCPE port map (spi/reg(0),spi/reg_D(0),NOT sck,'0','0',NOT ssel);
+spi/reg_D(0) <= ((spi/first(0) AND time_stamp(0))
+	OR (NOT spi/first(0) AND spi/mosi_cache));
+
+FDCPE_spi/reg1: FDCPE port map (spi/reg(1),spi/reg_D(1),NOT sck,'0','0',NOT ssel);
+spi/reg_D(1) <= ((spi/first(0) AND time_stamp(1))
+	OR (NOT spi/first(0) AND spi/reg(0)));
+
+FDCPE_spi/reg2: FDCPE port map (spi/reg(2),spi/reg_D(2),NOT sck,'0','0',NOT ssel);
+spi/reg_D(2) <= ((spi/first(0) AND time_stamp(2))
+	OR (NOT spi/first(0) AND spi/reg(1)));
+
+FDCPE_spi/reg3: FDCPE port map (spi/reg(3),spi/reg_D(3),NOT sck,'0','0',NOT ssel);
+spi/reg_D(3) <= ((spi/first(0) AND time_stamp(3))
+	OR (NOT spi/first(0) AND spi/reg(2)));
+
+FDCPE_spi/reg4: FDCPE port map (spi/reg(4),spi/reg_D(4),NOT sck,'0','0',NOT ssel);
+spi/reg_D(4) <= ((spi/first(0) AND time_stamp(4))
+	OR (NOT spi/first(0) AND spi/reg(3)));
+
+FDCPE_spi/reg5: FDCPE port map (spi/reg(5),spi/reg_D(5),NOT sck,'0','0',NOT ssel);
+spi/reg_D(5) <= ((spi/first(0) AND time_stamp(5))
+	OR (NOT spi/first(0) AND spi/reg(4)));
+
+FDCPE_spi/reg6: FDCPE port map (spi/reg(6),spi/reg_D(6),NOT sck,'0','0',NOT ssel);
+spi/reg_D(6) <= ((spi/first(0) AND time_stamp(6))
+	OR (NOT spi/first(0) AND spi/reg(5)));
+
+FTCPE_st/phase0: FTCPE port map (st/phase(0),'1',NOT iac_pulse,'0','0');
+
+FTCPE_st/phase1: FTCPE port map (st/phase(1),st/phase_T(1),NOT iac_pulse,'0','0');
+st/phase_T(1) <= ((st/phase(0) AND NOT iac_clockwise)
+	OR (NOT st/phase(0) AND iac_clockwise));
+
+FTCPE_sw/counter0: FTCPE port map (sw/counter(0),sw/counter_T(0),clk,'0','0',NOT timing_pulse);
+sw/counter_T(0) <= ((sw/counter(0) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter1: FTCPE port map (sw/counter(1),sw/counter_T(1),clk,'0','0',NOT timing_pulse);
+sw/counter_T(1) <= ((sw/counter(1) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/state_FSM_FFd1 AND 
+	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter2: FTCPE port map (sw/counter(2),sw/counter_T(2),clk,'0','0',NOT timing_pulse);
+sw/counter_T(2) <= ((sw/counter(2) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(1) AND 
+	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter3: FTCPE port map (sw/counter(3),sw/counter_T(3),clk,'0','0',NOT timing_pulse);
+sw/counter_T(3) <= ((sw/counter(3) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(1) AND 
+	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter4: FTCPE port map (sw/counter(4),sw/counter_T(4),clk,'0','0',NOT timing_pulse);
+sw/counter_T(4) <= ((sw/counter(4) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(1) AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter5: FTCPE port map (sw/counter(5),sw/counter_T(5),clk,'0','0',NOT timing_pulse);
+sw/counter_T(5) <= ((sw/counter(5) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(1) AND sw/state_FSM_FFd1 AND 
+	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter6: FTCPE port map (sw/counter(6),sw/counter_T(6),clk,'0','0',NOT timing_pulse);
+sw/counter_T(6) <= ((sw/counter(6) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(1) AND 
+	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter7: FTCPE port map (sw/counter(7),sw/counter_T(7),clk,'0','0',NOT timing_pulse);
+sw/counter_T(7) <= ((sw/counter(7) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(1) AND 
+	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter8: FTCPE port map (sw/counter(8),sw/counter_T(8),clk,'0','0',NOT timing_pulse);
+sw/counter_T(8) <= ((sw/counter(8) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(1) AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3));
+
+FTCPE_sw/counter9: FTCPE port map (sw/counter(9),sw/counter_T(9),clk,'0','0',NOT timing_pulse);
+sw/counter_T(9) <= ((sw/counter(9) AND sw/state_FSM_FFd2 AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd3)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/state_FSM_FFd1 AND 
+	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3));
+
+FDCPE_sw/state_FSM_FFd1: FDCPE port map (sw/state_FSM_FFd1,sw/state_FSM_FFd1_D,clk,timing_pulse,'0');
+sw/state_FSM_FFd1_D <= ((NOT sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2)
+	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
+	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
+	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+	NOT sw/state_FSM_FFd2));
+
+FDCPE_sw/state_FSM_FFd2: FDCPE port map (sw/state_FSM_FFd2,sw/state_FSM_FFd3,clk,timing_pulse,'0');
+
+FDCPE_sw/state_FSM_FFd3: FDCPE port map (sw/state_FSM_FFd3,'0',clk,'0',timing_pulse);
+
+FDCPE_time_stamp0: FDCPE port map (time_stamp(0),sw/counter(2),clk,'0','0',time_stamp_CE(0));
+time_stamp_CE(0) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp1: FDCPE port map (time_stamp(1),sw/counter(3),clk,'0','0',time_stamp_CE(1));
+time_stamp_CE(1) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp2: FDCPE port map (time_stamp(2),sw/counter(4),clk,'0','0',time_stamp_CE(2));
+time_stamp_CE(2) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp3: FDCPE port map (time_stamp(3),sw/counter(5),clk,'0','0',time_stamp_CE(3));
+time_stamp_CE(3) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp4: FDCPE port map (time_stamp(4),sw/counter(6),clk,'0','0',time_stamp_CE(4));
+time_stamp_CE(4) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp5: FDCPE port map (time_stamp(5),sw/counter(7),clk,'0','0',time_stamp_CE(5));
+time_stamp_CE(5) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp6: FDCPE port map (time_stamp(6),sw/counter(8),clk,'0','0',time_stamp_CE(6));
+time_stamp_CE(6) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+FDCPE_time_stamp7: FDCPE port map (time_stamp(7),sw/counter(9),clk,'0','0',time_stamp_CE(7));
+time_stamp_CE(7) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+
+Register Legend:
+ FDCPE (Q,D,C,CLR,PRE,CE); 
+ FTCPE (Q,D,C,CLR,PRE,CE); 
+ LDCP  (Q,D,G,CLR,PRE); 
+
+******************************  Device Pin Out *****************************
+
+Device : XC9572XL-10-VQ44
+
+
+   --------------------------------  
+  /44 43 42 41 40 39 38 37 36 35 34 \
+ | 1                             33 | 
+ | 2                             32 | 
+ | 3                             31 | 
+ | 4                             30 | 
+ | 5        XC9572XL-10-VQ44     29 | 
+ | 6                             28 | 
+ | 7                             27 | 
+ | 8                             26 | 
+ | 9                             25 | 
+ | 10                            24 | 
+ | 11                            23 | 
+ \ 12 13 14 15 16 17 18 19 20 21 22 /
+   --------------------------------  
+
+
+Pin Signal                         Pin Signal                        
+No. Name                           No. Name                          
+  1 KPR                              23 KPR                           
+  2 timing_pulse                     24 TDO                           
+  3 fi_pulse                         25 GND                           
+  4 GND                              26 VCC                           
+  5 sck                              27 KPR                           
+  6 ssel                             28 KPR                           
+  7 miso                             29 KPR                           
+  8 mosi                             30 KPR                           
+  9 TDI                              31 iac_out<7>                    
+ 10 TMS                              32 iac_out<6>                    
+ 11 TCK                              33 iac_out<5>                    
+ 12 iac_pulse                        34 iac_out<4>                    
+ 13 iac_clockwise                    35 VCC                           
+ 14 KPR                              36 iac_out<3>                    
+ 15 VCC                              37 iac_out<2>                    
+ 16 KPR                              38 iac_out<1>                    
+ 17 GND                              39 iac_out<0>                    
+ 18 KPR                              40 enable                        
+ 19 KPR                              41 KPR                           
+ 20 KPR                              42 KPR                           
+ 21 KPR                              43 clk                           
+ 22 KPR                              44 KPR                           
+
+
+Legend :  NC  = Not Connected, unbonded pin
+         PGND = Unused I/O configured as additional Ground pin
+         TIE  = Unused I/O floating -- must tie to VCC, GND or other signal
+         KPR  = Unused I/O with weak keeper (leave unconnected)
+         VCC  = Dedicated Power Pin
+         GND  = Dedicated Ground Pin
+         TDI  = Test Data In, JTAG pin
+         TDO  = Test Data Out, JTAG pin
+         TCK  = Test Clock, JTAG pin
+         TMS  = Test Mode Select, JTAG pin
+  PROHIBITED  = User reserved pin
+****************************  Compiler Options  ****************************
+
+Following is a list of all global compiler options used by the fitter run.
+
+Device(s) Specified                         : xc9572xl-10-VQ44
+Optimization Method                         : DENSITY
+Multi-Level Logic Optimization              : ON
+Ignore Timing Specifications                : OFF
+Default Register Power Up Value             : LOW
+Keep User Location Constraints              : ON
+What-You-See-Is-What-You-Get                : OFF
+Exhaustive Fitting                          : OFF
+Keep Unused Inputs                          : OFF
+Slew Rate                                   : FAST
+Power Mode                                  : STD
+Ground on Unused IOs                        : OFF
+Set I/O Pin Termination                     : KEEPER
+Global Clock Optimization                   : ON
+Global Set/Reset Optimization               : ON
+Global Ouput Enable Optimization            : ON
+Input Limit                                 : 54
+Pterm Limit                                 : 90
+</pre>
+<form><span class="pgRef"><table width="90%" align="center"><tr>
+<td align="left"><input type="button" onclick="javascript:parent.leftnav.showTop()" onmouseover="window.status='goto top of page'; return true;" onmouseout="window.status=''" value="back to top"></td>
+<td align="right"><input type="button" onclick="window.print()" onmouseover="window.status='print page'; return true;" onmouseout="window.status=''" value="print page"></td>
+</tr></table></span></form>
+</body></html>

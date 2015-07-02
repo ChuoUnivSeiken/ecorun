@@ -45,7 +45,7 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 		{
 			LPC_GPIO->CLR[1] |= _BV(0);
 		}
-
+		/*
 		uint32_t current_inject_time = get_inject_time_from_map(eg_data.th, eg_data.rev);
 
 		volatile uint8_t ssp_data = current_inject_time;
@@ -53,7 +53,7 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 		ssp_exchange(&ssp_data, 1);
 		ssel(1);
 
-		eg_data.rev = current_inject_time;
+		eg_data.rev = current_inject_time;*/
 	}
 }
 
@@ -82,6 +82,13 @@ void timer16_0_handler(uint8_t timer, uint8_t num)
 		}
 		sum_oil_temperature_adc = 0;
 		oil_temperature_samples = 0;
+	}
+}
+void timer16_1_handler(uint8_t timer, uint8_t num)
+{
+	if (num == 0)
+	{
+		LPC_GPIO->PIN[1] ^= _BV(24);
 	}
 }
 
@@ -349,6 +356,12 @@ int main(void)
 	timer16_init(0, 10000, SystemCoreClock / 10000);
 	timer16_add_event(0, timer16_0_handler);
 	timer16_enable(0);
+
+	timer16_init(1, 10000, SystemCoreClock / 10000);
+	timer16_set_match(1, 1, SystemCoreClock / 10000 / 2);
+	timer16_add_event(1, timer16_1_handler);
+	timer16_enable(1);
+
 	timer32_init(0, SystemCoreClock / 100);
 	timer32_add_event(0, timer32_0_handler);
 	timer32_enable(0);
@@ -365,6 +378,26 @@ int main(void)
 	init_fi_timer();
 
 	init_cli();
+
+	LPC_IOCON->PIO1_24 = 0x10;
+	LPC_GPIO->DIR[1] |= _BV(24);
+	LPC_GPIO->CLR[1] |= _BV(24);
+
+	LPC_IOCON->PIO1_18 = 0x10;
+	LPC_GPIO->DIR[1] |= _BV(18);
+	LPC_GPIO->SET[1] |= _BV(18);
+
+	volatile uint32_t i;
+	volatile uint8_t ssp_data = 0;
+	for (i = 0; i < 32; i++)
+	{
+		ssp_data = 0;
+		ssel(0);
+		ssp_exchange(&ssp_data, 1);
+		ssel(1);
+		usart_write_uint32(ssp_data);
+		usart_writeln_string("\r\n");
+	}
 
 	while (1)
 	{

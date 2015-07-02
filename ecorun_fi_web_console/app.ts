@@ -82,12 +82,8 @@ setInterval(() => {
         carTransmitter.requestData('engine_data');
     }
 }, 100);
-setInterval(() => {
-    if (carTransmitter != null) {
-        carTransmitter.requestData('basic_inject_time_map');
-    }
-}, 1000);
-io.sockets.on('connection', function(socket) {
+
+io.sockets.on('connection', (socket) => {
     socket.on('connected', (id) => {
         idHash[socket.id] = id;
         console.log('login : ' + id);
@@ -104,19 +100,18 @@ io.sockets.on('connection', function(socket) {
     socket.on('serial_connect', (connection_data) => {
         carTransmitter = new carcomm.CarTransmitter(connection_data.portName, connection_data.bitRate);
 
-        carTransmitter.addOpenedHandler((e) => {
-            carTransmitter.addDataReceivedHandler((e) => {
-                var data = e.value;
+        carTransmitter.on('opened', () => {
+            carTransmitter.on('obj', (data) => {
                 io.sockets.emit('data', data);
                 data.value['timestamp'] = new Date();
                 carserialize.CarDatabase.saveData(data.id, data.value)
             });
-            carTransmitter.addMessageReceivedHandler((e) => {
-                io.sockets.emit('msg', e.value);
+            carTransmitter.on('msg', (msg) => {
+                io.sockets.emit('msg', msg);
             });
             io.sockets.emit('serial_connected', {});
         });
-        carTransmitter.addClosedHandler((e) => {
+        carTransmitter.on('closed', () => {
             io.sockets.emit('serial_disconnected', {});
         });
         carTransmitter.open();
@@ -131,6 +126,18 @@ io.sockets.on('connection', function(socket) {
     socket.on('serial_write', (data) => {
         if (carTransmitter != null && carTransmitter.isOpening) {
             carTransmitter.write(data.message);
+        }
+    });
+
+    socket.on('request_data', (data) => {
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.requestData(data.id);
+        }
+    });
+
+    socket.on('send_data', (data) => {
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.sendData(data.id, data.data);
         }
     });
 

@@ -7,53 +7,57 @@ var nodemon = require('gulp-nodemon');
 var open = require('gulp-open');
 var uglify = require('gulp-uglify');
 var buffer = require('vinyl-buffer');
+var plumber = require('gulp-plumber');
+var handle_errors = require('./handle_errors.js')
+var ts = require('gulp-typescript');
 //var reactify = require('reactify');
 
-gulp.task('build-client', function () {
+gulp.task('build-client', function() {
     var bundle = browserify({
         entries: ['./public/javascripts/main.js']
     }).bundle();
     return bundle
-.pipe(source('app.js'))
-.pipe(buffer())
-.pipe(uglify())
-.pipe(gulp.dest('./public/javascripts/build'));
+        .on('error', handle_errors)
+        .pipe(plumber())
+        .pipe(source('app.js'))
+        //.pipe(buffer())
+        //.pipe(uglify())
+        .pipe(gulp.dest('./public/javascripts/build'));
 });
 
-var ts = require('gulp-typescript');
-
-gulp.task('build-server', function () {
-  var tsResult = gulp.src('*.ts')
-    .pipe(ts({
-        //out: 'app.js',
-        target: 'es5',
-        module: 'commonjs'
-      }));
-  tsResult.js.pipe(gulp.dest('.'));
+gulp.task('build-server', function() {
+    return gulp.src('*.ts')
+        .pipe(ts({
+            target: 'es5',
+            module: 'commonjs'
+        }))
+        .js
+        .pipe(gulp.dest('.'));
 });
 
-gulp.task('run-server', ['build-server'], function () {
-  nodemon({
-    script: 'app.js'
-  , env: { NODE_ENV: 'development' }
-  })
+gulp.task('run-server', ['build-server'], function() {
+    nodemon({
+        script: 'bin/www',
+        env: {
+            NODE_ENV: 'development'
+        }
+    });
 })
 
-gulp.task('open', function(){
-    var options = {
-    url: 'http://localhost',
-    app: 'chrome'
-      };
-  gulp.src('./public/index.html')
-  .pipe(open('', options));
-});
-
-gulp.task('watch', ['build-client'], function(){
+gulp.task('watch', ['build-client'], function() {
     var watcher = gulp.watch('./public/javascripts/*.js', ['build-client']);
     watcher.on('change', function(event) {
         console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
     });
-    gulp.watch('./public/javascripts/*.js', ['build-client']);
 });
 
-gulp.task("default",['build-client', 'run-server', 'open']);
+gulp.task('open', ['watch'], function() {
+    var options = {
+        url: 'http://localhost',
+        app: 'firefox'
+    };
+    return gulp.src('./public/index.html')
+        .pipe(open('', options));
+});
+
+gulp.task("default", ['run-server', 'open']);

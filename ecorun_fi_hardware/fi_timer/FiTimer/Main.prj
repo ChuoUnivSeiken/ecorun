@@ -1,0 +1,5 @@
+vhdl work "Stopwatch.vhd"
+vhdl work "Stepper.vhd"
+vhdl work "SPISlave.vhd"
+vhdl work "PulseTimer.vhd"
+vhdl work "Main.vhd"

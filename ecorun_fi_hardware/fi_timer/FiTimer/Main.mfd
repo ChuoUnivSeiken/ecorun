@@ -1,0 +1,1150 @@
+MDF Database:  version 1.0
+MDF_INFO | Main | XC9572XL-10-VQ44
+MACROCELL | 2 | 7 | spi/Mtridata_miso
+ATTRIBUTES | 8652578 | 0
+INPUTS | 5 | spi/first<0>  | spi/reg<6>  | time_stamp<7>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 1 | 4 | 3 | 2
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   miso.D = spi/first<0> & time_stamp<7>
+	# !spi/first<0> & spi/reg<6>;
+   miso.CLK = !sck;
+   miso.OE = !ssel;
+
+MACROCELL | 1 | 14 | iac_out_1_OBUF
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<2> = iac_pulse & st/phase<0> & st/phase<1>;
+
+MACROCELL | 1 | 5 | iac_out_4_OBUF
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<7> = iac_pulse & !st/phase<0> & !st/phase<1>;
+
+MACROCELL | 1 | 3 | spi/first<0>
+ATTRIBUTES | 8520676 | 0
+OUTPUTMC | 9 | 2 | 7 | 1 | 3 | 1 | 17 | 1 | 15 | 1 | 12 | 1 | 11 | 1 | 9 | 1 | 6 | 1 | 4
+INPUTS | 3 | sck  | ssel  | spi/first<0>
+INPUTMC | 1 | 1 | 3
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/first<0>.D = Gnd;
+   spi/first<0>.CLK = !sck;
+   spi/first<0>.AP = ssel;
+   spi/first<0>.CE = spi/first<0>;
+
+MACROCELL | 0 | 12 | fi_pulse_gen/enabled<0>
+ATTRIBUTES | 8553344 | 0
+OUTPUTMC | 3 | 0 | 6 | 0 | 16 | 0 | 7
+INPUTS | 3 | BUF_fi_pulse_gen/enabled<0>  | timing_pulse  | enable
+INPUTMC | 1 | 0 | 6
+INPUTP | 2 | 26 | 12
+EQ | 3 | 
+   fi_pulse_gen/enabled<0>.D = BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/enabled<0>.CLK = clk;	// GCK
+   fi_pulse_gen/enabled<0>.AP = timing_pulse & enable;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 4 | fi_pulse_gen/counter<0>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 10 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 10 | 0 | 16 | 0 | 2
+INPUTS | 9 | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/counter<0>  | timing_pulse  | enable  | fi_pulse_gen/counter<1>  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<2>.EXP
+INPUTMC | 7 | 0 | 17 | 0 | 4 | 0 | 11 | 0 | 6 | 0 | 5 | 0 | 3 | 0 | 5
+INPUTP | 2 | 26 | 12
+EXPORTS | 1 | 0 | 3
+IMPORTS | 1 | 0 | 5
+EQ | 15 | 
+   fi_pulse_gen/counter<0>.D = 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# fi_pulse_gen/counter<0> & timing_pulse & enable
+;Imported pterms FB1_6
+	# !fi_pulse_gen/counter<0> & !timing_pulse & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<0> & !enable & 
+	BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<0>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<0>.EXP  =  !fi_pulse_gen/counter<1> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<2> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<3> & 
+	!BUF_fi_pulse_gen/enabled<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 11 | fi_pulse_gen/counter<1>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 10 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 16 | 0 | 7 | 0 | 10 | 0 | 4 | 0 | 2 | 0 | 3
+INPUTS | 5 | timing_pulse  | enable  | fi_pulse_gen/counter<0>  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<1>
+INPUTMC | 3 | 0 | 4 | 0 | 6 | 0 | 11
+INPUTP | 2 | 26 | 12
+EQ | 6 | 
+   !fi_pulse_gen/counter<1>.T = !fi_pulse_gen/counter<0> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<1> & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# timing_pulse & enable;
+   fi_pulse_gen/counter<1>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 8 | fi_pulse_gen/counter<5>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 6 | 0 | 7 | 0 | 9 | 0 | 10 | 0 | 16 | 0 | 0 | 0 | 17
+INPUTS | 9 | fi_pulse_gen/counter<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<4>  | enable  | BUF_fi_pulse_gen/enabled<0>  | timing_pulse  | fi_pulse_gen/counter<6>.EXP
+INPUTMC | 7 | 0 | 4 | 0 | 11 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 6 | 0 | 9
+INPUTP | 2 | 12 | 26
+EXPORTS | 1 | 0 | 7
+IMPORTS | 1 | 0 | 9
+EQ | 19 | 
+   fi_pulse_gen/counter<5>.T = fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	!timing_pulse & fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/counter<4> & BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & fi_pulse_gen/counter<4> & 
+	!enable & BUF_fi_pulse_gen/enabled<0>
+;Imported pterms FB1_10
+	# fi_pulse_gen/counter<5> & !timing_pulse & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<5> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<5>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<5>.EXP  =  !timing_pulse & fi_pulse_gen/counter<4> & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<4> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	!timing_pulse & fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & 
+	BUF_fi_pulse_gen/enabled<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 9 | fi_pulse_gen/counter<6>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 6 | 0 | 9 | 0 | 10 | 0 | 6 | 0 | 16 | 0 | 7 | 0 | 8
+INPUTS | 11 | fi_pulse_gen/counter<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<5>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<4>  | enable  | BUF_fi_pulse_gen/enabled<0>  | timing_pulse  | fi_pulse_gen/counter<6>  | fi_pulse_gen/counter<7>.EXP
+INPUTMC | 9 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 6 | 0 | 9 | 0 | 10
+INPUTP | 2 | 12 | 26
+EXPORTS | 1 | 0 | 8
+IMPORTS | 1 | 0 | 10
+EQ | 17 | 
+   fi_pulse_gen/counter<6>.T = fi_pulse_gen/counter<6> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<5> & !timing_pulse & fi_pulse_gen/counter<2> & 
+	fi_pulse_gen/counter<3> & fi_pulse_gen/counter<4> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<5> & fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/counter<4> & !enable & BUF_fi_pulse_gen/enabled<0>
+;Imported pterms FB1_11
+	# fi_pulse_gen/counter<6> & !timing_pulse & 
+	!BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<6>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<6>.EXP  =  fi_pulse_gen/counter<5> & !timing_pulse & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<5> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 17 | sw/counter<0>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 11 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6
+INPUTS | 14 | sw/counter<0>  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/state_FSM_FFd1  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 3 | 8 | 3 | 1 | 2 | 6 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8
+INPUTP | 1 | 26
+EQ | 10 | 
+   sw/counter<0>.T = sw/counter<0> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<0>.CLK = clk;	// GCK
+   sw/counter<0>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 15 | sw/counter<2>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 7
+INPUTS | 14 | sw/counter<2>  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<0>  | sw/counter<1>  | sw/state_FSM_FFd1  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 15 | 3 | 8 | 3 | 1 | 2 | 17 | 2 | 16 | 2 | 6 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 8
+INPUTP | 1 | 26
+EQ | 10 | 
+   sw/counter<2>.T = sw/counter<2> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<1> & 
+	sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<2>.CLK = clk;	// GCK
+   sw/counter<2>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 14 | sw/counter<3>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 6
+INPUTS | 14 | sw/counter<3>  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<0>  | sw/counter<2>  | sw/counter<1>  | sw/state_FSM_FFd1  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 14 | 3 | 8 | 3 | 1 | 2 | 17 | 2 | 15 | 2 | 16 | 2 | 6 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 8
+INPUTP | 1 | 26
+EQ | 10 | 
+   sw/counter<3>.T = sw/counter<3> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<1> & 
+	sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<3>.CLK = clk;	// GCK
+   sw/counter<3>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 13 | sw/counter<4>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 2 | 1
+INPUTS | 14 | sw/counter<4>  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<1>  | sw/state_FSM_FFd1  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 13 | 3 | 8 | 3 | 1 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 16 | 2 | 6 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 8
+INPUTP | 1 | 26
+EQ | 11 | 
+   sw/counter<4>.T = sw/counter<4> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<1> & sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<4>.CLK = clk;	// GCK
+   sw/counter<4>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 12 | sw/counter<5>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 2 | 0
+INPUTS | 14 | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/counter<9>  | sw/state_FSM_FFd3  | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 3 | 1 | 2 | 6 | 3 | 8
+INPUTP | 1 | 26
+EQ | 11 | 
+   sw/counter<5>.T = sw/counter<5> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<1> & sw/state_FSM_FFd1 & 
+	!sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<5>.CLK = clk;	// GCK
+   sw/counter<5>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 11 | sw/counter<6>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 5
+INPUTS | 14 | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/counter<9>  | sw/state_FSM_FFd3  | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 3 | 1 | 2 | 6 | 3 | 8
+INPUTP | 1 | 26
+EQ | 11 | 
+   sw/counter<6>.T = sw/counter<6> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<1> & 
+	sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<6>.CLK = clk;	// GCK
+   sw/counter<6>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 10 | sw/counter<7>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 4
+INPUTS | 14 | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/counter<9>  | sw/state_FSM_FFd3  | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 3 | 1 | 2 | 6 | 3 | 8
+INPUTP | 1 | 26
+EQ | 11 | 
+   sw/counter<7>.T = sw/counter<7> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<1> & 
+	sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<7>.CLK = clk;	// GCK
+   sw/counter<7>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 9 | sw/counter<8>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 3
+INPUTS | 14 | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<1>  | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<8>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 16 | 2 | 6 | 3 | 8 | 3 | 1 | 2 | 9 | 2 | 8
+INPUTP | 1 | 26
+EQ | 12 | 
+   sw/counter<8>.T = sw/counter<8> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<1> & sw/state_FSM_FFd1 & !sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3;
+   sw/counter<8>.CLK = clk;	// GCK
+   sw/counter<8>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 5 | fi_pulse_gen/counter<2>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 9 | 0 | 8 | 0 | 9 | 0 | 4 | 0 | 16 | 0 | 7 | 0 | 10 | 0 | 3 | 0 | 2 | 0 | 6
+INPUTS | 6 | timing_pulse  | enable  | fi_pulse_gen/counter<0>  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<1>  | BUF_fi_pulse_gen/enabled<0>.EXP
+INPUTMC | 4 | 0 | 4 | 0 | 6 | 0 | 11 | 0 | 6
+INPUTP | 2 | 26 | 12
+EXPORTS | 1 | 0 | 4
+IMPORTS | 1 | 0 | 6
+EQ | 13 | 
+   !fi_pulse_gen/counter<2>.T = !fi_pulse_gen/counter<0> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<1> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# timing_pulse & enable
+;Imported pterms FB1_7
+	# !fi_pulse_gen/counter<2> & 
+	!BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<2>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<2>.EXP  =  !fi_pulse_gen/counter<0> & !timing_pulse & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<0> & !enable & 
+	BUF_fi_pulse_gen/enabled<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 3 | fi_pulse_gen/counter<3>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 10 | 0 | 8 | 0 | 9 | 0 | 1 | 0 | 7 | 0 | 10 | 0 | 4 | 0 | 0 | 0 | 16 | 0 | 17 | 0 | 2
+INPUTS | 10 | timing_pulse  | enable  | fi_pulse_gen/counter<0>  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/match_cache<0>  | fi_pulse_gen/match_cache<2>  | fi_pulse_gen/match_cache<1>  | fi_pulse_gen/counter<0>.EXP
+INPUTMC | 8 | 0 | 4 | 0 | 6 | 0 | 11 | 0 | 5 | 0 | 13 | 0 | 15 | 0 | 14 | 0 | 4
+INPUTP | 2 | 26 | 12
+EXPORTS | 1 | 0 | 2
+IMPORTS | 1 | 0 | 4
+EQ | 18 | 
+   !fi_pulse_gen/counter<3>.T = !fi_pulse_gen/counter<0> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# timing_pulse & enable
+;Imported pterms FB1_5
+	# !fi_pulse_gen/counter<1> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<2> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse_gen/counter<3> & 
+	!BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<3>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<3>.EXP  =  fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<2> & !fi_pulse_gen/match_cache<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	!fi_pulse_gen/match_cache<2> & !fi_pulse_gen/match_cache<0>
+	# fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/match_cache<1> & !fi_pulse_gen/match_cache<2> & 
+	!fi_pulse_gen/match_cache<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 7 | fi_pulse_gen/counter<4>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 9 | 0 | 8 | 0 | 9 | 0 | 16 | 0 | 10 | 0 | 1 | 0 | 0 | 0 | 7 | 0 | 17 | 0 | 6
+INPUTS | 15 | fi_pulse_gen/counter<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | enable  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<6>  | fi_pulse_gen/match_cache<7>  | fi_pulse_gen/match_cache<6>  | fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2  | fi_pulse_gen/counter<5>  | fi_pulse_gen/counter<4>  | fi_pulse_gen/counter<7>  | fi_pulse_gen/counter<5>.EXP
+INPUTMC | 14 | 0 | 4 | 0 | 11 | 0 | 5 | 0 | 3 | 0 | 6 | 0 | 12 | 0 | 9 | 3 | 13 | 3 | 14 | 0 | 0 | 0 | 8 | 0 | 7 | 0 | 10 | 0 | 8
+INPUTP | 1 | 12
+EXPORTS | 1 | 0 | 6
+IMPORTS | 1 | 0 | 8
+EQ | 24 | 
+   fi_pulse_gen/counter<4>.T = fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & !enable & 
+	BUF_fi_pulse_gen/enabled<0>
+;Imported pterms FB1_9
+	# !timing_pulse & fi_pulse_gen/counter<4> & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<4> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	!timing_pulse & fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & 
+	BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<4>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<4>.EXP  =  fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	fi_pulse_gen/match_cache<7> & fi_pulse_gen/match_cache<6>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	fi_pulse_gen/match_cache<7> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+	# fi_pulse_gen/enabled<0> & 
+	fi_pulse_gen/match_cache<7> & fi_pulse_gen/match_cache<6> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	!fi_pulse_gen/counter<7>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 10 | fi_pulse_gen/counter<7>
+ATTRIBUTES | 4358912 | 0
+OUTPUTMC | 5 | 0 | 10 | 0 | 6 | 0 | 16 | 0 | 7 | 0 | 9
+INPUTS | 11 | fi_pulse_gen/counter<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<5>  | fi_pulse_gen/counter<6>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<4>  | enable  | BUF_fi_pulse_gen/enabled<0>  | timing_pulse  | fi_pulse_gen/counter<7>
+INPUTMC | 9 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 6 | 0 | 10
+INPUTP | 2 | 12 | 26
+EXPORTS | 1 | 0 | 9
+EQ | 15 | 
+   fi_pulse_gen/counter<7>.T = !timing_pulse & fi_pulse_gen/counter<7> & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<7> & !enable & 
+	!BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<5> & fi_pulse_gen/counter<6> & !timing_pulse & 
+	fi_pulse_gen/counter<2> & fi_pulse_gen/counter<3> & fi_pulse_gen/counter<4> & 
+	BUF_fi_pulse_gen/enabled<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<5> & fi_pulse_gen/counter<6> & fi_pulse_gen/counter<2> & 
+	fi_pulse_gen/counter<3> & fi_pulse_gen/counter<4> & !enable & 
+	BUF_fi_pulse_gen/enabled<0>;
+   fi_pulse_gen/counter<7>.CLK = clk;	// GCK
+    fi_pulse_gen/counter<7>.EXP  =  fi_pulse_gen/counter<6> & !timing_pulse & 
+	!BUF_fi_pulse_gen/enabled<0>
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 13 | fi_pulse_gen/match_cache<7>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 3 | 3 | 13 | 0 | 6 | 0 | 7
+INPUTS | 3 | spi/out_data<7>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<7>
+INPUTMC | 3 | 2 | 2 | 0 | 17 | 3 | 13
+EQ | 5 | 
+   fi_pulse_gen/match_cache<7>.D = fi_pulse_gen/match_cache<7> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<7> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<7>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 16 | sw/counter<1>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 11 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6
+INPUTS | 14 | sw/counter<1>  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<0>  | sw/state_FSM_FFd1  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 16 | 3 | 8 | 3 | 1 | 2 | 17 | 2 | 6 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 8
+INPUTP | 1 | 26
+EQ | 10 | 
+   sw/counter<1>.T = sw/counter<1> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/state_FSM_FFd1 & 
+	!sw/state_FSM_FFd2 & !sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3;
+   sw/counter<1>.CLK = clk;	// GCK
+   sw/counter<1>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 8 | sw/counter<9>
+ATTRIBUTES | 4358976 | 0
+OUTPUTMC | 12 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 2
+INPUTS | 14 | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | sw/state_FSM_FFd3  | sw/counter<9>  | timing_pulse
+INPUTMC | 13 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 6 | 3 | 8 | 3 | 1 | 2 | 8
+INPUTP | 1 | 26
+EQ | 12 | 
+   sw/counter<9>.T = sw/counter<9> & sw/state_FSM_FFd2 & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd3
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/state_FSM_FFd1 & 
+	!sw/state_FSM_FFd2 & !sw/state_FSM_FFd3;
+   sw/counter<9>.CLK = clk;	// GCK
+   sw/counter<9>.CE = !timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 6 | sw/state_FSM_FFd1
+ATTRIBUTES | 8553232 | 0
+OUTPUTMC | 11 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6
+INPUTS | 13 | sw/state_FSM_FFd1  | sw/state_FSM_FFd2  | sw/counter<0>  | sw/counter<2>  | sw/counter<3>  | sw/counter<4>  | sw/counter<5>  | sw/counter<6>  | sw/counter<7>  | sw/counter<8>  | sw/counter<1>  | sw/counter<9>  | timing_pulse
+INPUTMC | 12 | 2 | 6 | 3 | 8 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8
+INPUTP | 1 | 26
+EQ | 7 | 
+   !sw/state_FSM_FFd1.D = !sw/state_FSM_FFd1 & !sw/state_FSM_FFd2
+	# sw/counter<0> & sw/counter<2> & sw/counter<3> & 
+	sw/counter<4> & sw/counter<5> & sw/counter<6> & sw/counter<7> & 
+	sw/counter<8> & sw/counter<1> & sw/counter<9> & 
+	!sw/state_FSM_FFd2;
+   sw/state_FSM_FFd1.CLK = clk;	// GCK
+   sw/state_FSM_FFd1.AR = timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 8 | sw/state_FSM_FFd2
+ATTRIBUTES | 8553232 | 0
+OUTPUTMC | 11 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 2 | 6
+INPUTS | 2 | sw/state_FSM_FFd3  | timing_pulse
+INPUTMC | 1 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   sw/state_FSM_FFd2.D = sw/state_FSM_FFd3;
+   sw/state_FSM_FFd2.CLK = clk;	// GCK
+   sw/state_FSM_FFd2.AR = timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 1 | 2 | spi/mosi_cache
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 17 | 3 | 12
+INPUTS | 3 | mosi  | sck  | ssel
+INPUTP | 3 | 38 | 29 | 31
+EQ | 3 | 
+   spi/mosi_cache.D = mosi;
+   spi/mosi_cache.CLK = sck;
+   spi/mosi_cache.CE = !ssel;
+
+MACROCELL | 1 | 17 | spi/reg<0>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 15 | 3 | 11
+INPUTS | 5 | spi/first<0>  | spi/mosi_cache  | time_stamp<0>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 1 | 2 | 3 | 7
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<0>.D = spi/first<0> & time_stamp<0>
+	# !spi/first<0> & spi/mosi_cache;
+   spi/reg<0>.CLK = !sck;
+   spi/reg<0>.CE = !ssel;
+
+MACROCELL | 1 | 15 | spi/reg<1>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 12 | 3 | 10
+INPUTS | 5 | spi/first<0>  | time_stamp<1>  | spi/reg<0>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 3 | 6 | 1 | 17
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<1>.D = spi/first<0> & time_stamp<1>
+	# !spi/first<0> & spi/reg<0>;
+   spi/reg<1>.CLK = !sck;
+   spi/reg<1>.CE = !ssel;
+
+MACROCELL | 1 | 12 | spi/reg<2>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 11 | 3 | 9
+INPUTS | 5 | spi/first<0>  | time_stamp<2>  | spi/reg<1>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 2 | 1 | 1 | 15
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<2>.D = spi/first<0> & time_stamp<2>
+	# !spi/first<0> & spi/reg<1>;
+   spi/reg<2>.CLK = !sck;
+   spi/reg<2>.CE = !ssel;
+
+MACROCELL | 1 | 11 | spi/reg<3>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 9 | 2 | 5
+INPUTS | 5 | spi/first<0>  | spi/reg<2>  | time_stamp<3>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 1 | 12 | 2 | 0
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<3>.D = spi/first<0> & time_stamp<3>
+	# !spi/first<0> & spi/reg<2>;
+   spi/reg<3>.CLK = !sck;
+   spi/reg<3>.CE = !ssel;
+
+MACROCELL | 1 | 9 | spi/reg<4>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 6 | 2 | 4
+INPUTS | 5 | spi/first<0>  | spi/reg<3>  | time_stamp<4>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 1 | 11 | 3 | 5
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<4>.D = spi/first<0> & time_stamp<4>
+	# !spi/first<0> & spi/reg<3>;
+   spi/reg<4>.CLK = !sck;
+   spi/reg<4>.CE = !ssel;
+
+MACROCELL | 1 | 6 | spi/reg<5>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 1 | 4 | 2 | 3
+INPUTS | 5 | spi/first<0>  | spi/reg<4>  | time_stamp<5>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 1 | 9 | 3 | 4
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<5>.D = spi/first<0> & time_stamp<5>
+	# !spi/first<0> & spi/reg<4>;
+   spi/reg<5>.CLK = !sck;
+   spi/reg<5>.CE = !ssel;
+
+MACROCELL | 1 | 4 | spi/reg<6>
+ATTRIBUTES | 8520544 | 0
+OUTPUTMC | 2 | 2 | 7 | 2 | 2
+INPUTS | 5 | spi/first<0>  | time_stamp<6>  | spi/reg<5>  | sck  | ssel
+INPUTMC | 3 | 1 | 3 | 3 | 3 | 1 | 6
+INPUTP | 2 | 29 | 31
+EQ | 4 | 
+   spi/reg<6>.D = spi/first<0> & time_stamp<6>
+	# !spi/first<0> & spi/reg<5>;
+   spi/reg<6>.CLK = !sck;
+   spi/reg<6>.CE = !ssel;
+
+MACROCELL | 0 | 14 | fi_pulse_gen/match_cache<1>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 3 | 0 | 14 | 0 | 2 | 0 | 3
+INPUTS | 3 | spi/out_data<1>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<1>
+INPUTMC | 3 | 3 | 11 | 0 | 17 | 0 | 14
+EQ | 5 | 
+   fi_pulse_gen/match_cache<1>.D = fi_pulse_gen/match_cache<1> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<1> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<1>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 15 | fi_pulse_gen/match_cache<2>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 4 | 0 | 15 | 0 | 2 | 0 | 3 | 0 | 16
+INPUTS | 6 | spi/out_data<2>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<2>  | timing_pulse  | fi_pulse  | enable
+INPUTMC | 4 | 3 | 10 | 0 | 17 | 0 | 15 | 0 | 16
+INPUTP | 2 | 26 | 12
+EXPORTS | 1 | 0 | 16
+EQ | 6 | 
+   fi_pulse_gen/match_cache<2>.D = fi_pulse_gen/match_cache<2> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<2> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<2>.CLK = clk;	// GCK
+    fi_pulse_gen/match_cache<2>.EXP  =  timing_pulse & !fi_pulse & enable
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 17 | fi_pulse_gen/match_cache<3>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 4 | 3 | 17 | 0 | 0 | 0 | 1 | 0 | 17
+INPUTS | 3 | spi/out_data<3>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<3>
+INPUTMC | 3 | 3 | 9 | 0 | 17 | 3 | 17
+EQ | 5 | 
+   fi_pulse_gen/match_cache<3>.D = fi_pulse_gen/match_cache<3> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<3> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<3>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 16 | fi_pulse_gen/match_cache<4>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 4 | 3 | 16 | 0 | 0 | 0 | 1 | 0 | 17
+INPUTS | 3 | spi/out_data<4>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<4>
+INPUTMC | 3 | 2 | 5 | 0 | 17 | 3 | 16
+EQ | 5 | 
+   fi_pulse_gen/match_cache<4>.D = fi_pulse_gen/match_cache<4> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<4> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<4>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 15 | fi_pulse_gen/match_cache<5>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 4 | 3 | 15 | 0 | 0 | 0 | 1 | 0 | 17
+INPUTS | 3 | spi/out_data<5>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<5>
+INPUTMC | 3 | 2 | 4 | 0 | 17 | 3 | 15
+EQ | 5 | 
+   fi_pulse_gen/match_cache<5>.D = fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<5> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<5>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 14 | fi_pulse_gen/match_cache<6>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 3 | 3 | 14 | 0 | 6 | 0 | 7
+INPUTS | 3 | spi/out_data<6>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<6>
+INPUTMC | 3 | 2 | 3 | 0 | 17 | 3 | 14
+EQ | 5 | 
+   fi_pulse_gen/match_cache<6>.D = fi_pulse_gen/match_cache<6> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<6> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<6>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 13 | fi_pulse_gen/match_cache<0>
+ATTRIBUTES | 8553216 | 0
+OUTPUTMC | 3 | 0 | 13 | 0 | 2 | 0 | 3
+INPUTS | 3 | spi/out_data<0>  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | fi_pulse_gen/match_cache<0>
+INPUTMC | 3 | 3 | 12 | 0 | 17 | 0 | 13
+EQ | 5 | 
+   fi_pulse_gen/match_cache<0>.D = fi_pulse_gen/match_cache<0> & 
+	!fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# spi/out_data<0> & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2;
+   fi_pulse_gen/match_cache<0>.CLK = clk;	// GCK
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 7 | time_stamp<0>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 17
+INPUTS | 3 | sw/counter<2>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 15 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<0>.D = sw/counter<2>;
+   time_stamp<0>.CLK = clk;	// GCK
+   time_stamp<0>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 6 | time_stamp<1>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 15
+INPUTS | 3 | sw/counter<3>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 14 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<1>.D = sw/counter<3>;
+   time_stamp<1>.CLK = clk;	// GCK
+   time_stamp<1>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 1 | time_stamp<2>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 12
+INPUTS | 3 | sw/counter<4>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 13 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<2>.D = sw/counter<4>;
+   time_stamp<2>.CLK = clk;	// GCK
+   time_stamp<2>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 2 | 0 | time_stamp<3>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 11
+INPUTS | 3 | sw/counter<5>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 12 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<3>.D = sw/counter<5>;
+   time_stamp<3>.CLK = clk;	// GCK
+   time_stamp<3>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 5 | time_stamp<4>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 9
+INPUTS | 3 | sw/counter<6>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 11 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<4>.D = sw/counter<6>;
+   time_stamp<4>.CLK = clk;	// GCK
+   time_stamp<4>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 4 | time_stamp<5>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 6
+INPUTS | 3 | sw/counter<7>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 10 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<5>.D = sw/counter<7>;
+   time_stamp<5>.CLK = clk;	// GCK
+   time_stamp<5>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 3 | time_stamp<6>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 1 | 4
+INPUTS | 3 | sw/counter<8>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 9 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<6>.D = sw/counter<8>;
+   time_stamp<6>.CLK = clk;	// GCK
+   time_stamp<6>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 2 | time_stamp<7>
+ATTRIBUTES | 8553280 | 0
+OUTPUTMC | 1 | 2 | 7
+INPUTS | 3 | sw/counter<9>  | timing_pulse  | sw/state_FSM_FFd3
+INPUTMC | 2 | 2 | 8 | 3 | 1
+INPUTP | 1 | 26
+EQ | 3 | 
+   time_stamp<7>.D = sw/counter<9>;
+   time_stamp<7>.CLK = clk;	// GCK
+   time_stamp<7>.CE = !timing_pulse & sw/state_FSM_FFd3;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 0 | 16 | fi_pulse_OBUF
+ATTRIBUTES | 8815362 | 0
+OUTPUTMC | 3 | 0 | 16 | 0 | 15 | 0 | 17
+INPUTS | 15 | fi_pulse  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2  | timing_pulse  | BUF_fi_pulse_gen/enabled<0>  | enable  | fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<0>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/counter<5>  | fi_pulse_gen/counter<6>  | fi_pulse_gen/counter<2>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<4>  | fi_pulse_gen/counter<7>  | fi_pulse_gen/match_cache<2>.EXP
+INPUTMC | 13 | 0 | 16 | 0 | 17 | 0 | 6 | 0 | 12 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 10 | 0 | 15
+INPUTP | 2 | 26 | 12
+EXPORTS | 1 | 0 | 17
+IMPORTS | 1 | 0 | 15
+EQ | 15 | 
+   !fi_pulse.D = !timing_pulse & !BUF_fi_pulse_gen/enabled<0>
+	# !fi_pulse & 
+	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+	# !enable & !BUF_fi_pulse_gen/enabled<0>
+;Imported pterms FB1_16
+	# timing_pulse & !fi_pulse & enable;
+   fi_pulse.CLK = clk;	// GCK
+    fi_pulse_OBUF.EXP  =  fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!timing_pulse & !fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & 
+	!fi_pulse_gen/counter<4> & !fi_pulse_gen/counter<7>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	!fi_pulse_gen/counter<7> & !enable
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 1 | 13 | iac_out_0_OBUF
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<3> = iac_pulse & st/phase<0> & !st/phase<1>;
+
+MACROCELL | 1 | 7 | iac_out_5_OBUF
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<6> = iac_pulse & !st/phase<0> & st/phase<1>;
+
+MACROCELL | 1 | 0 | st/phase<0>
+ATTRIBUTES | 4326176 | 0
+OUTPUTMC | 9 | 1 | 14 | 1 | 5 | 1 | 13 | 1 | 7 | 1 | 1 | 1 | 8 | 1 | 16 | 1 | 10 | 0 | 2
+INPUTS | 1 | iac_pulse
+INPUTP | 1 | 46
+EQ | 2 | 
+   st/phase<0>.T = Vcc;
+   st/phase<0>.CLK = !iac_pulse;
+
+MACROCELL | 1 | 1 | st/phase<1>
+ATTRIBUTES | 4326176 | 0
+OUTPUTMC | 8 | 1 | 14 | 1 | 5 | 1 | 13 | 1 | 7 | 1 | 8 | 1 | 16 | 1 | 10 | 0 | 2
+INPUTS | 3 | st/phase<0>  | iac_clockwise  | iac_pulse
+INPUTMC | 1 | 1 | 0
+INPUTP | 2 | 49 | 46
+EQ | 3 | 
+   !st/phase<1>.T = st/phase<0> & !iac_clockwise
+	# !st/phase<0> & iac_clockwise;
+   st/phase<1>.CLK = !iac_pulse;
+
+MACROCELL | 3 | 1 | sw/state_FSM_FFd3
+ATTRIBUTES | 8553344 | 0
+OUTPUTMC | 19 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 2 | 16 | 2 | 8 | 3 | 8 | 3 | 7 | 3 | 6 | 2 | 1 | 2 | 0 | 3 | 5 | 3 | 4 | 3 | 3 | 3 | 2
+INPUTS | 1 | timing_pulse
+INPUTP | 1 | 26
+EQ | 3 | 
+   sw/state_FSM_FFd3.D = Gnd;
+   sw/state_FSM_FFd3.CLK = clk;	// GCK
+   sw/state_FSM_FFd3.AP = timing_pulse;
+GLOBALS | 1 | 2 | clk
+
+MACROCELL | 3 | 12 | spi/out_data<0>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 0 | 13
+INPUTS | 2 | spi/mosi_cache  | ssel
+INPUTMC | 1 | 1 | 2
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<0>.D = spi/mosi_cache;
+   spi/out_data<0>.CLK = ssel;
+
+MACROCELL | 3 | 11 | spi/out_data<1>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 0 | 14
+INPUTS | 2 | spi/reg<0>  | ssel
+INPUTMC | 1 | 1 | 17
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<1>.D = spi/reg<0>;
+   spi/out_data<1>.CLK = ssel;
+
+MACROCELL | 3 | 10 | spi/out_data<2>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 0 | 15
+INPUTS | 2 | spi/reg<1>  | ssel
+INPUTMC | 1 | 1 | 15
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<2>.D = spi/reg<1>;
+   spi/out_data<2>.CLK = ssel;
+
+MACROCELL | 3 | 9 | spi/out_data<3>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 3 | 17
+INPUTS | 2 | spi/reg<2>  | ssel
+INPUTMC | 1 | 1 | 12
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<3>.D = spi/reg<2>;
+   spi/out_data<3>.CLK = ssel;
+
+MACROCELL | 2 | 5 | spi/out_data<4>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 3 | 16
+INPUTS | 2 | spi/reg<3>  | ssel
+INPUTMC | 1 | 1 | 11
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<4>.D = spi/reg<3>;
+   spi/out_data<4>.CLK = ssel;
+
+MACROCELL | 2 | 4 | spi/out_data<5>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 3 | 15
+INPUTS | 2 | spi/reg<4>  | ssel
+INPUTMC | 1 | 1 | 9
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<5>.D = spi/reg<4>;
+   spi/out_data<5>.CLK = ssel;
+
+MACROCELL | 2 | 3 | spi/out_data<6>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 3 | 14
+INPUTS | 2 | spi/reg<5>  | ssel
+INPUTMC | 1 | 1 | 6
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<6>.D = spi/reg<5>;
+   spi/out_data<6>.CLK = ssel;
+
+MACROCELL | 2 | 2 | spi/out_data<7>
+ATTRIBUTES | 8520480 | 0
+OUTPUTMC | 1 | 3 | 13
+INPUTS | 2 | spi/reg<6>  | ssel
+INPUTMC | 1 | 1 | 4
+INPUTP | 1 | 31
+EQ | 2 | 
+   spi/out_data<7>.D = spi/reg<6>;
+   spi/out_data<7>.CLK = ssel;
+
+MACROCELL | 0 | 1 | iac_out_0_OBUF$BUF0
+ATTRIBUTES | 264962 | 0
+OUTPUTMC | 1 | 0 | 0
+INPUTS | 7 | fi_pulse_gen/counter<3>  | fi_pulse_gen/counter<4>  | fi_pulse_gen/match_cache<3>  | fi_pulse_gen/match_cache<5>  | fi_pulse_gen/match_cache<4>  | fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2  | fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2.EXP
+INPUTMC | 7 | 0 | 3 | 0 | 7 | 3 | 17 | 3 | 15 | 3 | 16 | 0 | 2 | 0 | 2
+EXPORTS | 1 | 0 | 0
+IMPORTS | 1 | 0 | 2
+EQ | 16 | 
+   iac_out<0> = ;Imported pterms FB1_3
+	  iac_pulse & st/phase<0> & !st/phase<1>;
+    iac_out_0_OBUF$BUF0.EXP  =  !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4> & 
+	fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<4> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# fi_pulse_gen/match_cache<3> & 
+	fi_pulse_gen/match_cache<4> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+
+MACROCELL | 1 | 16 | iac_out_1_OBUF$BUF0
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<1> = iac_pulse & st/phase<0> & st/phase<1>;
+
+MACROCELL | 1 | 10 | iac_out_4_OBUF$BUF0
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<4> = iac_pulse & !st/phase<0> & !st/phase<1>;
+
+MACROCELL | 1 | 8 | iac_out_5_OBUF$BUF0
+ATTRIBUTES | 264962 | 0
+INPUTS | 3 | iac_pulse  | st/phase<0>  | st/phase<1>
+INPUTMC | 2 | 1 | 0 | 1 | 1
+INPUTP | 1 | 46
+EQ | 1 | 
+   iac_out<5> = iac_pulse & !st/phase<0> & st/phase<1>;
+
+MACROCELL | 0 | 6 | BUF_fi_pulse_gen/enabled<0>
+ATTRIBUTES | 133888 | 0
+OUTPUTMC | 11 | 0 | 12 | 0 | 16 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 10 | 0 | 4 | 0 | 6
+INPUTS | 9 | fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<7>  | fi_pulse_gen/match_cache<7>  | fi_pulse_gen/counter<6>  | fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2  | fi_pulse_gen/match_cache<6>  | fi_pulse_gen/counter<2>  | BUF_fi_pulse_gen/enabled<0>  | fi_pulse_gen/counter<4>.EXP
+INPUTMC | 9 | 0 | 12 | 0 | 10 | 3 | 13 | 0 | 9 | 0 | 0 | 3 | 14 | 0 | 5 | 0 | 6 | 0 | 7
+EXPORTS | 1 | 0 | 5
+IMPORTS | 1 | 0 | 7
+EQ | 25 | 
+   BUF_fi_pulse_gen/enabled<0> = fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<7> & 
+	fi_pulse_gen/match_cache<7>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<7> & fi_pulse_gen/match_cache<6>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<7> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<7> & 
+	fi_pulse_gen/match_cache<6> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+;Imported pterms FB1_8
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	fi_pulse_gen/match_cache<7> & fi_pulse_gen/match_cache<6>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<6> & 
+	fi_pulse_gen/match_cache<7> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+	# fi_pulse_gen/enabled<0> & 
+	fi_pulse_gen/match_cache<7> & fi_pulse_gen/match_cache<6> & 
+	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	!fi_pulse_gen/counter<7>;
+    BUF_fi_pulse_gen/enabled<0>.EXP  =  !fi_pulse_gen/counter<2> & 
+	!BUF_fi_pulse_gen/enabled<0>
+
+MACROCELL | 0 | 0 | fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2
+ATTRIBUTES | 133888 | 0
+OUTPUTMC | 2 | 0 | 6 | 0 | 7
+INPUTS | 9 | fi_pulse_gen/counter<5>  | fi_pulse_gen/match_cache<5>  | fi_pulse_gen/counter<4>  | fi_pulse_gen/match_cache<4>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2  | fi_pulse_gen/match_cache<3>  | iac_out_0_OBUF$BUF0.EXP  | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2.EXP
+INPUTMC | 9 | 0 | 8 | 3 | 15 | 0 | 7 | 3 | 16 | 0 | 3 | 0 | 2 | 3 | 17 | 0 | 1 | 0 | 17
+IMPORTS | 2 | 0 | 1 | 0 | 17
+EQ | 41 | 
+   fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2 = !fi_pulse_gen/counter<5> & 
+	fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<4>
+	# !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<4> & fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	!fi_pulse_gen/counter<4> & fi_pulse_gen/match_cache<3>
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	!fi_pulse_gen/counter<4> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+;Imported pterms FB1_2
+	# !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4> & 
+	fi_pulse_gen/match_cache<5>
+	# !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<4> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# fi_pulse_gen/match_cache<3> & 
+	fi_pulse_gen/match_cache<4> & fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+;Imported pterms FB1_18
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4>
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<4> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<5> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2;
+
+MACROCELL | 0 | 2 | fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+ATTRIBUTES | 133888 | 0
+OUTPUTMC | 3 | 0 | 0 | 0 | 1 | 0 | 17
+INPUTS | 10 | fi_pulse_gen/counter<2>  | fi_pulse_gen/match_cache<2>  | fi_pulse_gen/counter<1>  | fi_pulse_gen/match_cache<1>  | fi_pulse_gen/counter<0>  | fi_pulse_gen/match_cache<0>  | iac_pulse  | st/phase<0>  | st/phase<1>  | fi_pulse_gen/counter<3>.EXP
+INPUTMC | 9 | 0 | 5 | 0 | 15 | 0 | 11 | 0 | 14 | 0 | 4 | 0 | 13 | 1 | 0 | 1 | 1 | 0 | 3
+INPUTP | 1 | 46
+EXPORTS | 1 | 0 | 1
+IMPORTS | 1 | 0 | 3
+EQ | 17 | 
+   fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2 = fi_pulse_gen/counter<2> & 
+	!fi_pulse_gen/match_cache<2>
+	# fi_pulse_gen/counter<1> & fi_pulse_gen/counter<2> & 
+	!fi_pulse_gen/match_cache<1>
+	# fi_pulse_gen/counter<1> & 
+	!fi_pulse_gen/match_cache<1> & !fi_pulse_gen/match_cache<2>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<2> & 
+	!fi_pulse_gen/match_cache<1> & !fi_pulse_gen/match_cache<0>
+;Imported pterms FB1_4
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	fi_pulse_gen/counter<2> & !fi_pulse_gen/match_cache<0>
+	# fi_pulse_gen/counter<0> & fi_pulse_gen/counter<1> & 
+	!fi_pulse_gen/match_cache<2> & !fi_pulse_gen/match_cache<0>
+	# fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/match_cache<1> & !fi_pulse_gen/match_cache<2> & 
+	!fi_pulse_gen/match_cache<0>;
+    fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2.EXP  =  iac_pulse & st/phase<0> & !st/phase<1>
+
+MACROCELL | 0 | 17 | fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+ATTRIBUTES | 133888 | 0
+OUTPUTMC | 11 | 0 | 4 | 3 | 13 | 0 | 14 | 0 | 15 | 3 | 17 | 3 | 16 | 3 | 15 | 3 | 14 | 0 | 13 | 0 | 16 | 0 | 0
+INPUTS | 8 | fi_pulse_gen/counter<5>  | fi_pulse_gen/counter<3>  | fi_pulse_gen/match_cache<3>  | fi_pulse_gen/match_cache<4>  | fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2  | fi_pulse_gen/counter<4>  | fi_pulse_gen/match_cache<5>  | fi_pulse_OBUF.EXP
+INPUTMC | 8 | 0 | 8 | 0 | 3 | 3 | 17 | 3 | 16 | 0 | 2 | 0 | 7 | 3 | 15 | 0 | 16
+EXPORTS | 1 | 0 | 0
+IMPORTS | 1 | 0 | 16
+EQ | 23 | 
+   fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 = ;Imported pterms FB1_17
+	  fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!timing_pulse & !fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & 
+	!fi_pulse_gen/counter<4> & !fi_pulse_gen/counter<7>
+	# fi_pulse_gen/enabled<0> & !fi_pulse_gen/counter<0> & 
+	!fi_pulse_gen/counter<1> & !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<6> & 
+	!fi_pulse_gen/counter<2> & !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	!fi_pulse_gen/counter<7> & !enable;
+    fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2.EXP  =  !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4>
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<3> & 
+	fi_pulse_gen/match_cache<4> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<5> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<3> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<5> & 
+	fi_pulse_gen/match_cache<3> & fi_pulse_gen/match_cache<4> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+	# !fi_pulse_gen/counter<3> & !fi_pulse_gen/counter<4> & 
+	fi_pulse_gen/match_cache<5> & 
+	!fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2
+
+PIN | ssel | 64 | 0 | N/A | 31 | 18 | 2 | 7 | 1 | 3 | 1 | 2 | 1 | 17 | 1 | 15 | 1 | 12 | 1 | 11 | 1 | 9 | 1 | 6 | 1 | 4 | 3 | 12 | 3 | 11 | 3 | 10 | 3 | 9 | 2 | 5 | 2 | 4 | 2 | 3 | 2 | 2
+PIN | sck | 64 | 0 | N/A | 29 | 10 | 2 | 7 | 1 | 3 | 1 | 2 | 1 | 17 | 1 | 15 | 1 | 12 | 1 | 11 | 1 | 9 | 1 | 6 | 1 | 4
+PIN | iac_pulse | 64 | 0 | N/A | 46 | 10 | 1 | 14 | 1 | 5 | 1 | 13 | 1 | 7 | 1 | 0 | 1 | 1 | 1 | 8 | 1 | 16 | 1 | 10 | 0 | 2
+PIN | clk | 4096 | 0 | N/A | 20 | 39 | 0 | 12 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 10 | 3 | 13 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 8 | 0 | 14 | 0 | 15 | 3 | 17 | 3 | 16 | 3 | 15 | 3 | 14 | 0 | 13 | 3 | 7 | 3 | 6 | 2 | 1 | 2 | 0 | 3 | 5 | 3 | 4 | 3 | 3 | 3 | 2 | 0 | 16 | 3 | 1
+PIN | timing_pulse | 64 | 0 | N/A | 26 | 31 | 0 | 12 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 2 | 17 | 2 | 15 | 2 | 14 | 2 | 13 | 2 | 12 | 2 | 11 | 2 | 10 | 2 | 9 | 0 | 5 | 0 | 3 | 0 | 15 | 0 | 10 | 2 | 16 | 2 | 8 | 2 | 6 | 3 | 8 | 3 | 7 | 3 | 6 | 2 | 1 | 2 | 0 | 3 | 5 | 3 | 4 | 3 | 3 | 3 | 2 | 0 | 16 | 3 | 1
+PIN | enable | 64 | 0 | N/A | 12 | 11 | 0 | 12 | 0 | 4 | 0 | 11 | 0 | 8 | 0 | 9 | 0 | 5 | 0 | 3 | 0 | 7 | 0 | 10 | 0 | 16 | 0 | 15
+PIN | mosi | 64 | 0 | N/A | 38 | 1 | 1 | 2
+PIN | iac_clockwise | 64 | 0 | N/A | 49 | 1 | 1 | 1
+PIN | miso | 536871040 | 0 | N/A | 33
+PIN | iac_out<2> | 536871040 | 0 | N/A | 9
+PIN | iac_out<7> | 536871040 | 0 | N/A | 89
+PIN | fi_pulse | 536871040 | 0 | N/A | 27
+PIN | iac_out<3> | 536871040 | 0 | N/A | 7
+PIN | iac_out<6> | 536871040 | 0 | N/A | 90
+PIN | iac_out<0> | 536871040 | 0 | N/A | 11
+PIN | iac_out<1> | 536871040 | 0 | N/A | 10
+PIN | iac_out<4> | 536871040 | 0 | N/A | 3
+PIN | iac_out<5> | 536871040 | 0 | N/A | 92

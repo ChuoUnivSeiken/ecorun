@@ -22,10 +22,10 @@ uint32_t adler32(const_buffer data, size_t len)
 			a += *data++;
 			b += a;
 		} while (--tlen);
-
-		a %= MOD_ADLER;
-		b %= MOD_ADLER;
 	}
+
+	a %= MOD_ADLER;
+	b %= MOD_ADLER;
 
 	return (b << 16) | a;
 }

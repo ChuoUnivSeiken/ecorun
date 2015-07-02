@@ -1,9 +1,8 @@
 /// <reference path="typings/tsd.d.ts" />
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var d3 = require("d3");
 var rect = (function () {
@@ -71,7 +70,9 @@ var ChartElement = (function () {
         }
         else {
             this.domel = document.createElement('div');
-            this.el = d3.select(this.domel).attr('width', 300).attr('height', 300);
+            this.el = d3.select(this.domel)
+                .attr('width', 300)
+                .attr('height', 300);
         }
     }
     Object.defineProperty(ChartElement.prototype, "size", {
@@ -102,7 +103,10 @@ var ChartSVG = (function (_super) {
     __extends(ChartSVG, _super);
     function ChartSVG(el, options) {
         _super.call(this, el, options);
-        this.svg = this.el.append("svg").attr("width", this.size.width).attr("height", this.size.height);
+        this.svg = this.el
+            .append("svg")
+            .attr("width", this.size.width)
+            .attr("height", this.size.height);
     }
     return ChartSVG;
 })(ChartElement);
@@ -116,19 +120,18 @@ var ChartCanvas = (function (_super) {
         this.canvas.style({
             top: this.margins.top + "px",
             left: this.margins.left + "px",
-        }).attr("width", this.clientSize.width).attr("height", this.clientSize.height);
+        }).attr("width", this.clientSize.width)
+            .attr("height", this.clientSize.height);
         this.el.node().appendChild(this.canvas.node());
         var c = this.canvas.node();
         this.context = c.getContext("2d");
-        var queue = null, wait = 300; // 0.3秒後に実行の場合 
+        var queue = null, wait = 300;
         window.addEventListener('resize', function () {
-            // イベント発生の都度、キューをキャンセル 
             clearTimeout(queue);
-            // waitで指定したミリ秒後に所定の処理を実行 
-            // 経過前に再度イベントが発生した場合
-            // キューをキャンセルして再カウント 
             queue = setTimeout(function () {
-                _this.canvas.attr("width", _this.clientSize.width).attr("height", _this.clientSize.height);
+                _this.canvas
+                    .attr("width", _this.clientSize.width)
+                    .attr("height", _this.clientSize.height);
             }, wait);
         }, false);
     }
@@ -142,7 +145,10 @@ var Chart = (function (_super) {
         _super.call(this, el, options);
         this.values = [];
         this._querySize = 250;
-        this.svg = this.el.insert('svg', ':first-child').attr('width', this.size.width).attr('height', this.size.height).style('z-index', '1000');
+        this.svg = this.el.insert('svg', ':first-child')
+            .attr('width', this.size.width)
+            .attr('height', this.size.height)
+            .style('z-index', '1000');
         if (this.el.style('position') != 'absolute' && this.el.style('position') != 'relative') {
             this.el.style('position', 'relative');
         }
@@ -165,7 +171,9 @@ var Chart = (function (_super) {
     Object.defineProperty(Chart.prototype, "xScale", {
         get: function () {
             var now = new Date();
-            return d3.scale.linear().domain([now.getTime() - 1000 * 25, now.getTime() - 1000]).range([0, this.clientSize.width]);
+            return d3.scale.linear()
+                .domain([now.getTime() - 1000 * 25, now.getTime() - 1000])
+                .range([0, this.clientSize.width]);
         },
         enumerable: true,
         configurable: true
@@ -182,32 +190,47 @@ var Chart = (function (_super) {
                 }
             }
             max = 100;
-            return d3.scale.linear().domain([0, max]).range([this.clientSize.height, 0]);
+            return d3.scale.linear()
+                .domain([0, max])
+                .range([this.clientSize.height, 0]);
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Chart.prototype, "bottomAxis", {
         get: function () {
-            return d3.svg.axis().scale(this.xScale).orient("bottom").tickFormat(function (value) {
+            return d3.svg.axis()
+                .scale(this.xScale)
+                .orient("bottom")
+                .tickFormat(function (value) {
                 var date = new Date(value);
                 return date.toLocaleTimeString();
-            }).ticks(5);
+            })
+                .ticks(5);
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Chart.prototype, "leftAxis", {
         get: function () {
-            return d3.svg.axis().scale(this.yScale).orient("left").ticks(5);
+            return d3.svg.axis()
+                .scale(this.yScale)
+                .orient("left")
+                .ticks(5);
         },
         enumerable: true,
         configurable: true
     });
     Chart.prototype.buildAxes = function () {
         this.svg.selectAll(".axis").remove();
-        this.svgXAxis = this.svg.append("g").attr("transform", "translate(" + this.clientRect.left + "," + this.clientRect.bottom + ")").attr("class", "axis").call(this.bottomAxis);
-        this.svgYAxis = this.svg.append("g").attr("transform", "translate(" + this.clientRect.left + "," + this.clientRect.top + ")").attr("class", "axis").call(this.leftAxis);
+        this.svgXAxis = this.svg.append("g")
+            .attr("transform", "translate(" + this.clientRect.left + "," + this.clientRect.bottom + ")")
+            .attr("class", "axis")
+            .call(this.bottomAxis);
+        this.svgYAxis = this.svg.append("g")
+            .attr("transform", "translate(" + this.clientRect.left + "," + this.clientRect.top + ")")
+            .attr("class", "axis")
+            .call(this.leftAxis);
     };
     Chart.prototype.push = function (y) {
         var now = new Date();
@@ -219,7 +242,9 @@ var Chart = (function (_super) {
     Chart.prototype.draw = function () {
         if (this.values.length > 0) {
             var now = new Date();
-            this.xScale = d3.scale.linear().domain([now.getTime() - 1000 * 25, now.getTime() - 1000]).range([0, this.clientSize.width]);
+            this.xScale = d3.scale.linear()
+                .domain([now.getTime() - 1000 * 25, now.getTime() - 1000])
+                .range([0, this.clientSize.width]);
             this.context.clearRect(0, 0, this.size.width, this.size.height);
             this.context.beginPath();
             this.context.strokeStyle = '#1f77b4';
@@ -238,4 +263,3 @@ var Chart = (function (_super) {
     return Chart;
 })(ChartCanvas);
 exports.Chart = Chart;
-//# sourceMappingURL=car_charts.js.map

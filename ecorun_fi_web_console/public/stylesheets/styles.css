@@ -4,13 +4,18 @@ html {
     width: 100%;
     height: 100%;
 }
-
 body {
-    position:absolute;
+    position: absolute;
     width: 100%;
     height: 100%;
 }
+.panel-heading {
+    line-height: 34px;
+}
 
+#basic_inject_time_matrix {
+    min-width: 1200px;
+}
 .tooltip-inner {
     max-height: 80px;
     /* If max-width does not work, try using width instead */
@@ -25,18 +30,19 @@ body {
     vertical-align: middle;
 }
 
-.axis path,
-.axis line {
-   fill: none;
-   stroke: black;
-   shape-rendering: crispEdges;
+.panel {
+    min-width: 1200px;
 }
 
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
 .axis text {
-   font-family: 'Arial Unicode MS';
-   font-size: 16px;
+    font-family: 'Arial Unicode MS';
+    font-size: 16px;
 }
-
 .connection-section {
     height: 100%;
     padding-top: 150px;
@@ -44,7 +50,6 @@ body {
     text-align: center;
     background: #fff;
 }
-
 .basicinfo-section {
     height: 100%;
     padding-top: 150px;
@@ -52,7 +57,6 @@ body {
     text-align: center;
     background: #fff;
 }
-
 .engineinfo-section {
     height: 100%;
     padding-top: 150px;
@@ -60,7 +64,6 @@ body {
     text-align: center;
     background: #fff;
 }
-
 .basicsettings-section {
     height: 100%;
     padding-top: 150px;
@@ -68,7 +71,6 @@ body {
     text-align: center;
     background: #fff;
 }
-
 .enginesettings-section {
     height: 100%;
     padding-top: 150px;
