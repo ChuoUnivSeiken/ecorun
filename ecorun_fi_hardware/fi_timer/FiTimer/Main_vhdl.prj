@@ -1,5 +1,0 @@
-vhdl work "C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer\Stopwatch.vhd"
-vhdl work "C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer\Stepper.vhd"
-vhdl work "C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer\SPISlave.vhd"
-vhdl work "C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer\PulseTimer.vhd"
-vhdl work "C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer\Main.vhd"
