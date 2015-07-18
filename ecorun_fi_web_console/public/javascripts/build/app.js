@@ -1,106 +1,162 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
 /// <reference path="./typings/tsd.d.ts"/>
-var $ = require('jquery');
-global.jQuery = require("jquery");
-global.$ = $;
+require('bootstrap');
 var car_visualize = require("./car_visualize");
 var car_access = require("./car_access");
 var _ = require('lodash');
-(function () {
-    var bootstrap = require('bootstrap');
-    $(window).ready(function () {
-        car_access.initialize();
-        car_visualize.initialize();
+$(document).ready(function () {
+    car_access.initialize();
+    car_visualize.initialize();
+    var rev = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000];
+    var th = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000];
+    var num_row = 16;
+    var num_col = 16;
+    for (var i = 0; i < num_row; i++) {
+        var id_row = 'basic_inject_time_matrix_' + i.toString();
+        $('#basic_inject_time_matrix').append('<div width="900px" class="btn-group-lg"" id=' + id_row + '>' + '</div>');
+        for (var j = 0; j < num_col; j++) {
+            var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
+            var clazz = 'btn btn-default';
+            var elem = $('#' + id_row);
+            elem.append('<button type="button" style="margin: 2px;" class="' + clazz + '" id=' + id_cell + ' data-target-cell=' + id_cell + ' data-popover=popover data-tooltip="tooltip" data-toggle="modal" data-target="#time-setting-modal" data-placement="left" title="噴射時間設定">' + '2.5' + '</button>');
+            var cell = $('#' + id_cell);
+            var rev_beg = rev[j].toString();
+            var rev_end = j != num_col - 1 ? rev[j + 1].toString() : " ";
+            cell.data('rev', rev_beg + " - " + rev_end);
+            var th_beg = rev[j].toString();
+            var th_end = j != num_col - 1 ? rev[j + 1].toString() : " ";
+            cell.data('th', th_beg + " - " + th_end);
+        }
+    }
+    var model = $('#time-setting-modal');
+    var time_view = $('#time-setting-modal').find('#time-view');
+    var time_input = $('#time-setting-modal').find('#time-input');
+    model.on('shown.bs.modal', function (e) {
+        var target_cell = $(e.relatedTarget).attr('id');
+        var time = parseFloat($(e.relatedTarget).html());
+        $(e.currentTarget).data('target-cell', target_cell);
+        time_view.html(time.toFixed(1) + "ms");
+        time_input.val(time.toString());
+    });
+    time_input.on('input', function (e) {
+        var time = parseFloat($(e.currentTarget).val());
+        time_view.html(time.toFixed(1) + 'ms');
+    });
+    model.on('hidden.bs.modal', function (e) {
+        var target_cell = $(e.currentTarget).data('target-cell');
+        var time = parseFloat(time_input.val());
+        $('#' + target_cell).html(time.toFixed(1));
+    });
+    $("#update_basic_inject_time").click(function () {
+        car_access.AppConnection.get_instance().request_data('basic_inject_time_map');
+    });
+    $("#save_basic_inject_time").click(function () {
+        var array = new Uint8Array(256);
         var num_row = 16;
         var num_col = 16;
         for (var i = 0; i < num_row; i++) {
-            var id_row = 'basic_inject_time_matrix_' + i.toString();
-            $('#basic_inject_time_matrix').append('<div width="900px" class="btn-group-lg"" id=' + id_row + '>' + '</div>');
             for (var j = 0; j < num_col; j++) {
                 var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                var clazz = 'btn btn-default';
-                var elem = $('#' + id_row);
-                elem.append('<button type="button" style="margin: 2px;" class="' + clazz + '" id=' + id_cell + ' data-target-cell=' + id_cell + ' data-popover=popover data-tooltip="tooltip" data-toggle="modal" data-target="#time-setting-modal" data-placement="left" title="Hooray!">' + '0.0' + '</button>');
+                array[i * num_col + j] = parseInt($('#' + id_cell).html());
             }
         }
-        var model = $('#time-setting-modal');
-        model.on('show.bs.modal', function (e) {
-            var target_cell = $(e.relatedTarget).attr('id');
-            var time = parseFloat($(e.relatedTarget).html());
-            $(e.currentTarget).data('target-cell', target_cell);
-            $('#time-view').html(time.toFixed(1).toString() + "ms");
-            $('#time-input').val(time);
-        });
-        model.on('hidden.bs.modal', function (e) {
-            var target_cell = $(e.currentTarget).data('target-cell');
-            var time = parseFloat($('#time-input').val());
-            $('#' + target_cell).html(time.toFixed(1));
-        });
-        $('#time-input').on('input', function (e) {
-            var time = parseFloat($(e.currentTarget).val());
-            $('#time-view').html(time.toFixed(1) + 'ms');
-        });
-        $("#update_basic_inject_time").click(function () {
-            car_access.AppConnection.get_instance().request_data('basic_inject_time_map');
-        });
-        $("#apply_basic_inject_time").click(function () {
-            var array = new Uint8Array(256);
-            var num_row = 16;
-            var num_col = 16;
-            for (var i = 0; i < num_row; i++) {
-                for (var j = 0; j < num_col; j++) {
-                    var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                    array[i * num_col + j] = parseInt($('#' + id_cell).html());
-                }
+        var b64encoded = btoa(_.reduce(array, function (previousValue, currentValue, currentIndex, array) {
+            return previousValue + String.fromCharCode(currentValue);
+        }, ""));
+        car_access.AppConnection.get_instance().save_data('basic_inject_time_map', b64encoded);
+    });
+    $("#apply_basic_inject_time").click(function () {
+        var array = new Uint8Array(256);
+        var num_row = 16;
+        var num_col = 16;
+        for (var i = 0; i < num_row; i++) {
+            for (var j = 0; j < num_col; j++) {
+                var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
+                array[i * num_col + j] = parseInt($('#' + id_cell).html());
             }
-            var b64encoded = btoa(_.reduce(array, function (previousValue, currentValue, currentIndex, array) {
-                return previousValue + String.fromCharCode(currentValue);
-            }, ""));
-            car_access.AppConnection.get_instance().send_data('basic_inject_time_map', b64encoded, 256);
-        });
-        $("[data-popover=popover]").popover({
-            trigger: 'manual',
-            animate: false,
-            html: true,
-            placement: 'top',
-            template: '<div class="popover" onmouseover="$(this).mouseleave(function() {$(this).hide();});" style="display:block;"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
-        }).mouseenter(function (e) {
-            $(this).popover('show');
-        }).mouseleave(function (e) {
-            $(this).popover('hide');
-        });
-        $("#navbar ul li a[href^='#']").on('click', function (e) {
-            e.preventDefault();
-            var hash = this.hash;
-            $('html, body').animate({
-                scrollTop: $(hash).offset().top
-            }, 300, function () {
-                window.location.hash = hash;
-            });
+        }
+        var b64encoded = btoa(_.reduce(array, function (previousValue, currentValue, currentIndex, array) {
+            return previousValue + String.fromCharCode(currentValue);
+        }, ""));
+        car_access.AppConnection.get_instance().send_data('basic_inject_time_map', b64encoded, 256);
+    });
+    $("#navbar ul li a[href^='#']").on('click', function (e) {
+        e.preventDefault();
+        var hash = this.hash;
+        $('html, body').animate({
+            scrollTop: $(hash).offset().top
+        }, 300, function () {
+            window.location.hash = hash;
         });
     });
-})();
+    var popover_template = [
+        '<div class="popover" onmouseover="$(this).mouseleave(function() {$(this).hide();});" style="display:block;">',
+        '<div class="arrow"></div>',
+        '<div class="popover-inner">',
+        '<h3 class="popover-title"></h3>',
+        '<div class="popover-content"><p></p></div>',
+        '</div>',
+        '</div>'
+    ];
+    $("[data-popover=popover]").popover({
+        trigger: 'manual',
+        animate: false,
+        html: true,
+        placement: 'left',
+        template: popover_template.join("")
+    }).mouseenter(function (e) {
+        var rev_range = $(this).data('rev');
+        var th_range = $(this).data('rev');
+        var val = $(this).html();
+        var content_html = [
+            '<table class="table">',
+            '<tr>',
+            '<th>スロットル</th>',
+            '<td>' + th_range + '</td>',
+            '</tr>',
+            '<tr>',
+            '<th>回転数</th>',
+            '<td>' + rev_range + '</td>',
+            '</tr>',
+            '<tr>',
+            '<th>値</th>',
+            '<td>' + val + '</td>',
+            '</tr>',
+            '</table>'
+        ];
+        $(this).attr('data-content', content_html.join(""));
+        $(this).popover('show');
+    }).mouseleave(function (e) {
+        $(this).popover('hide');
+    });
+});
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./car_access":69,"./car_visualize":71,"bootstrap":2,"jquery":17,"lodash":18}],2:[function(require,module,exports){
-// This file is autogenerated via the `commonjs` Grunt task. You can require() this file in a CommonJS environment.
-require('../../js/transition.js')
-require('../../js/alert.js')
-require('../../js/button.js')
-require('../../js/carousel.js')
-require('../../js/collapse.js')
-require('../../js/dropdown.js')
-require('../../js/modal.js')
-require('../../js/tooltip.js')
-require('../../js/popover.js')
-require('../../js/scrollspy.js')
-require('../../js/tab.js')
-require('../../js/affix.js')
-},{"../../js/affix.js":3,"../../js/alert.js":4,"../../js/button.js":5,"../../js/carousel.js":6,"../../js/collapse.js":7,"../../js/dropdown.js":8,"../../js/modal.js":9,"../../js/popover.js":10,"../../js/scrollspy.js":11,"../../js/tab.js":12,"../../js/tooltip.js":13,"../../js/transition.js":14}],3:[function(require,module,exports){
+},{"./car_access":57,"./car_visualize":59,"bootstrap":2,"lodash":6}],2:[function(require,module,exports){
+(function (global){
+
+; $ = global.$ = require("C:\\git\\ecorun\\ecorun_fi_web_console\\node_modules\\jquery\\dist\\jquery.js");
+; var __browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
+/*!
+ * Bootstrap v3.3.4 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
+
++function ($) {
+  'use strict';
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher')
+  }
+}(jQuery);
+
 /* ========================================================================
- * Bootstrap: affix.js v3.3.4
- * http://getbootstrap.com/javascript/#affix
+ * Bootstrap: transition.js v3.3.4
+ * http://getbootstrap.com/javascript/#transitions
  * ========================================================================
  * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
@@ -110,158 +166,54 @@ require('../../js/affix.js')
 +function ($) {
   'use strict';
 
-  // AFFIX CLASS DEFINITION
-  // ======================
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
 
-  var Affix = function (element, options) {
-    this.options = $.extend({}, Affix.DEFAULTS, options)
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
 
-    this.$target = $(this.options.target)
-      .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
-      .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
-
-    this.$element     = $(element)
-    this.affixed      = null
-    this.unpin        = null
-    this.pinnedOffset = null
-
-    this.checkPosition()
-  }
-
-  Affix.VERSION  = '3.3.4'
-
-  Affix.RESET    = 'affix affix-top affix-bottom'
-
-  Affix.DEFAULTS = {
-    offset: 0,
-    target: window
-  }
-
-  Affix.prototype.getState = function (scrollHeight, height, offsetTop, offsetBottom) {
-    var scrollTop    = this.$target.scrollTop()
-    var position     = this.$element.offset()
-    var targetHeight = this.$target.height()
-
-    if (offsetTop != null && this.affixed == 'top') return scrollTop < offsetTop ? 'top' : false
-
-    if (this.affixed == 'bottom') {
-      if (offsetTop != null) return (scrollTop + this.unpin <= position.top) ? false : 'bottom'
-      return (scrollTop + targetHeight <= scrollHeight - offsetBottom) ? false : 'bottom'
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
     }
 
-    var initializing   = this.affixed == null
-    var colliderTop    = initializing ? scrollTop : position.top
-    var colliderHeight = initializing ? targetHeight : height
-
-    if (offsetTop != null && scrollTop <= offsetTop) return 'top'
-    if (offsetBottom != null && (colliderTop + colliderHeight >= scrollHeight - offsetBottom)) return 'bottom'
-
-    return false
-  }
-
-  Affix.prototype.getPinnedOffset = function () {
-    if (this.pinnedOffset) return this.pinnedOffset
-    this.$element.removeClass(Affix.RESET).addClass('affix')
-    var scrollTop = this.$target.scrollTop()
-    var position  = this.$element.offset()
-    return (this.pinnedOffset = position.top - scrollTop)
-  }
-
-  Affix.prototype.checkPositionWithEventLoop = function () {
-    setTimeout($.proxy(this.checkPosition, this), 1)
-  }
-
-  Affix.prototype.checkPosition = function () {
-    if (!this.$element.is(':visible')) return
-
-    var height       = this.$element.height()
-    var offset       = this.options.offset
-    var offsetTop    = offset.top
-    var offsetBottom = offset.bottom
-    var scrollHeight = $(document.body).height()
-
-    if (typeof offset != 'object')         offsetBottom = offsetTop = offset
-    if (typeof offsetTop == 'function')    offsetTop    = offset.top(this.$element)
-    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom(this.$element)
-
-    var affix = this.getState(scrollHeight, height, offsetTop, offsetBottom)
-
-    if (this.affixed != affix) {
-      if (this.unpin != null) this.$element.css('top', '')
-
-      var affixType = 'affix' + (affix ? '-' + affix : '')
-      var e         = $.Event(affixType + '.bs.affix')
-
-      this.$element.trigger(e)
-
-      if (e.isDefaultPrevented()) return
-
-      this.affixed = affix
-      this.unpin = affix == 'bottom' ? this.getPinnedOffset() : null
-
-      this.$element
-        .removeClass(Affix.RESET)
-        .addClass(affixType)
-        .trigger(affixType.replace('affix', 'affixed') + '.bs.affix')
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
     }
 
-    if (affix == 'bottom') {
-      this.$element.offset({
-        top: scrollHeight - height - offsetBottom
-      })
-    }
+    return false // explicit for ie8 (  ._.)
   }
 
-
-  // AFFIX PLUGIN DEFINITION
-  // =======================
-
-  function Plugin(option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.affix')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.affix', (data = new Affix(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  var old = $.fn.affix
-
-  $.fn.affix             = Plugin
-  $.fn.affix.Constructor = Affix
-
-
-  // AFFIX NO CONFLICT
-  // =================
-
-  $.fn.affix.noConflict = function () {
-    $.fn.affix = old
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
     return this
   }
 
+  $(function () {
+    $.support.transition = transitionEnd()
 
-  // AFFIX DATA-API
-  // ==============
+    if (!$.support.transition) return
 
-  $(window).on('load', function () {
-    $('[data-spy="affix"]').each(function () {
-      var $spy = $(this)
-      var data = $spy.data()
-
-      data.offset = data.offset || {}
-
-      if (data.offsetBottom != null) data.offset.bottom = data.offsetBottom
-      if (data.offsetTop    != null) data.offset.top    = data.offsetTop
-
-      Plugin.call($spy, data)
-    })
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
   })
 
 }(jQuery);
 
-},{}],4:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: alert.js v3.3.4
  * http://getbootstrap.com/javascript/#alerts
@@ -357,7 +309,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],5:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: button.js v3.3.4
  * http://getbootstrap.com/javascript/#buttons
@@ -475,7 +426,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],6:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: carousel.js v3.3.4
  * http://getbootstrap.com/javascript/#carousel
@@ -714,7 +664,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],7:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: collapse.js v3.3.4
  * http://getbootstrap.com/javascript/#collapse
@@ -927,7 +876,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],8:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: dropdown.js v3.3.4
  * http://getbootstrap.com/javascript/#dropdowns
@@ -1090,7 +1038,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],9:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: modal.js v3.3.4
  * http://getbootstrap.com/javascript/#modals
@@ -1431,446 +1378,6 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],10:[function(require,module,exports){
-/* ========================================================================
- * Bootstrap: popover.js v3.3.4
- * http://getbootstrap.com/javascript/#popovers
- * ========================================================================
- * Copyright 2011-2015 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
-
-+function ($) {
-  'use strict';
-
-  // POPOVER PUBLIC CLASS DEFINITION
-  // ===============================
-
-  var Popover = function (element, options) {
-    this.init('popover', element, options)
-  }
-
-  if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
-
-  Popover.VERSION  = '3.3.4'
-
-  Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
-    placement: 'right',
-    trigger: 'click',
-    content: '',
-    template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-  })
-
-
-  // NOTE: POPOVER EXTENDS tooltip.js
-  // ================================
-
-  Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype)
-
-  Popover.prototype.constructor = Popover
-
-  Popover.prototype.getDefaults = function () {
-    return Popover.DEFAULTS
-  }
-
-  Popover.prototype.setContent = function () {
-    var $tip    = this.tip()
-    var title   = this.getTitle()
-    var content = this.getContent()
-
-    $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
-    $tip.find('.popover-content').children().detach().end()[ // we use append for html objects to maintain js events
-      this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
-    ](content)
-
-    $tip.removeClass('fade top bottom left right in')
-
-    // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
-    // this manually by checking the contents.
-    if (!$tip.find('.popover-title').html()) $tip.find('.popover-title').hide()
-  }
-
-  Popover.prototype.hasContent = function () {
-    return this.getTitle() || this.getContent()
-  }
-
-  Popover.prototype.getContent = function () {
-    var $e = this.$element
-    var o  = this.options
-
-    return $e.attr('data-content')
-      || (typeof o.content == 'function' ?
-            o.content.call($e[0]) :
-            o.content)
-  }
-
-  Popover.prototype.arrow = function () {
-    return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
-  }
-
-
-  // POPOVER PLUGIN DEFINITION
-  // =========================
-
-  function Plugin(option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.popover')
-      var options = typeof option == 'object' && option
-
-      if (!data && /destroy|hide/.test(option)) return
-      if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  var old = $.fn.popover
-
-  $.fn.popover             = Plugin
-  $.fn.popover.Constructor = Popover
-
-
-  // POPOVER NO CONFLICT
-  // ===================
-
-  $.fn.popover.noConflict = function () {
-    $.fn.popover = old
-    return this
-  }
-
-}(jQuery);
-
-},{}],11:[function(require,module,exports){
-/* ========================================================================
- * Bootstrap: scrollspy.js v3.3.4
- * http://getbootstrap.com/javascript/#scrollspy
- * ========================================================================
- * Copyright 2011-2015 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
-
-+function ($) {
-  'use strict';
-
-  // SCROLLSPY CLASS DEFINITION
-  // ==========================
-
-  function ScrollSpy(element, options) {
-    this.$body          = $(document.body)
-    this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
-    this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
-    this.selector       = (this.options.target || '') + ' .nav li > a'
-    this.offsets        = []
-    this.targets        = []
-    this.activeTarget   = null
-    this.scrollHeight   = 0
-
-    this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
-    this.refresh()
-    this.process()
-  }
-
-  ScrollSpy.VERSION  = '3.3.4'
-
-  ScrollSpy.DEFAULTS = {
-    offset: 10
-  }
-
-  ScrollSpy.prototype.getScrollHeight = function () {
-    return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
-  }
-
-  ScrollSpy.prototype.refresh = function () {
-    var that          = this
-    var offsetMethod  = 'offset'
-    var offsetBase    = 0
-
-    this.offsets      = []
-    this.targets      = []
-    this.scrollHeight = this.getScrollHeight()
-
-    if (!$.isWindow(this.$scrollElement[0])) {
-      offsetMethod = 'position'
-      offsetBase   = this.$scrollElement.scrollTop()
-    }
-
-    this.$body
-      .find(this.selector)
-      .map(function () {
-        var $el   = $(this)
-        var href  = $el.data('target') || $el.attr('href')
-        var $href = /^#./.test(href) && $(href)
-
-        return ($href
-          && $href.length
-          && $href.is(':visible')
-          && [[$href[offsetMethod]().top + offsetBase, href]]) || null
-      })
-      .sort(function (a, b) { return a[0] - b[0] })
-      .each(function () {
-        that.offsets.push(this[0])
-        that.targets.push(this[1])
-      })
-  }
-
-  ScrollSpy.prototype.process = function () {
-    var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
-    var scrollHeight = this.getScrollHeight()
-    var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
-    var offsets      = this.offsets
-    var targets      = this.targets
-    var activeTarget = this.activeTarget
-    var i
-
-    if (this.scrollHeight != scrollHeight) {
-      this.refresh()
-    }
-
-    if (scrollTop >= maxScroll) {
-      return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
-    }
-
-    if (activeTarget && scrollTop < offsets[0]) {
-      this.activeTarget = null
-      return this.clear()
-    }
-
-    for (i = offsets.length; i--;) {
-      activeTarget != targets[i]
-        && scrollTop >= offsets[i]
-        && (offsets[i + 1] === undefined || scrollTop < offsets[i + 1])
-        && this.activate(targets[i])
-    }
-  }
-
-  ScrollSpy.prototype.activate = function (target) {
-    this.activeTarget = target
-
-    this.clear()
-
-    var selector = this.selector +
-      '[data-target="' + target + '"],' +
-      this.selector + '[href="' + target + '"]'
-
-    var active = $(selector)
-      .parents('li')
-      .addClass('active')
-
-    if (active.parent('.dropdown-menu').length) {
-      active = active
-        .closest('li.dropdown')
-        .addClass('active')
-    }
-
-    active.trigger('activate.bs.scrollspy')
-  }
-
-  ScrollSpy.prototype.clear = function () {
-    $(this.selector)
-      .parentsUntil(this.options.target, '.active')
-      .removeClass('active')
-  }
-
-
-  // SCROLLSPY PLUGIN DEFINITION
-  // ===========================
-
-  function Plugin(option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.scrollspy')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  var old = $.fn.scrollspy
-
-  $.fn.scrollspy             = Plugin
-  $.fn.scrollspy.Constructor = ScrollSpy
-
-
-  // SCROLLSPY NO CONFLICT
-  // =====================
-
-  $.fn.scrollspy.noConflict = function () {
-    $.fn.scrollspy = old
-    return this
-  }
-
-
-  // SCROLLSPY DATA-API
-  // ==================
-
-  $(window).on('load.bs.scrollspy.data-api', function () {
-    $('[data-spy="scroll"]').each(function () {
-      var $spy = $(this)
-      Plugin.call($spy, $spy.data())
-    })
-  })
-
-}(jQuery);
-
-},{}],12:[function(require,module,exports){
-/* ========================================================================
- * Bootstrap: tab.js v3.3.4
- * http://getbootstrap.com/javascript/#tabs
- * ========================================================================
- * Copyright 2011-2015 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
-
-+function ($) {
-  'use strict';
-
-  // TAB CLASS DEFINITION
-  // ====================
-
-  var Tab = function (element) {
-    this.element = $(element)
-  }
-
-  Tab.VERSION = '3.3.4'
-
-  Tab.TRANSITION_DURATION = 150
-
-  Tab.prototype.show = function () {
-    var $this    = this.element
-    var $ul      = $this.closest('ul:not(.dropdown-menu)')
-    var selector = $this.data('target')
-
-    if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
-    }
-
-    if ($this.parent('li').hasClass('active')) return
-
-    var $previous = $ul.find('.active:last a')
-    var hideEvent = $.Event('hide.bs.tab', {
-      relatedTarget: $this[0]
-    })
-    var showEvent = $.Event('show.bs.tab', {
-      relatedTarget: $previous[0]
-    })
-
-    $previous.trigger(hideEvent)
-    $this.trigger(showEvent)
-
-    if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
-
-    var $target = $(selector)
-
-    this.activate($this.closest('li'), $ul)
-    this.activate($target, $target.parent(), function () {
-      $previous.trigger({
-        type: 'hidden.bs.tab',
-        relatedTarget: $this[0]
-      })
-      $this.trigger({
-        type: 'shown.bs.tab',
-        relatedTarget: $previous[0]
-      })
-    })
-  }
-
-  Tab.prototype.activate = function (element, container, callback) {
-    var $active    = container.find('> .active')
-    var transition = callback
-      && $.support.transition
-      && (($active.length && $active.hasClass('fade')) || !!container.find('> .fade').length)
-
-    function next() {
-      $active
-        .removeClass('active')
-        .find('> .dropdown-menu > .active')
-          .removeClass('active')
-        .end()
-        .find('[data-toggle="tab"]')
-          .attr('aria-expanded', false)
-
-      element
-        .addClass('active')
-        .find('[data-toggle="tab"]')
-          .attr('aria-expanded', true)
-
-      if (transition) {
-        element[0].offsetWidth // reflow for transition
-        element.addClass('in')
-      } else {
-        element.removeClass('fade')
-      }
-
-      if (element.parent('.dropdown-menu').length) {
-        element
-          .closest('li.dropdown')
-            .addClass('active')
-          .end()
-          .find('[data-toggle="tab"]')
-            .attr('aria-expanded', true)
-      }
-
-      callback && callback()
-    }
-
-    $active.length && transition ?
-      $active
-        .one('bsTransitionEnd', next)
-        .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
-      next()
-
-    $active.removeClass('in')
-  }
-
-
-  // TAB PLUGIN DEFINITION
-  // =====================
-
-  function Plugin(option) {
-    return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.tab')
-
-      if (!data) $this.data('bs.tab', (data = new Tab(this)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  var old = $.fn.tab
-
-  $.fn.tab             = Plugin
-  $.fn.tab.Constructor = Tab
-
-
-  // TAB NO CONFLICT
-  // ===============
-
-  $.fn.tab.noConflict = function () {
-    $.fn.tab = old
-    return this
-  }
-
-
-  // TAB DATA-API
-  // ============
-
-  var clickHandler = function (e) {
-    e.preventDefault()
-    Plugin.call($(this), 'show')
-  }
-
-  $(document)
-    .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
-    .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
-
-}(jQuery);
-
-},{}],13:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tooltip.js v3.3.4
  * http://getbootstrap.com/javascript/#tooltip
@@ -2348,10 +1855,9 @@ require('../../js/affix.js')
 
 }(jQuery);
 
-},{}],14:[function(require,module,exports){
 /* ========================================================================
- * Bootstrap: transition.js v3.3.4
- * http://getbootstrap.com/javascript/#transitions
+ * Bootstrap: popover.js v3.3.4
+ * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
  * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
@@ -2361,55 +1867,599 @@ require('../../js/affix.js')
 +function ($) {
   'use strict';
 
-  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
-  // ============================================================
+  // POPOVER PUBLIC CLASS DEFINITION
+  // ===============================
 
-  function transitionEnd() {
-    var el = document.createElement('bootstrap')
-
-    var transEndEventNames = {
-      WebkitTransition : 'webkitTransitionEnd',
-      MozTransition    : 'transitionend',
-      OTransition      : 'oTransitionEnd otransitionend',
-      transition       : 'transitionend'
-    }
-
-    for (var name in transEndEventNames) {
-      if (el.style[name] !== undefined) {
-        return { end: transEndEventNames[name] }
-      }
-    }
-
-    return false // explicit for ie8 (  ._.)
+  var Popover = function (element, options) {
+    this.init('popover', element, options)
   }
 
-  // http://blog.alexmaccaw.com/css-transitions
-  $.fn.emulateTransitionEnd = function (duration) {
-    var called = false
-    var $el = this
-    $(this).one('bsTransitionEnd', function () { called = true })
-    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
-    setTimeout(callback, duration)
+  if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
+
+  Popover.VERSION  = '3.3.4'
+
+  Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
+    placement: 'right',
+    trigger: 'click',
+    content: '',
+    template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+  })
+
+
+  // NOTE: POPOVER EXTENDS tooltip.js
+  // ================================
+
+  Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype)
+
+  Popover.prototype.constructor = Popover
+
+  Popover.prototype.getDefaults = function () {
+    return Popover.DEFAULTS
+  }
+
+  Popover.prototype.setContent = function () {
+    var $tip    = this.tip()
+    var title   = this.getTitle()
+    var content = this.getContent()
+
+    $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
+    $tip.find('.popover-content').children().detach().end()[ // we use append for html objects to maintain js events
+      this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
+    ](content)
+
+    $tip.removeClass('fade top bottom left right in')
+
+    // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
+    // this manually by checking the contents.
+    if (!$tip.find('.popover-title').html()) $tip.find('.popover-title').hide()
+  }
+
+  Popover.prototype.hasContent = function () {
+    return this.getTitle() || this.getContent()
+  }
+
+  Popover.prototype.getContent = function () {
+    var $e = this.$element
+    var o  = this.options
+
+    return $e.attr('data-content')
+      || (typeof o.content == 'function' ?
+            o.content.call($e[0]) :
+            o.content)
+  }
+
+  Popover.prototype.arrow = function () {
+    return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
+  }
+
+
+  // POPOVER PLUGIN DEFINITION
+  // =========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.popover')
+      var options = typeof option == 'object' && option
+
+      if (!data && /destroy|hide/.test(option)) return
+      if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.popover
+
+  $.fn.popover             = Plugin
+  $.fn.popover.Constructor = Popover
+
+
+  // POPOVER NO CONFLICT
+  // ===================
+
+  $.fn.popover.noConflict = function () {
+    $.fn.popover = old
     return this
   }
 
-  $(function () {
-    $.support.transition = transitionEnd()
+}(jQuery);
 
-    if (!$.support.transition) return
+/* ========================================================================
+ * Bootstrap: scrollspy.js v3.3.4
+ * http://getbootstrap.com/javascript/#scrollspy
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
 
-    $.event.special.bsTransitionEnd = {
-      bindType: $.support.transition.end,
-      delegateType: $.support.transition.end,
-      handle: function (e) {
-        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
-      }
+
++function ($) {
+  'use strict';
+
+  // SCROLLSPY CLASS DEFINITION
+  // ==========================
+
+  function ScrollSpy(element, options) {
+    this.$body          = $(document.body)
+    this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+    this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+    this.selector       = (this.options.target || '') + ' .nav li > a'
+    this.offsets        = []
+    this.targets        = []
+    this.activeTarget   = null
+    this.scrollHeight   = 0
+
+    this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+    this.refresh()
+    this.process()
+  }
+
+  ScrollSpy.VERSION  = '3.3.4'
+
+  ScrollSpy.DEFAULTS = {
+    offset: 10
+  }
+
+  ScrollSpy.prototype.getScrollHeight = function () {
+    return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+  }
+
+  ScrollSpy.prototype.refresh = function () {
+    var that          = this
+    var offsetMethod  = 'offset'
+    var offsetBase    = 0
+
+    this.offsets      = []
+    this.targets      = []
+    this.scrollHeight = this.getScrollHeight()
+
+    if (!$.isWindow(this.$scrollElement[0])) {
+      offsetMethod = 'position'
+      offsetBase   = this.$scrollElement.scrollTop()
     }
+
+    this.$body
+      .find(this.selector)
+      .map(function () {
+        var $el   = $(this)
+        var href  = $el.data('target') || $el.attr('href')
+        var $href = /^#./.test(href) && $(href)
+
+        return ($href
+          && $href.length
+          && $href.is(':visible')
+          && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+      })
+      .sort(function (a, b) { return a[0] - b[0] })
+      .each(function () {
+        that.offsets.push(this[0])
+        that.targets.push(this[1])
+      })
+  }
+
+  ScrollSpy.prototype.process = function () {
+    var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+    var scrollHeight = this.getScrollHeight()
+    var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+    var offsets      = this.offsets
+    var targets      = this.targets
+    var activeTarget = this.activeTarget
+    var i
+
+    if (this.scrollHeight != scrollHeight) {
+      this.refresh()
+    }
+
+    if (scrollTop >= maxScroll) {
+      return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+    }
+
+    if (activeTarget && scrollTop < offsets[0]) {
+      this.activeTarget = null
+      return this.clear()
+    }
+
+    for (i = offsets.length; i--;) {
+      activeTarget != targets[i]
+        && scrollTop >= offsets[i]
+        && (offsets[i + 1] === undefined || scrollTop < offsets[i + 1])
+        && this.activate(targets[i])
+    }
+  }
+
+  ScrollSpy.prototype.activate = function (target) {
+    this.activeTarget = target
+
+    this.clear()
+
+    var selector = this.selector +
+      '[data-target="' + target + '"],' +
+      this.selector + '[href="' + target + '"]'
+
+    var active = $(selector)
+      .parents('li')
+      .addClass('active')
+
+    if (active.parent('.dropdown-menu').length) {
+      active = active
+        .closest('li.dropdown')
+        .addClass('active')
+    }
+
+    active.trigger('activate.bs.scrollspy')
+  }
+
+  ScrollSpy.prototype.clear = function () {
+    $(this.selector)
+      .parentsUntil(this.options.target, '.active')
+      .removeClass('active')
+  }
+
+
+  // SCROLLSPY PLUGIN DEFINITION
+  // ===========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.scrollspy')
+      var options = typeof option == 'object' && option
+
+      if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.scrollspy
+
+  $.fn.scrollspy             = Plugin
+  $.fn.scrollspy.Constructor = ScrollSpy
+
+
+  // SCROLLSPY NO CONFLICT
+  // =====================
+
+  $.fn.scrollspy.noConflict = function () {
+    $.fn.scrollspy = old
+    return this
+  }
+
+
+  // SCROLLSPY DATA-API
+  // ==================
+
+  $(window).on('load.bs.scrollspy.data-api', function () {
+    $('[data-spy="scroll"]').each(function () {
+      var $spy = $(this)
+      Plugin.call($spy, $spy.data())
+    })
   })
 
 }(jQuery);
 
-},{}],15:[function(require,module,exports){
+/* ========================================================================
+ * Bootstrap: tab.js v3.3.4
+ * http://getbootstrap.com/javascript/#tabs
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // TAB CLASS DEFINITION
+  // ====================
+
+  var Tab = function (element) {
+    this.element = $(element)
+  }
+
+  Tab.VERSION = '3.3.4'
+
+  Tab.TRANSITION_DURATION = 150
+
+  Tab.prototype.show = function () {
+    var $this    = this.element
+    var $ul      = $this.closest('ul:not(.dropdown-menu)')
+    var selector = $this.data('target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    if ($this.parent('li').hasClass('active')) return
+
+    var $previous = $ul.find('.active:last a')
+    var hideEvent = $.Event('hide.bs.tab', {
+      relatedTarget: $this[0]
+    })
+    var showEvent = $.Event('show.bs.tab', {
+      relatedTarget: $previous[0]
+    })
+
+    $previous.trigger(hideEvent)
+    $this.trigger(showEvent)
+
+    if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
+
+    var $target = $(selector)
+
+    this.activate($this.closest('li'), $ul)
+    this.activate($target, $target.parent(), function () {
+      $previous.trigger({
+        type: 'hidden.bs.tab',
+        relatedTarget: $this[0]
+      })
+      $this.trigger({
+        type: 'shown.bs.tab',
+        relatedTarget: $previous[0]
+      })
+    })
+  }
+
+  Tab.prototype.activate = function (element, container, callback) {
+    var $active    = container.find('> .active')
+    var transition = callback
+      && $.support.transition
+      && (($active.length && $active.hasClass('fade')) || !!container.find('> .fade').length)
+
+    function next() {
+      $active
+        .removeClass('active')
+        .find('> .dropdown-menu > .active')
+          .removeClass('active')
+        .end()
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', false)
+
+      element
+        .addClass('active')
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', true)
+
+      if (transition) {
+        element[0].offsetWidth // reflow for transition
+        element.addClass('in')
+      } else {
+        element.removeClass('fade')
+      }
+
+      if (element.parent('.dropdown-menu').length) {
+        element
+          .closest('li.dropdown')
+            .addClass('active')
+          .end()
+          .find('[data-toggle="tab"]')
+            .attr('aria-expanded', true)
+      }
+
+      callback && callback()
+    }
+
+    $active.length && transition ?
+      $active
+        .one('bsTransitionEnd', next)
+        .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
+      next()
+
+    $active.removeClass('in')
+  }
+
+
+  // TAB PLUGIN DEFINITION
+  // =====================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.tab')
+
+      if (!data) $this.data('bs.tab', (data = new Tab(this)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.tab
+
+  $.fn.tab             = Plugin
+  $.fn.tab.Constructor = Tab
+
+
+  // TAB NO CONFLICT
+  // ===============
+
+  $.fn.tab.noConflict = function () {
+    $.fn.tab = old
+    return this
+  }
+
+
+  // TAB DATA-API
+  // ============
+
+  var clickHandler = function (e) {
+    e.preventDefault()
+    Plugin.call($(this), 'show')
+  }
+
+  $(document)
+    .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
+    .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
+
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: affix.js v3.3.4
+ * http://getbootstrap.com/javascript/#affix
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // AFFIX CLASS DEFINITION
+  // ======================
+
+  var Affix = function (element, options) {
+    this.options = $.extend({}, Affix.DEFAULTS, options)
+
+    this.$target = $(this.options.target)
+      .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
+      .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
+
+    this.$element     = $(element)
+    this.affixed      = null
+    this.unpin        = null
+    this.pinnedOffset = null
+
+    this.checkPosition()
+  }
+
+  Affix.VERSION  = '3.3.4'
+
+  Affix.RESET    = 'affix affix-top affix-bottom'
+
+  Affix.DEFAULTS = {
+    offset: 0,
+    target: window
+  }
+
+  Affix.prototype.getState = function (scrollHeight, height, offsetTop, offsetBottom) {
+    var scrollTop    = this.$target.scrollTop()
+    var position     = this.$element.offset()
+    var targetHeight = this.$target.height()
+
+    if (offsetTop != null && this.affixed == 'top') return scrollTop < offsetTop ? 'top' : false
+
+    if (this.affixed == 'bottom') {
+      if (offsetTop != null) return (scrollTop + this.unpin <= position.top) ? false : 'bottom'
+      return (scrollTop + targetHeight <= scrollHeight - offsetBottom) ? false : 'bottom'
+    }
+
+    var initializing   = this.affixed == null
+    var colliderTop    = initializing ? scrollTop : position.top
+    var colliderHeight = initializing ? targetHeight : height
+
+    if (offsetTop != null && scrollTop <= offsetTop) return 'top'
+    if (offsetBottom != null && (colliderTop + colliderHeight >= scrollHeight - offsetBottom)) return 'bottom'
+
+    return false
+  }
+
+  Affix.prototype.getPinnedOffset = function () {
+    if (this.pinnedOffset) return this.pinnedOffset
+    this.$element.removeClass(Affix.RESET).addClass('affix')
+    var scrollTop = this.$target.scrollTop()
+    var position  = this.$element.offset()
+    return (this.pinnedOffset = position.top - scrollTop)
+  }
+
+  Affix.prototype.checkPositionWithEventLoop = function () {
+    setTimeout($.proxy(this.checkPosition, this), 1)
+  }
+
+  Affix.prototype.checkPosition = function () {
+    if (!this.$element.is(':visible')) return
+
+    var height       = this.$element.height()
+    var offset       = this.options.offset
+    var offsetTop    = offset.top
+    var offsetBottom = offset.bottom
+    var scrollHeight = $(document.body).height()
+
+    if (typeof offset != 'object')         offsetBottom = offsetTop = offset
+    if (typeof offsetTop == 'function')    offsetTop    = offset.top(this.$element)
+    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom(this.$element)
+
+    var affix = this.getState(scrollHeight, height, offsetTop, offsetBottom)
+
+    if (this.affixed != affix) {
+      if (this.unpin != null) this.$element.css('top', '')
+
+      var affixType = 'affix' + (affix ? '-' + affix : '')
+      var e         = $.Event(affixType + '.bs.affix')
+
+      this.$element.trigger(e)
+
+      if (e.isDefaultPrevented()) return
+
+      this.affixed = affix
+      this.unpin = affix == 'bottom' ? this.getPinnedOffset() : null
+
+      this.$element
+        .removeClass(Affix.RESET)
+        .addClass(affixType)
+        .trigger(affixType.replace('affix', 'affixed') + '.bs.affix')
+    }
+
+    if (affix == 'bottom') {
+      this.$element.offset({
+        top: scrollHeight - height - offsetBottom
+      })
+    }
+  }
+
+
+  // AFFIX PLUGIN DEFINITION
+  // =======================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.affix')
+      var options = typeof option == 'object' && option
+
+      if (!data) $this.data('bs.affix', (data = new Affix(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.affix
+
+  $.fn.affix             = Plugin
+  $.fn.affix.Constructor = Affix
+
+
+  // AFFIX NO CONFLICT
+  // =================
+
+  $.fn.affix.noConflict = function () {
+    $.fn.affix = old
+    return this
+  }
+
+
+  // AFFIX DATA-API
+  // ==============
+
+  $(window).on('load', function () {
+    $('[data-spy="affix"]').each(function () {
+      var $spy = $(this)
+      var data = $spy.data()
+
+      data.offset = data.offset || {}
+
+      if (data.offsetBottom != null) data.offset.bottom = data.offsetBottom
+      if (data.offsetTop    != null) data.offset.top    = data.offsetTop
+
+      Plugin.call($spy, data)
+    })
+  })
+
+}(jQuery);
+
+; browserify_shim__define__module__export__(typeof bootstrap != "undefined" ? bootstrap : window.bootstrap);
+
+}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"C:\\git\\ecorun\\ecorun_fi_web_console\\node_modules\\jquery\\dist\\jquery.js":5}],3:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2712,7 +2762,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.5"
@@ -12217,7 +12267,9 @@ function isUndefined(arg) {
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],17:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+(function (global){
+; var __browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -21429,7 +21481,12 @@ return jQuery;
 
 }));
 
-},{}],18:[function(require,module,exports){
+; browserify_shim__define__module__export__(typeof $ != "undefined" ? $ : window.$);
+
+}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],6:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -33668,11 +33725,11 @@ return jQuery;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":20}],20:[function(require,module,exports){
+},{"./lib/":8}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -33761,7 +33818,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":21,"./socket":23,"./url":24,"debug":28,"socket.io-parser":64}],21:[function(require,module,exports){
+},{"./manager":9,"./socket":11,"./url":12,"debug":16,"socket.io-parser":52}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -34266,7 +34323,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":22,"./socket":23,"./url":24,"backo2":25,"component-bind":26,"component-emitter":27,"debug":28,"engine.io-client":29,"indexof":60,"object-component":61,"socket.io-parser":64}],22:[function(require,module,exports){
+},{"./on":10,"./socket":11,"./url":12,"backo2":13,"component-bind":14,"component-emitter":15,"debug":16,"engine.io-client":17,"indexof":48,"object-component":49,"socket.io-parser":52}],10:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -34292,7 +34349,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],23:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -34679,7 +34736,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":22,"component-bind":26,"component-emitter":27,"debug":28,"has-binary":58,"socket.io-parser":64,"to-array":68}],24:[function(require,module,exports){
+},{"./on":10,"component-bind":14,"component-emitter":15,"debug":16,"has-binary":46,"socket.io-parser":52,"to-array":56}],12:[function(require,module,exports){
 (function (global){
 
 /**
@@ -34756,7 +34813,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":28,"parseuri":62}],25:[function(require,module,exports){
+},{"debug":16,"parseuri":50}],13:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -34843,7 +34900,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],26:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -34868,7 +34925,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],27:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -35034,7 +35091,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -35173,11 +35230,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],29:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":30}],30:[function(require,module,exports){
+},{"./lib/":18}],18:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -35189,7 +35246,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":31,"engine.io-parser":43}],31:[function(require,module,exports){
+},{"./socket":19,"engine.io-parser":31}],19:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -35898,7 +35955,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":32,"./transports":33,"component-emitter":27,"debug":40,"engine.io-parser":43,"indexof":60,"parsejson":54,"parseqs":55,"parseuri":56}],32:[function(require,module,exports){
+},{"./transport":20,"./transports":21,"component-emitter":15,"debug":28,"engine.io-parser":31,"indexof":48,"parsejson":42,"parseqs":43,"parseuri":44}],20:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -36059,7 +36116,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":27,"engine.io-parser":43}],33:[function(require,module,exports){
+},{"component-emitter":15,"engine.io-parser":31}],21:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -36116,7 +36173,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":34,"./polling-xhr":35,"./websocket":37,"xmlhttprequest":38}],34:[function(require,module,exports){
+},{"./polling-jsonp":22,"./polling-xhr":23,"./websocket":25,"xmlhttprequest":26}],22:[function(require,module,exports){
 (function (global){
 
 /**
@@ -36353,7 +36410,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":36,"component-inherit":39}],35:[function(require,module,exports){
+},{"./polling":24,"component-inherit":27}],23:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -36741,7 +36798,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":36,"component-emitter":27,"component-inherit":39,"debug":40,"xmlhttprequest":38}],36:[function(require,module,exports){
+},{"./polling":24,"component-emitter":15,"component-inherit":27,"debug":28,"xmlhttprequest":26}],24:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -36988,7 +37045,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":32,"component-inherit":39,"debug":40,"engine.io-parser":43,"parseqs":55,"xmlhttprequest":38}],37:[function(require,module,exports){
+},{"../transport":20,"component-inherit":27,"debug":28,"engine.io-parser":31,"parseqs":43,"xmlhttprequest":26}],25:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -37228,7 +37285,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":32,"component-inherit":39,"debug":40,"engine.io-parser":43,"parseqs":55,"ws":57}],38:[function(require,module,exports){
+},{"../transport":20,"component-inherit":27,"debug":28,"engine.io-parser":31,"parseqs":43,"ws":45}],26:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -37266,7 +37323,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":52}],39:[function(require,module,exports){
+},{"has-cors":40}],27:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -37274,7 +37331,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],40:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -37423,7 +37480,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":41}],41:[function(require,module,exports){
+},{"./debug":29}],29:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -37622,7 +37679,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":42}],42:[function(require,module,exports){
+},{"ms":30}],30:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -37735,7 +37792,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],43:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -38333,7 +38390,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":44,"after":45,"arraybuffer.slice":46,"base64-arraybuffer":47,"blob":48,"has-binary":49,"utf8":51}],44:[function(require,module,exports){
+},{"./keys":32,"after":33,"arraybuffer.slice":34,"base64-arraybuffer":35,"blob":36,"has-binary":37,"utf8":39}],32:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -38354,7 +38411,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -38384,7 +38441,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],46:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -38415,7 +38472,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -38476,7 +38533,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],48:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -38529,7 +38586,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],49:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (global){
 
 /*
@@ -38591,12 +38648,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":50}],50:[function(require,module,exports){
+},{"isarray":38}],38:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],51:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -38839,7 +38896,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],52:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -38864,7 +38921,7 @@ try {
   module.exports = false;
 }
 
-},{"global":53}],53:[function(require,module,exports){
+},{"global":41}],41:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -38874,7 +38931,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],54:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -38909,7 +38966,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],55:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -38948,7 +39005,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],56:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -38989,7 +39046,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],57:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -39034,7 +39091,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],58:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (global){
 
 /*
@@ -39096,9 +39153,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":59}],59:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"dup":50}],60:[function(require,module,exports){
+},{"isarray":47}],47:[function(require,module,exports){
+arguments[4][38][0].apply(exports,arguments)
+},{"dup":38}],48:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -39109,7 +39166,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],61:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -39194,7 +39251,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],62:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -39221,7 +39278,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],63:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -39366,7 +39423,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":65,"isarray":66}],64:[function(require,module,exports){
+},{"./is-buffer":53,"isarray":54}],52:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -39768,7 +39825,7 @@ function error(data){
   };
 }
 
-},{"./binary":63,"./is-buffer":65,"component-emitter":27,"debug":28,"isarray":66,"json3":67}],65:[function(require,module,exports){
+},{"./binary":51,"./is-buffer":53,"component-emitter":15,"debug":16,"isarray":54,"json3":55}],53:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -39785,9 +39842,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],66:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"dup":50}],67:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
+arguments[4][38][0].apply(exports,arguments)
+},{"dup":38}],55:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -40650,7 +40707,7 @@ arguments[4][50][0].apply(exports,arguments)
   }
 }(this));
 
-},{}],68:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -40665,7 +40722,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],69:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /// <reference path="./typings/tsd.d.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -40674,6 +40731,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var $ = require('jquery');
 var events = require('events');
+var car_visualize = require("./car_visualize");
 var AppConnection = (function (_super) {
     __extends(AppConnection, _super);
     function AppConnection() {
@@ -40727,6 +40785,12 @@ var AppConnection = (function (_super) {
             id: id
         });
     };
+    AppConnection.prototype.save_data = function (id, data) {
+        this.socketio.emit('save_data', {
+            id: id,
+            data: data
+        });
+    };
     AppConnection.prototype.send_data = function (id, data, size) {
         this.socketio.emit('send_data', {
             id: id,
@@ -40772,7 +40836,6 @@ function set_connection_state(state) {
 }
 exports.set_connection_state = set_connection_state;
 function initialize() {
-    var car_visualize = require("./car_visualize.js");
     var connection = AppConnection.get_instance();
     connection.on('serial_ports', function (arr) {
         $('#port').html(arr.map(function (item) {
@@ -40809,7 +40872,7 @@ function initialize() {
 }
 exports.initialize = initialize;
 
-},{"./car_visualize.js":71,"events":15,"jquery":17,"socket.io-client":19}],70:[function(require,module,exports){
+},{"./car_visualize":59,"events":3,"jquery":5,"socket.io-client":7}],58:[function(require,module,exports){
 /// <reference path="typings/tsd.d.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -41076,7 +41139,7 @@ var Chart = (function (_super) {
 })(ChartCanvas);
 exports.Chart = Chart;
 
-},{"d3":16}],71:[function(require,module,exports){
+},{"d3":4}],59:[function(require,module,exports){
 /// <reference path="./typings/tsd.d.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -41169,7 +41232,7 @@ function data_apply(name, value, timestamp) {
             break;
         case 'th':
             var th = Math.round(value / 41);
-            $('#td_th').html(th);
+            $('#td_th').html(th.toString());
             $('#progress_th').attr('aria-valuenow', th).css('width', th + "%");
             CarCharts.throttle_chart.push(th);
             break;
@@ -41179,7 +41242,7 @@ function data_apply(name, value, timestamp) {
             var denom = Math.log(value / 1000.0) - lnR0 + (B / 301.0);
             var oil_temp = Math.round(B / denom - 273.0);
             $('#progress_oil_temp').attr('aria-valuenow', oil_temp).css('width', oil_temp + "%");
-            $('#td_oil_temp').html(oil_temp);
+            $('#td_oil_temp').html(oil_temp.toString());
             CarCharts.oil_temp_chart.push(oil_temp);
             break;
         case 'intake_temp':
@@ -41188,7 +41251,7 @@ function data_apply(name, value, timestamp) {
             var denom = Math.log(value / 1000.0) - lnR0 + (B / 301.0);
             var oil_temp = Math.round(B / denom - 273.0);
             $('#progress_temp').attr('aria-valuenow', oil_temp).css('width', oil_temp + "%");
-            $('#td_temp').html(oil_temp);
+            $('#td_temp').html(oil_temp.toString());
             CarCharts.temp_chart.push(oil_temp);
             break;
         case 'is_fuel_cut':
@@ -41209,13 +41272,13 @@ function data_apply(name, value, timestamp) {
             break;
         case 'wheel_rotation_period':
             var speed = 20;
-            $('#td_speed').html(speed);
+            $('#td_speed').html(speed.toString());
             $('#progress_speed').attr('aria-valuenow', speed).css('width', speed / 80 * 100 + "%");
             CarCharts.speed_chart.push(speed);
             break;
         case 'vattery_voltage':
             var vattery_voltage = value / 1000.0;
-            $('#td_vattery_voltage').html(vattery_voltage);
+            $('#td_vattery_voltage').html(vattery_voltage.toString());
             $('#progress_vattery_voltage').attr('aria-valuenow', vattery_voltage).css('width', vattery_voltage / 15 * 100 + "%");
             CarCharts.voltage_chart.push(vattery_voltage);
             break;
@@ -41250,4 +41313,4 @@ function car_add_data(data) {
 exports.car_add_data = car_add_data;
 ;
 
-},{"./car_charts":70,"events":15,"jquery":17,"lodash":18}]},{},[1]);
+},{"./car_charts":58,"events":3,"jquery":5,"lodash":6}]},{},[1]);

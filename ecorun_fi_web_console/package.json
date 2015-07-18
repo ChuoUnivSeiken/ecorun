@@ -40,10 +40,21 @@
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^1.1.0"
     },
+    "browser": {
+        "jquery": "./node_modules/jquery/dist/jquery.js",
+        "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js",
+        "d3": "./node_modules/d3/d3.js"
+    },
     "browserify": {
-        "transform": [ "browserify-shim" ]
+        "transform": ["browserify-shim"]
     },
     "browserify-shim": {
-        "jquery": "$"
+        "jquery": "$",
+        "bootstrap": {
+            "exports": "bootstrap",
+            "depends": [
+                "jquery:$"
+            ]
+        }
     }
 }

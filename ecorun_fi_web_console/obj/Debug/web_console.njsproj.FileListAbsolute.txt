@@ -1,0 +1,3 @@
+C:\Users\Yoshio\git\ecorun\ecorun_fi_web_console\obj\Debug\web_console.njsprojResolveAssemblyReference.cache
+C:\git\ecorun\ecorun_fi_web_console\obj\Debug\web_console.njsprojResolveAssemblyReference.cache
+C:\git\ecorun\ecorun_fi_web_console\bin\Microsoft.NodejsTools.WebRole.dll

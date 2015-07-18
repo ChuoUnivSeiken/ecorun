@@ -10,6 +10,12 @@
     },
     "lodash/lodash.d.ts": {
       "commit": "e1182d56ccb192379eade6055d9ba3fb6a0bacc4"
+    },
+    "bootstrap/bootstrap.d.ts": {
+      "commit": "76e1dedf0bada455c0b75abeec3206d3aa5bd892"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "76e1dedf0bada455c0b75abeec3206d3aa5bd892"
     }
   }
 }

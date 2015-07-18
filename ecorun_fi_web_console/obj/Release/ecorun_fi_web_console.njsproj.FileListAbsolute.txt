@@ -1,0 +1,2 @@
+C:\git\ecorun\ecorun_fi_web_console\bin\Microsoft.NodejsTools.WebRole.dll
+C:\git\ecorun\ecorun_fi_web_console\obj\Release\ecorun_fi_web_console.njsprojResolveAssemblyReference.cache

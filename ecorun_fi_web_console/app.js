@@ -1,6 +1,9 @@
 /// <reference path="typings/tsd.d.ts" />
 var express = require('express');
+var socketio = require('socket.io');
 var path = require('path');
+var carcomm = require('./car_comm');
+var carserialize = require("./car_serialize");
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -8,11 +11,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,15 +21,11 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err['status'] = 404;
     next(err);
 });
-// error handlers
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
@@ -39,8 +35,6 @@ if (app.get('env') === 'development') {
         });
     });
 }
-// production error handler
-// no stacktraces leaked to user
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -53,14 +47,11 @@ var server = app.listen(80, function () {
     var port = server.address().port;
     console.log('listening at http://%s:%s', host, port);
 });
-var socketio = require('socket.io');
 var io = socketio.listen(server);
 var idHash = {};
-var carcomm = require('./car_comm');
-var carserialize = require("./car_serialize");
 carserialize.CarDatabase.connect();
 var carTransmitter;
-setInterval(function () {
+var timer = setInterval(function () {
     if (carTransmitter != null) {
         carTransmitter.requestData('car_data');
         carTransmitter.requestData('engine_data');
@@ -81,18 +72,19 @@ io.sockets.on('connection', function (socket) {
     socket.on('serial_connect', function (connection_data) {
         carTransmitter = new carcomm.CarTransmitter(connection_data.portName, connection_data.bitRate);
         carTransmitter.on('opened', function () {
-            carTransmitter.on('obj', function (data) {
-                io.sockets.emit('data', data);
-                data.value['timestamp'] = new Date();
-                carserialize.CarDatabase.saveData(data.id, data.value);
-            });
-            carTransmitter.on('msg', function (msg) {
-                io.sockets.emit('msg', msg);
-            });
             io.sockets.emit('serial_connected', {});
         });
         carTransmitter.on('closed', function () {
             io.sockets.emit('serial_disconnected', {});
+        });
+        carTransmitter.on('obj', function (data) {
+            io.sockets.emit('data', data);
+            data.value['timestamp'] = new Date();
+            carserialize.CarDatabase.saveData(data.id, data.value);
+        });
+        carTransmitter.on('msg', function (msg) {
+            io.sockets.emit('msg', msg);
+            console.log(msg);
         });
         carTransmitter.open();
     });
@@ -114,6 +106,11 @@ io.sockets.on('connection', function (socket) {
     socket.on('send_data', function (data) {
         if (carTransmitter != null && carTransmitter.isOpening) {
             carTransmitter.sendData(data.id, data.data);
+        }
+    });
+    socket.on('save_data', function (data) {
+        if (carTransmitter != null && carTransmitter.isOpening) {
+            carTransmitter.write("exec save-settings");
         }
     });
     socket.on('disconnect', function () {
