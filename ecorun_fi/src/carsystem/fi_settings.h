@@ -29,10 +29,23 @@ extern volatile uint32_t idle_rev_th;
 extern volatile uint32_t fuel_cut_threshold;
 extern volatile uint32_t fuel_cut_interval_threshold;
 
-typedef struct fi_setting_data_t
+typedef struct
 {
 	volatile uint8_t basic_inject_time_map[16][16];
 } fi_setting_data;
+
+typedef struct
+{
+	volatile uint8_t inject_time_map[16][16];
+} fi_modified_setting_data;
+
+typedef struct
+{
+	volatile uint32_t enable_feedback;
+	volatile uint32_t interval;
+	volatile uint32_t delta;
+	volatile uint32_t num_step;
+} fi_feedback_settings;
 
 void fi_set_default(void);
 

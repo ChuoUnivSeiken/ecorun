@@ -137,26 +137,27 @@ void timer32_set_match(uint32_t timer, uint32_t num, uint32_t value)
 
 void timer32_set_pwm(uint32_t timer, uint32_t period)
 {
-	if (timer == 1)
+	if (timer)
 	{
 		NVIC_DisableIRQ(CT32B1_IRQn);
 		timer32_disable(timer);
 
 		/* Setup the external match register (clear on match) */
-		LPC_CT32B1->EMR = _BV(0) | _BV(1) | _BV(2) | _BV(3) | (0x01 << 4) | (0x01 << 6) | (0x01 << 8) | (0x01 << 10);
+		LPC_CT32B1->EMR = _BV(0) | _BV(1) | _BV(2) | _BV(3) | (0x01 << 4)
+				| (0x01 << 6) | (0x01 << 8) | (0x01 << 10);
 
 		/* Set MAT0..3 to PWM mode via the PWM Control register */
 		LPC_CT32B1->PWMC = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 
 		/* MAT3 controls period, set MAT1..3 to 50% duty cycle to start */
 		LPC_CT32B1->PR = 0;
-		timer32_set_match(timer, 0, period);
-		timer32_set_match(timer, 1, period);
-		timer32_set_match(timer, 2, period);
+		timer32_set_match(timer, 0, period / 2);
+		timer32_set_match(timer, 1, period / 2);
+		timer32_set_match(timer, 2, period / 2);
 		timer32_set_match(timer, 3, period);
 
 		/* Reset on MR3 */
-		LPC_CT32B1->MCR = _BV(0) | _BV(1) | _BV(3) | _BV(6) | _BV(9);
+		LPC_CT32B1->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
 		NVIC_EnableIRQ(CT32B1_IRQn);
 	}
@@ -166,10 +167,11 @@ void timer32_set_pwm(uint32_t timer, uint32_t period)
 		timer32_disable(timer);
 
 		/* Setup the external match register (clear on match) */
-		LPC_CT32B1->EMR = (1 << 10) | (1 << 8) | (1 << 6) | (1 << 4) | (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+		LPC_CT32B0->EMR = (1 << 10) | (1 << 8) | (1 << 6) | (1 << 4) | (1 << 0)
+				| (1 << 1) | (1 << 2) | (1 << 3);
 
 		/* Set MAT0..3 to PWM mode via the PWM Control register */
-		LPC_CT32B1->PWMC = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+		LPC_CT32B0->PWMC = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 
 		/* MAT3 controls period, set MAT1..3 to 50% duty cycle to start */
 		timer32_set_match(timer, 0, period / 2);
@@ -178,7 +180,7 @@ void timer32_set_pwm(uint32_t timer, uint32_t period)
 		timer32_set_match(timer, 3, period);
 
 		/* Reset on MR3 */
-		LPC_CT32B1->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
+		LPC_CT32B0->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
 		NVIC_EnableIRQ(CT32B0_IRQn);
 	}

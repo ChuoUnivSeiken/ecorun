@@ -59,15 +59,15 @@
   </files>
 
   <transforms xmlns="http://www.xilinx.com/XMLSchema">
-    <transform xil_pn:end_ts="1434557890" xil_pn:name="TRAN_copyInitialToXSTAbstractSynthesis" xil_pn:start_ts="1434557890">
+    <transform xil_pn:end_ts="1435832077" xil_pn:name="TRAN_copyInitialToXSTAbstractSynthesis" xil_pn:start_ts="1435832077">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1434557890" xil_pn:name="TRAN_schematicsToHdl" xil_pn:prop_ck="-2232631596820746003" xil_pn:start_ts="1434557890">
+    <transform xil_pn:end_ts="1435832077" xil_pn:name="TRAN_schematicsToHdl" xil_pn:prop_ck="-2232631596820746003" xil_pn:start_ts="1435832077">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1434558103" xil_pn:in_ck="1173681409837889404" xil_pn:name="TRANEXT_xstsynthesize_xc9500xl" xil_pn:prop_ck="5831779681100286035" xil_pn:start_ts="1434558096">
+    <transform xil_pn:end_ts="1435832089" xil_pn:in_ck="1173681409837889404" xil_pn:name="TRANEXT_xstsynthesize_xc9500xl" xil_pn:prop_ck="5831779681100286035" xil_pn:start_ts="1435832077">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
@@ -88,7 +88,7 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1434558108" xil_pn:in_ck="3448645596365777628" xil_pn:name="TRAN_ngdbuild" xil_pn:prop_ck="-736101761533034375" xil_pn:start_ts="1434558103">
+    <transform xil_pn:end_ts="1435832096" xil_pn:in_ck="3448645596365777628" xil_pn:name="TRAN_ngdbuild" xil_pn:prop_ck="-736101761533034375" xil_pn:start_ts="1435832089">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="Main.bld"/>
@@ -97,7 +97,7 @@
       <outfile xil_pn:name="_ngo"/>
       <outfile xil_pn:name="_xmsgs/ngdbuild.xmsgs"/>
     </transform>
-    <transform xil_pn:end_ts="1434558119" xil_pn:in_ck="3411133946188" xil_pn:name="TRANEXT_vm6File_xc9500xl" xil_pn:prop_ck="9004057811965381659" xil_pn:start_ts="1434558108">
+    <transform xil_pn:end_ts="1435832110" xil_pn:in_ck="3411133946188" xil_pn:name="TRANEXT_vm6File_xc9500xl" xil_pn:prop_ck="9004057811965381659" xil_pn:start_ts="1435832096">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
@@ -113,7 +113,7 @@
       <outfile xil_pn:name="Main_html"/>
       <outfile xil_pn:name="Main_pad.csv"/>
     </transform>
-    <transform xil_pn:end_ts="1434558121" xil_pn:in_ck="3411133955052" xil_pn:name="TRANEXT_crtProg_xc9500" xil_pn:prop_ck="-6294026017969277533" xil_pn:start_ts="1434558119">
+    <transform xil_pn:end_ts="1435832112" xil_pn:in_ck="3411133955052" xil_pn:name="TRANEXT_crtProg_xc9500" xil_pn:prop_ck="-6294026017969277533" xil_pn:start_ts="1435832110">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="Main.jed"/>
@@ -123,6 +123,7 @@
       <status xil_pn:value="ReadyToRun"/>
       <status xil_pn:value="OutOfDateForInputs"/>
       <status xil_pn:value="InputAdded"/>
+      <status xil_pn:value="InputChanged"/>
     </transform>
     <transform xil_pn:end_ts="1434557433" xil_pn:in_ck="3448647002774395869" xil_pn:name="TRAN_createTimingConstraints" xil_pn:start_ts="1434557433">
       <status xil_pn:value="SuccessfullyRun"/>

@@ -3,14 +3,14 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 --> Parameter TMPDIR set to xst/projnav.tmp
 
 
-Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.09 secs
+Total REAL time to Xst completion: 1.00 secs
+Total CPU time to Xst completion: 0.31 secs
  
 --> Parameter xsthdpdir set to xst
 
 
-Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.09 secs
+Total REAL time to Xst completion: 1.00 secs
+Total CPU time to Xst completion: 0.31 secs
  
 --> Reading design: Main.prj
 
@@ -76,15 +76,20 @@ wysiwyg                            : NO
 *                          HDL Compilation                              *
 =========================================================================
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" in Library work.
-Architecture behavioral of Entity stepper is up to date.
+Entity <stepper> compiled.
+Entity <stepper> (Architecture <behavioral>) compiled.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd" in Library work.
-Architecture rtl of Entity stopwatch is up to date.
+Entity <stopwatch> compiled.
+Entity <stopwatch> (Architecture <rtl>) compiled.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd" in Library work.
-Architecture behavioral of Entity spislave is up to date.
+Entity <spislave> compiled.
+Entity <spislave> (Architecture <behavioral>) compiled.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd" in Library work.
-Architecture rtl of Entity pulsetimer is up to date.
+Entity <pulsetimer> compiled.
+Entity <pulsetimer> (Architecture <rtl>) compiled.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd" in Library work.
-Architecture rtl of Entity main is up to date.
+Entity <main> compiled.
+Entity <main> (Architecture <rtl>) compiled.
 
 =========================================================================
 *                     Design Hierarchy Analysis                         *
@@ -350,12 +355,12 @@ Cell Usage :
 =========================================================================
 
 
-Total REAL time to Xst completion: 4.00 secs
-Total CPU time to Xst completion: 4.56 secs
+Total REAL time to Xst completion: 6.00 secs
+Total CPU time to Xst completion: 5.86 secs
  
 --> 
 
-Total memory usage is 261580 kilobytes
+Total memory usage is 261516 kilobytes
 
 Number of errors   :    0 (   0 filtered)
 Number of warnings :    1 (   0 filtered)

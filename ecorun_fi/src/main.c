@@ -10,6 +10,7 @@
 #include "system/peripheral/timer.h"
 #include "system/peripheral/adc.h"
 #include "system/peripheral/ssp.h"
+#include "system/peripheral/eeprom.h"
 #include "system/systimer.h"
 #include "util/usart_util.h"
 #include "core/command.h"
@@ -45,19 +46,36 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 		{
 			LPC_GPIO->CLR[1] |= _BV(0);
 		}
-		/*
-		uint32_t current_inject_time = get_inject_time_from_map(eg_data.th, eg_data.rev);
+
+		uint32_t current_inject_time = get_inject_time_from_map(eg_data.th,
+				eg_data.rev);
 
 		volatile uint8_t ssp_data = current_inject_time;
 		ssel(0);
 		ssp_exchange(&ssp_data, 1);
 		ssel(1);
 
-		eg_data.rev = current_inject_time;*/
+		eg_data.rev = current_inject_time;
+
+	}
+}
+
+void timer32_1_handler(uint8_t timer, uint8_t num)
+{
+	if (num == 0)
+	{
+		//LPC_GPIO->PIN[1] ^= _BV(1);
 	}
 }
 
 void timer16_0_handler(uint8_t timer, uint8_t num)
+{
+	if (num == 0)
+	{
+
+	}
+}
+void timer16_1_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
@@ -75,19 +93,20 @@ void timer16_0_handler(uint8_t timer, uint8_t num)
 		// engine oil temperature
 		if (oil_temperature_samples != 0)
 		{
-			uint32_t ave_temp_adc = sum_oil_temperature_adc / oil_temperature_samples;
+			uint32_t ave_temp_adc = sum_oil_temperature_adc
+					/ oil_temperature_samples;
 
-			ave_oil_temperature_registance = ave_temp_adc * 1000 / (4096 - ave_temp_adc);
+			ave_oil_temperature_registance = ave_temp_adc * 1000
+					/ (4096 - ave_temp_adc);
 			eg_data.oil_temp = ave_oil_temperature_registance;
 		}
 		sum_oil_temperature_adc = 0;
 		oil_temperature_samples = 0;
-	}
-}
-void timer16_1_handler(uint8_t timer, uint8_t num)
-{
-	if (num == 0)
-	{
+		/*
+		 timer32_set_match(1, 1,
+		 SystemCoreClock / 70 * (0 + (4096 - eg_data.th) * 144 / 4096)
+		 / 144);*/
+
 		LPC_GPIO->PIN[1] ^= _BV(24);
 	}
 }
@@ -102,7 +121,8 @@ void command_error_func(const char* id, command_func func)
 static const named_data register_data_table[] =
 {
 { "engine_data", (void*) &eg_data, sizeof(eg_data), true },
-{ "basic_inject_time_map", (void*) &fi_settings.basic_inject_time_map[0][0], sizeof(fi_settings.basic_inject_time_map), false },
+{ "basic_inject_time_map", (void*) &fi_settings.basic_inject_time_map[0][0],
+		sizeof(fi_settings.basic_inject_time_map), false },
 { "car_data", (void*) &cr_data, sizeof(cr_data), true } };
 
 void command_get(command_data* data)
@@ -158,6 +178,25 @@ void command_put(command_data* data)
 		}
 
 		memcpy((uint8_t*) registered_data.data_ptr, transaction_buf, size);
+	}
+}
+
+void command_exec(command_data* data)
+{
+	const uint8_t* id = data->args[0].arg_value;
+	if (strcmp(id, "save-settings") == 0)
+	{
+		eeprom_write((uint8_t*) 0, (buffer*) fi_settings.basic_inject_time_map,
+				sizeof(fi_settings.basic_inject_time_map));
+
+		write_message("settings saved.");
+	}
+	else if (strcmp(id, "load-settings") == 0)
+	{
+		eeprom_read((uint8_t*) 0, (buffer*) fi_settings.basic_inject_time_map,
+				sizeof(fi_settings.basic_inject_time_map));
+
+		write_message("settings loaded.");
 	}
 }
 
@@ -316,10 +355,12 @@ void init_cli(void)
 
 	initialize_command_system(command_error_func);
 
-	uint32_t registered_data_count = sizeof(register_data_table) / sizeof(register_data_table[0]);
+	uint32_t registered_data_count = sizeof(register_data_table)
+			/ sizeof(register_data_table[0]);
 	register_data(register_data_table, registered_data_count);
 	register_command("get", command_get);
 	register_command("put", command_put);
+	register_command("exec", command_exec);
 }
 
 void init_fi_timer(void)
@@ -349,11 +390,14 @@ int main(void)
 {
 	SystemCoreClockUpdate();
 
+	eeprom_read((uint8_t*) 0, (buffer*) fi_settings.basic_inject_time_map,
+			sizeof(fi_settings.basic_inject_time_map));
+
 	init_io();
 
-	fi_set_default();
+	//fi_set_default();
 
-	timer16_init(0, 10000, SystemCoreClock / 10000);
+	timer16_init(0, 10000, SystemCoreClock / 10000 / 1000);
 	timer16_add_event(0, timer16_0_handler);
 	timer16_enable(0);
 
@@ -374,8 +418,6 @@ int main(void)
 	init_fi_timer();
 
 	systimer_init();
-
-	init_fi_timer();
 
 	init_cli();
 
@@ -398,6 +440,12 @@ int main(void)
 		usart_write_uint32(ssp_data);
 		usart_writeln_string("\r\n");
 	}
+
+	LPC_IOCON->PIO1_1 &= ~0x07;
+	LPC_IOCON->PIO1_1 |= 0x00;
+	LPC_IOCON->PIO1_1 = 0x10;
+	LPC_GPIO->DIR[1] |= _BV(1);
+	LPC_GPIO->SET[1] |= _BV(1);
 
 	while (1)
 	{

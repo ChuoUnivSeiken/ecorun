@@ -4,7 +4,6 @@ import express = require('express');
 import socketio = require('socket.io');
 import path = require('path');
 
-import _ = require('lodash');
 import carcomm = require('./car_comm');
 import carserialize = require("./car_serialize");
 
@@ -41,11 +40,10 @@ app.use((req, res, next) => {
 });
 
 // error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use((err:any, req, res, next) => {
+    app.use((err: any, req, res, next) => {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -56,7 +54,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err:any, req, res, next) => {
+app.use((err: any, req, res, next) => {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
