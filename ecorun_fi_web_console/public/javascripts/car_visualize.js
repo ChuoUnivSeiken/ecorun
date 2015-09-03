@@ -142,8 +142,8 @@ function data_apply(name, value, timestamp) {
             break;
         case 'basic_inject_time_map':
             var array = atob(value);
-            var num_row = 16;
-            var num_col = 16;
+            var num_row = 8;
+            var num_col = 8;
             for (var i = 0; i < num_row; i++) {
                 for (var j = 0; j < num_col; j++) {
                     var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();

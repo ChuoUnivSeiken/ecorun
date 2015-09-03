@@ -3,14 +3,14 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 --> Parameter TMPDIR set to xst/projnav.tmp
 
 
-Total REAL time to Xst completion: 1.00 secs
-Total CPU time to Xst completion: 0.31 secs
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.08 secs
  
 --> Parameter xsthdpdir set to xst
 
 
-Total REAL time to Xst completion: 1.00 secs
-Total CPU time to Xst completion: 0.31 secs
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.08 secs
  
 --> Reading design: Main.prj
 
@@ -76,17 +76,13 @@ wysiwyg                            : NO
 *                          HDL Compilation                              *
 =========================================================================
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" in Library work.
-Entity <stepper> compiled.
-Entity <stepper> (Architecture <behavioral>) compiled.
+Architecture behavioral of Entity stepper is up to date.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd" in Library work.
-Entity <stopwatch> compiled.
-Entity <stopwatch> (Architecture <rtl>) compiled.
+Architecture rtl of Entity stopwatch is up to date.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd" in Library work.
-Entity <spislave> compiled.
-Entity <spislave> (Architecture <behavioral>) compiled.
+Architecture behavioral of Entity spislave is up to date.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd" in Library work.
-Entity <pulsetimer> compiled.
-Entity <pulsetimer> (Architecture <rtl>) compiled.
+Architecture rtl of Entity pulsetimer is up to date.
 Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd" in Library work.
 Entity <main> compiled.
 Entity <main> (Architecture <rtl>) compiled.
@@ -355,8 +351,8 @@ Cell Usage :
 =========================================================================
 
 
-Total REAL time to Xst completion: 6.00 secs
-Total CPU time to Xst completion: 5.86 secs
+Total REAL time to Xst completion: 4.00 secs
+Total CPU time to Xst completion: 4.27 secs
  
 --> 
 

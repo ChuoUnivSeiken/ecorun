@@ -24,10 +24,9 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 
 -- spec
--- 供給クロック : 4kHz
--- エンジン最大回転数 : 6000rev
--- 噴射精度 : 0.25ms
--- 最大噴射可能時間 : 64ms
+-- 供給クロック : 1kHz
+-- 噴射精度 : 0.1ms
+-- 最大噴射可能時間 : 25.5ms
 
 entity Main is
 	port(

@@ -54,7 +54,7 @@ gulp.task('watch', ['build-client'], function() {
 gulp.task('open', ['watch'], function() {
     var options = {
         url: 'http://localhost',
-        app: 'firefox'
+        app: 'chrome'
     };
     return gulp.src('./public/index.html')
         .pipe(open('', options));

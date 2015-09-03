@@ -9,11 +9,11 @@ $(document).ready(() => {
     car_access.initialize();
     car_visualize.initialize();
 
-    var rev = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000];
-    var th = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000];
+    var rev = [800, 1600, 2400, 3200, 4000, 4800, 5600, 6400];
+    var th = [10, 20, 30, 40, 50, 60, 70, 80];
 
-    var num_row = 16;
-    var num_col = 16;
+    var num_row = 8;
+    var num_col = 8;
     for (var i = 0; i < num_row; i++) {
         var id_row = 'basic_inject_time_matrix_' + i.toString();
         $('#basic_inject_time_matrix').append('<div width="900px" class="btn-group-lg"" id=' + id_row + '>' + '</div>');
@@ -26,11 +26,11 @@ $(document).ready(() => {
 
             var rev_beg = rev[j].toString();
             var rev_end = j != num_col - 1 ? rev[j + 1].toString() : " ";
-            cell.data('rev', rev_beg + " - " + rev_end);
+            cell.data('rev', rev_beg + "rpm - " + rev_end + "rpm");
 
-            var th_beg = rev[j].toString();
-            var th_end = j != num_col - 1 ? rev[j + 1].toString() : " ";
-            cell.data('th', th_beg + " - " + th_end);
+            var th_beg = th[j].toString();
+            var th_end = j != num_col - 1 ? th[j + 1].toString() : " ";
+            cell.data('th', th_beg + "% - " + th_end + "%");
         }
     }
 
@@ -62,9 +62,7 @@ $(document).ready(() => {
     });
 
     $("#save_basic_inject_time").click(() => {
-        var array = new Uint8Array(256);
-        var num_row = 16;
-        var num_col = 16;
+        var array = new Uint8Array(num_row * num_col);
         for (var i = 0; i < num_row; i++) {
             for (var j = 0; j < num_col; j++) {
                 var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
@@ -79,20 +77,18 @@ $(document).ready(() => {
     });
 
     $("#apply_basic_inject_time").click(() => {
-        var array = new Uint8Array(256);
-        var num_row = 16;
-        var num_col = 16;
+        var array = new Uint8Array(num_row * num_col);
         for (var i = 0; i < num_row; i++) {
             for (var j = 0; j < num_col; j++) {
                 var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                array[i * num_col + j] = parseInt($('#' + id_cell).html());
+                array[i * num_col + j] = <number>(parseFloat($('#' + id_cell).html()) * 20);
             }
         }
         var b64encoded = btoa(_.reduce(array, (previousValue, currentValue, currentIndex, array) => {
             return previousValue + String.fromCharCode(currentValue);
         }, ""));
 
-        car_access.AppConnection.get_instance().send_data('basic_inject_time_map', b64encoded, 256);
+        car_access.AppConnection.get_instance().send_data('basic_inject_time_map', b64encoded, num_row * num_col);
     });
 
     $("#navbar ul li a[href^='#']").click(function(e) {
@@ -132,7 +128,7 @@ $(document).ready(() => {
         template: popover_template.join("")
     }).mouseenter(function(e) {
         var rev_range = $(this).data('rev') as string;
-        var th_range = $(this).data('rev') as string;
+        var th_range = $(this).data('th') as string;
         var val = $(this).html();
         var content_html = [
             '<table class="table">',
