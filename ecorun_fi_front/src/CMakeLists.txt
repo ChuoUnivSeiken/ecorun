@@ -7,8 +7,8 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_BUILD_TYPE None)
 
-set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-set(CMAKE_C_OUTPUT_EXTENSION .o)
+#set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
+#set(CMAKE_C_OUTPUT_EXTENSION .o)
 
 set(CMAKE_C_FLAGS "")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m3")
@@ -29,9 +29,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -MP")
 
 set(CMAKE_EXE_LINKER_FLAGS "-T ../lpc1347.ld -nostartfiles -nodefaultlibs -nostdlib -Xlinker --gc-sections -Wl,-Map,ecorun_fi.map")
 
-#set(CMAKE_ASM_FLAGS "-mcpu=cortex-m3 -mthumb -O0 -mthumb-interwork" CACHE INTERNAL "asm compiler flags")
+set(CMAKE_ASM_FLAGS "-mcpu=cortex-m3 -mthumb -O0 -mthumb-interwork" CACHE INTERNAL "asm compiler flags")
 
-set (SystemSrcs
+set(SystemSrcs
 	system/cmsis/startup.c
 	system/cmsis/system_LPC13Uxx.c
 	system/cortexm/_initialize_hardware.c
@@ -47,10 +47,11 @@ set (SystemSrcs
 	system/peripheral/timer_handler.c
 	system/peripheral/usart.c
 	system/peripheral/usart_handler.c
+    system/peripheral/ssp.c
     system/systimer.c
 )
 
-set (Srcs
+set(Srcs
 	integer.c
 	usart_receive_data_handler.c
     carsystem/accessible_data.c
@@ -70,5 +71,4 @@ project(ecorun_fi)
 add_executable(ecorun_fi ${SystemSrcs} ${Srcs} main.c)
 add_custom_command(TARGET ecorun_fi COMMAND arm-none-eabi-objcopy -O ihex ecorun_fi ecorun_fi.hex)
 add_custom_command(TARGET ecorun_fi COMMAND arm-none-eabi-size ecorun_fi)
-add_custom_command(TARGET ecorun_fi COMMAND arm-none-eabi-size ecorun_fi.hex)
 
