@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "command.h"
+#include "../system/cmsis/LPC13Uxx.h"
 
 static command_data command_data_reserved[MAX_COMMAND_QUEUE];
 static command_data* command_data_recycle;
@@ -52,13 +53,19 @@ uint32_t get_registered_command_count()
 {
 	return registered_command_count;
 }
+void execute_command(command_data* cmd)
+{
+	__disable_irq();
+	command_table[cmd->command_id].command_func(cmd);
+	delete_command(cmd);
+	__enable_irq();
+}
 void execute_all_command(void)
 {
 	volatile command_data* cmd = dequeue_command();
 	while (cmd != NULL)
 	{
-		command_table[cmd->command_id].command_func(cmd);
-		delete_command(cmd);
+		execute_command(cmd);
 		cmd = dequeue_command();
 	}
 }
@@ -68,8 +75,7 @@ void execute_one_command(void)
 	if (cmd != NULL && cmd->command_id >= 0
 			&& cmd->command_id < registered_command_count)
 	{
-		command_table[cmd->command_id].command_func(cmd);
-		delete_command(cmd);
+		execute_command(cmd);
 	}
 }
 

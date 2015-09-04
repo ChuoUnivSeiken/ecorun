@@ -68,7 +68,7 @@ void put_data(const_buffer data, size_t size, const_string id)
 	usart_write_string(" ");
 	usart_write_base64(data, size);
 	usart_write_string(" ");
-	usart_write_uint32_hex(adler32(data, size));
+	usart_write_uint32(adler32(data, size));
 	usart_write_string(" ");
 	usart_write_uint32(send_time.high_part);
 	usart_write_string(" ");

@@ -158,9 +158,7 @@ void command_get(command_data* data)
 {
 	const_string id = data->args[0].arg_value;
 
-	__disable_irq();
 	find_and_put_data(id);
-	__enable_irq();
 }
 
 volatile uint8_t transaction_buf[512];
@@ -401,20 +399,13 @@ int main(void)
 
 	init_io();
 
-	//fi_set_default();
-
 	timer16_init(0, 10000, SystemCoreClock / 10000 / 1000);
 	timer16_add_event(0, timer16_0_handler);
 	timer16_enable(0);
 
 	LPC_IOCON->PIO1_11 = 0x10;
 	LPC_GPIO->DIR[1] &= ~_BV(11);
-	/*
-	 timer16_init(1, 10000, SystemCoreClock / 10000);
-	 timer16_set_match(1, 1, SystemCoreClock / 10000 / 2);
-	 timer16_add_event(1, timer16_1_handler);
-	 timer16_enable(1);
-	 */
+
 	/*
 	 LPC_IOCON->PIO1_3 &= ~0x07;
 	 LPC_IOCON->PIO1_3 |= 0x01;
