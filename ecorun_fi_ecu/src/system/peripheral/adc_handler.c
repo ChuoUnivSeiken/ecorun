@@ -6,8 +6,6 @@
  */
 
 #include "../cmsis/LPC11xx.h"
-#include "../command.h"
-#include "../integer.h"
 #include "adc.h"
 
 #define ADC_DONE		0x80000000

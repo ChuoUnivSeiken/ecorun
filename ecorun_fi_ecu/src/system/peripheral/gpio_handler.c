@@ -5,8 +5,7 @@
  *      Author: Yoshio
  */
 
-#include "cmsis/LPC11xx.h"
-#include "type.h"
+#include "../cmsis/LPC11xx.h"
 #include "gpio.h"
 
 gpio_event_handler events_buf[20];

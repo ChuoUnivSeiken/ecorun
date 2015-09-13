@@ -34,6 +34,11 @@ volatile uint32_t ave_oil_temperature_registance = 0;
 
 volatile uint8_t ssp_buf[sizeof(eg_data) + 4];
 
+uint16_t spi_encode_header(uint32_t func, uint32_t addr, uint32_t size)
+{
+	return (((func & 0x01) << 15) | ((addr & 0x7F) << 8) | ((size - 1) & 0xFF));
+}
+
 void receive_eneine_data(void)
 {
 	volatile uint32_t i = 0;
@@ -41,9 +46,7 @@ void receive_eneine_data(void)
 	// receive engine data
 	{
 		volatile uint32_t size = sizeof(eg_data) + 4;
-		volatile uint32_t addr = 0x00;
-		volatile uint32_t func = 0x00;
-		volatile uint16_t data = ((func << 15) | (addr << 8) | (size & 0xFF));
+		volatile uint16_t data = spi_encode_header(0x00, 0x00, size);
 		ssp_send2(&data, 1);
 		for (i = 0; i < size; i++)
 		{
@@ -70,9 +73,7 @@ void receive_eneine_data(void)
 		volatile uint8_t* fi_settings_ptr = (uint8_t*) &fi_settings;
 
 		volatile uint32_t size = sizeof(fi_settings.basic_inject_time_map) + 4;
-		volatile uint32_t addr = 0x01;
-		volatile uint32_t func = 0x01;
-		volatile uint16_t data = ((func << 15) | (addr << 8) | 68);
+		volatile uint16_t data = spi_encode_header(0x01, 0x01, size);
 		ssp_send2(&data, 1);
 		for (i = 0; i < size; i++)
 		{
@@ -101,6 +102,11 @@ void timer16_0_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
+		uint32_t angle = ((1800 * eg_data.th) >> 10);
+		uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
+		usart_write_uint32(eg_data.th);
+		usart_writeln_string("\r\n");
+		timer32_set_match(1, 1, match);
 	}
 }
 
@@ -399,7 +405,7 @@ int main(void)
 
 	init_io();
 
-	timer16_init(0, 10000, SystemCoreClock / 10000 / 1000);
+	timer16_init(0, 10000, SystemCoreClock / 10000 / 10);
 	timer16_add_event(0, timer16_0_handler);
 	timer16_enable(0);
 
@@ -419,9 +425,19 @@ int main(void)
 
 	init_cli();
 
+	LPC_IOCON->TRST_PIO0_14 = 0x13;
+	//LPC_GPIO->DIR[0] |= _BV(14);
+	//LPC_GPIO->SET[0] |= _BV(14);
+
 	timer32_init(0, SystemCoreClock / 20);
 	timer32_add_event(0, timer32_0_handler);
 	timer32_enable(0);
+
+	timer32_init(1, SystemCoreClock / 1000000 * 20000);
+	timer32_add_event(1, timer32_1_handler);
+	timer32_set_pwm(1, SystemCoreClock / 1000000 * 20000);
+	//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
+	timer32_enable(1);
 
 	while (1)
 	{

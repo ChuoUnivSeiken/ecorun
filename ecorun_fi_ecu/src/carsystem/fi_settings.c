@@ -8,6 +8,8 @@
 #include "fi_settings.h"
 
 fi_setting_data fi_settings;
+fi_modify_setting_data fi_modify_setting;
+fi_feedback_settings_data fi_feedback_settings;
 
 volatile uint32_t inject_time_100us = DEFAULT_INJECT_TIME;  // 5ms
 volatile uint32_t inject_time_idle_100us = DEFAULT_INJECT_IDLE_TIME; // 3.5ms
@@ -20,29 +22,19 @@ DEFAULT_FUEL_CUT_INTERVAL_THRESHOLD;
 void fi_set_default(void)
 {
 	volatile uint32_t rev, th;
-	for (rev = 0; rev < 8; rev++)
+	for (rev = 0; rev < NUM_REV_POINTS; rev++)
 	{
-		for (th = 0; th < 8; th++)
+		for (th = 0; th < NUM_TH_POINTS; th++)
 		{
-			volatile uint32_t time = 0;
-			switch (th)
-			{
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			default:
-				time = th * 25;
-				break;
-			}
-
-			fi_settings.basic_inject_time_map[rev][th] = time;
+			fi_settings.basic_inject_time_map[rev][th] = 0;
+			fi_modify_setting.modify_coff[rev][th] = 10000;
 		}
 	}
+
+	fi_feedback_settings.delta = 0;
+	fi_feedback_settings.enable_feedback = 1;
+	fi_feedback_settings.interval = 1;
+	fi_feedback_settings.num_step = 1;
 }
 
 uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev)
@@ -50,6 +42,11 @@ uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev)
 	volatile uint32_t thIndex, revIndex;
 	thIndex = (th >> 7) & 0x7;
 	revIndex = 0;
+	if (fi_feedback_settings.enable_feedback)
+	{
+		return fi_settings.basic_inject_time_map[revIndex][thIndex]
+				* fi_modify_setting.modify_coff[revIndex][thIndex] / 10000;
+	}
 	return fi_settings.basic_inject_time_map[revIndex][thIndex];
 }
 
@@ -67,7 +64,3 @@ void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time)
 	fi_settings.basic_inject_time_map[revIndex][thIndex] = time;
 }
 
-fi_setting_data* get_fi_setting_data(void)
-{
-	return &fi_settings;
-}

@@ -7,8 +7,6 @@
 
 #include "../cmsis/LPC11xx.h"
 #include "timer.h"
-#include "../type.h"
-#include "../command.h"
 
 timer_event_handler timer_events_buf[TIMER_MAX_EVENT];
 uint32_t timer_event_count = 0;

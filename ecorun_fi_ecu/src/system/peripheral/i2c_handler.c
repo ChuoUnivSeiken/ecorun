@@ -6,7 +6,6 @@
  */
 
 #include "../cmsis/LPC11xx.h"
-#include "../type.h"
 #include "i2c.h"
 
 extern volatile uint32_t I2CMasterState;

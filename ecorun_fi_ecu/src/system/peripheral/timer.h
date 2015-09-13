@@ -8,7 +8,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include "../type.h"
+#include "../common_types.h"
 
 #define TIMER_MAX_EVENT 5
 

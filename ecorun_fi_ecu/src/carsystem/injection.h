@@ -9,6 +9,7 @@
 #define CARSYSTEM_INJECTION_H_
 
 #include <stdint.h>
+#include "fi_settings.h"
 
 #if defined(__cplusplus)
 extern "C"
@@ -32,6 +33,8 @@ typedef volatile struct engine_data_t
 
 extern volatile engine_data eg_data;
 extern volatile uint32_t starter_motor_on;
+
+void fi_feedback(void);
 
 #if defined(__cplusplus)
 }

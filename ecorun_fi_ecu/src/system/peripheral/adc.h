@@ -8,7 +8,7 @@
 #ifndef ADC_H_
 #define ADC_H
 
-#include "../type.h"
+#include "../common_types.h"
 
 #define ADC_NUM			8			/* for LPC11xx */
 #define ADC_CLK			4000000		/* set to 1Mhz */

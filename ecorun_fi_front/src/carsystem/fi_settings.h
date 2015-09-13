@@ -29,15 +29,18 @@ extern volatile uint32_t idle_rev_th;
 extern volatile uint32_t fuel_cut_threshold;
 extern volatile uint32_t fuel_cut_interval_threshold;
 
+#define NUM_TH_POINTS 11
+#define NUM_REV_POINTS 13
+
 typedef struct
 {
-	volatile uint8_t basic_inject_time_map[8][8];
+	volatile uint8_t basic_inject_time_map[NUM_REV_POINTS][NUM_TH_POINTS];
 	volatile uint32_t checksum;
 } fi_setting_data;
 
 typedef struct
 {
-	volatile uint8_t inject_time_map[8][8];
+	volatile uint8_t inject_time_map[NUM_REV_POINTS][NUM_TH_POINTS];
 } fi_modified_setting_data;
 
 typedef struct

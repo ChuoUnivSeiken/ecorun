@@ -8,7 +8,7 @@
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include "type.h"
+#include "../common_types.h"
 
 #define ENABLE_PIOINT0_IRQHandler 1
 #define ENABLE_PIOINT1_IRQHandler 1

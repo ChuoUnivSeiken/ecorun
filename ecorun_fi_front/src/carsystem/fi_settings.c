@@ -20,9 +20,9 @@ DEFAULT_FUEL_CUT_INTERVAL_THRESHOLD;
 void fi_set_default(void)
 {
 	volatile uint32_t rev, th;
-	for (rev = 0; rev < 16; rev++)
+	for (rev = 0; rev < NUM_REV_POINTS; rev++)
 	{
-		for (th = 0; th < 16; th++)
+		for (th = 0; th < NUM_TH_POINTS; th++)
 		{
 			volatile uint32_t time = 0;
 			switch (th)
@@ -77,7 +77,3 @@ void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time)
 	fi_settings.basic_inject_time_map[revIndex][thIndex] = time;
 }
 
-fi_setting_data* get_fi_setting_data(void)
-{
-	return &fi_settings;
-}

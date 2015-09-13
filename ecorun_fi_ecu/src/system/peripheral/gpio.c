@@ -5,7 +5,7 @@
  *      Author: Yoshio
  */
 
-#include "cmsis/LPC11xx.h"
+#include "../cmsis/LPC11xx.h"
 #include "gpio.h"
 
 void gpio_init(void) {
