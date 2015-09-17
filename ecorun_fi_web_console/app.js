@@ -65,7 +65,7 @@ var timer = setInterval(function () {
         carTransmitter.requestData('car_data');
         carTransmitter.requestData('engine_data');
     }
-}, 100);
+}, 200);
 io.sockets.on('connection', function (socket) {
     socket.on('connected', function (id) {
         idHash[socket.id] = id;

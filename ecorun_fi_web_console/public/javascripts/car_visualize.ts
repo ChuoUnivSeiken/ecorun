@@ -89,7 +89,7 @@ export function data_apply(name, value, timestamp) {
             CarCharts.rev_chart.push(value);
             break;
         case 'th':
-            var th = Math.round(value / 41);
+            var th = Math.round(value / 1024.0 * 100);
             $('#td_th').html(th.toString());
             $('#progress_th').attr('aria-valuenow', th).css('width', th + "%");
             CarCharts.throttle_chart.push(th);
@@ -143,12 +143,12 @@ export function data_apply(name, value, timestamp) {
             break;
         case 'basic_inject_time_map':
             var array = atob(value);
-            var num_row = 8;
-            var num_col = 8;
+            var num_row = 13;
+            var num_col = 11;
             for (var i = 0; i < num_row; i++) {
                 for (var j = 0; j < num_col; j++) {
                     var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                    $('#' + id_cell).html(array.charCodeAt(i * num_col + j).toFixed(1));
+                    $('#' + id_cell).html((array.charCodeAt(i * num_col + j) / 255.0 * 5.0).toFixed(1));
                 }
             }
             break;

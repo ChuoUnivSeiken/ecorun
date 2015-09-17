@@ -26,10 +26,12 @@ void spi_receive_fi_settings(uint32_t size)
 		ssp_fi_settings_buf[i] = LPC_SSP1->DR;
 	}
 
-	volatile uint32_t sum = adler32(ssp_fi_settings_buf, size - 4);
+	volatile uint32_t sum = adler32(ssp_fi_settings_buf,
+			sizeof(fi_settings.basic_inject_time_map));
 
 	volatile uint32_t checksum = *(uint32_t*) ((uint8_t*) ssp_fi_settings_buf
-			+ sizeof(fi_settings.basic_inject_time_map));
+			+ ((uint8_t*) &fi_settings.checksum
+					- (uint8_t*) &fi_settings.basic_inject_time_map[0][0]));
 
 	if (checksum == sum)
 	{

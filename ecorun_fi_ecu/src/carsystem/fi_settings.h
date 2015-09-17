@@ -58,6 +58,8 @@ void fi_set_default(void);
 uint32_t get_inject_time_from_map(uint32_t th, uint32_t rev);
 void set_inject_time_to_map(uint32_t th, uint32_t rev, uint32_t time);
 
+uint32_t calc_th_index(uint32_t th_val);
+
 extern fi_setting_data fi_settings;
 extern fi_modify_setting_data fi_modify_setting;
 extern fi_feedback_settings_data fi_feedback_settings;

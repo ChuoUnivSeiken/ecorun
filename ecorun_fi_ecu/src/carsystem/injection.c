@@ -12,12 +12,12 @@ volatile uint32_t starter_motor_on = 0;
 
 static volatile uint32_t feedback_counter = 0;
 
-inline uint16_t clame(uint16_t val, uint16_t min, uint16_t max)
+inline uint16_t clamp(uint16_t val, uint16_t min, uint16_t max)
 {
 	if (val < min)
 		return min;
 	if (val > max)
-		return val;
+		return max;
 	return val;
 }
 
@@ -30,7 +30,7 @@ void fi_feedback(void)
 
 	if (fi_feedback_settings.enable_feedback)
 	{
-		volatile uint32_t th = 0;
+		volatile uint32_t th = calc_th_index(eg_data.th) / 10;
 		volatile uint32_t rev = 0;
 		volatile uint16_t val = fi_modify_setting.modify_coff[rev][th];
 
@@ -43,7 +43,7 @@ void fi_feedback(void)
 			val += fi_feedback_settings.delta;
 		}
 
-		fi_modify_setting.modify_coff[rev][th] = clame(val, 8000, 15000);
+		fi_modify_setting.modify_coff[rev][th] = clamp(val, 9000, 11000);
 	}
 
 	feedback_counter = 0;

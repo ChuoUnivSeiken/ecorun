@@ -6,10 +6,10 @@ var _ = require('lodash');
 $(document).ready(function () {
     car_access.initialize();
     car_visualize.initialize();
-    var rev = [800, 1600, 2400, 3200, 4000, 4800, 5600, 6400];
-    var th = [10, 20, 30, 40, 50, 60, 70, 80];
-    var num_row = 8;
-    var num_col = 8;
+    var rev = [0, 800, 1600, 2400, 3200, 4000, 4800, 5600, 6400, 0, 0, 0, 0];
+    var th = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    var num_row = 13;
+    var num_col = 11;
     for (var i = 0; i < num_row; i++) {
         var id_row = 'basic_inject_time_matrix_' + i.toString();
         $('#basic_inject_time_matrix').append('<div width="900px" class="btn-group-lg"" id=' + id_row + '>' + '</div>');
@@ -19,12 +19,8 @@ $(document).ready(function () {
             var elem = $('#' + id_row);
             elem.append('<button type="button" style="margin: 2px;" class="' + clazz + '" id=' + id_cell + ' data-target-cell=' + id_cell + ' data-popover=popover data-tooltip="tooltip" data-toggle="modal" data-target="#time-setting-modal" data-placement="left" title="噴射時間設定">' + '2.5' + '</button>');
             var cell = $('#' + id_cell);
-            var rev_beg = rev[j].toString();
-            var rev_end = j != num_col - 1 ? rev[j + 1].toString() : " ";
-            cell.data('rev', rev_beg + "rpm - " + rev_end + "rpm");
-            var th_beg = th[j].toString();
-            var th_end = j != num_col - 1 ? th[j + 1].toString() : " ";
-            cell.data('th', th_beg + "% - " + th_end + "%");
+            cell.data('rev', rev[i].toString() + "rpm");
+            cell.data('th', th[j].toString() + "%");
         }
     }
     var model = $('#time-setting-modal');
@@ -54,7 +50,7 @@ $(document).ready(function () {
         for (var i = 0; i < num_row; i++) {
             for (var j = 0; j < num_col; j++) {
                 var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                array[i * num_col + j] = parseInt($('#' + id_cell).html());
+                array[i * num_col + j] = (parseFloat($('#' + id_cell).html()) / 5.0 * 255);
             }
         }
         var b64encoded = btoa(_.reduce(array, function (previousValue, currentValue, currentIndex, array) {
@@ -67,7 +63,7 @@ $(document).ready(function () {
         for (var i = 0; i < num_row; i++) {
             for (var j = 0; j < num_col; j++) {
                 var id_cell = 'basic_inject_time_matrix_' + i.toString() + '-' + j.toString();
-                array[i * num_col + j] = (parseFloat($('#' + id_cell).html()) * 20);
+                array[i * num_col + j] = (parseFloat($('#' + id_cell).html()) / 5.0 * 255);
             }
         }
         var b64encoded = btoa(_.reduce(array, function (previousValue, currentValue, currentIndex, array) {

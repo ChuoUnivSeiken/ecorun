@@ -64,6 +64,9 @@ void receive_eneine_data(void)
 		if (sum == checksum)
 		{
 			memcpy(&eg_data, ssp_buf, sizeof(eg_data));
+
+			//usart_write_uint32(eg_data.th);
+			//usart_writeln_string("\r\n");
 		}
 	}
 	// send injection map
@@ -72,7 +75,7 @@ void receive_eneine_data(void)
 				sizeof(fi_settings.basic_inject_time_map));
 		volatile uint8_t* fi_settings_ptr = (uint8_t*) &fi_settings;
 
-		volatile uint32_t size = sizeof(fi_settings.basic_inject_time_map) + 4;
+		volatile uint32_t size = sizeof(fi_settings);
 		volatile uint16_t data = spi_encode_header(0x01, 0x01, size);
 		ssp_send2(&data, 1);
 		for (i = 0; i < size; i++)
@@ -88,6 +91,33 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 	if (num == 0)
 	{
 		receive_eneine_data();
+
+		if (LPC_GPIO->PIN[1] & _BV(4))
+		{
+			LPC_GPIO->SET[1] |= _BV(11);
+		}
+		else
+		{
+			LPC_GPIO->CLR[1] |= _BV(11);
+		}
+
+		if (LPC_GPIO->PIN[1] & _BV(27))
+		{
+			LPC_GPIO->SET[1] |= _BV(29);
+		}
+		else
+		{
+			LPC_GPIO->CLR[1] |= _BV(29);
+		}
+
+		if (LPC_GPIO->PIN[1] & _BV(26))
+		{
+			LPC_GPIO->SET[0] |= _BV(22);
+		}
+		else
+		{
+			LPC_GPIO->CLR[0] |= _BV(22);
+		}
 	}
 }
 
@@ -102,11 +132,16 @@ void timer16_0_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
-		uint32_t angle = ((1800 * eg_data.th) >> 10);
-		uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
-		usart_write_uint32(eg_data.th);
+		volatile uint32_t angle = ((1800 * eg_data.th) >> 10);
+		volatile uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
+/*
+		usart_write_uint32(match);
 		usart_writeln_string("\r\n");
+		usart_write_uint32(angle + 500);
+		usart_writeln_string("\r\n");*/
+		timer32_disable(1);
 		timer32_set_match(1, 1, match);
+		timer32_enable(1);
 	}
 }
 
@@ -368,6 +403,22 @@ void init_io_signals(void)
 	LPC_GPIO->CLR[1] |= _BV(25);
 	LPC_GPIO->CLR[1] |= _BV(19);
 	LPC_GPIO->CLR[1] |= _BV(7);
+
+	LPC_IOCON->PIO1_11 = 0x10; // fuel output
+	LPC_IOCON->PIO1_29 = 0x10; // cdi output
+	LPC_IOCON->PIO0_22 = 0x10; // starter output
+
+	LPC_GPIO->DIR[1] |= _BV(11);
+	LPC_GPIO->DIR[1] |= _BV(29);
+	LPC_GPIO->DIR[0] |= _BV(22);
+
+	LPC_GPIO->CLR[1] |= _BV(11);
+	LPC_GPIO->CLR[1] |= _BV(29);
+	LPC_GPIO->CLR[0] |= _BV(22);
+
+	LPC_IOCON->TRST_PIO0_14 = 0x13; // servo
+	//LPC_GPIO->DIR[0] |= _BV(14);
+	//LPC_GPIO->SET[0] |= _BV(14);
 }
 
 void init_io(void)
@@ -405,29 +456,11 @@ int main(void)
 
 	init_io();
 
-	timer16_init(0, 10000, SystemCoreClock / 10000 / 10);
-	timer16_add_event(0, timer16_0_handler);
-	timer16_enable(0);
-
-	LPC_IOCON->PIO1_11 = 0x10;
-	LPC_GPIO->DIR[1] &= ~_BV(11);
-
-	/*
-	 LPC_IOCON->PIO1_3 &= ~0x07;
-	 LPC_IOCON->PIO1_3 |= 0x01;
-	 LPC_GPIO->DIR[1] |= _BV(3);
-	 adc_init(ADC_CLK);
-	 adc_add_event(adc_handler);
-	 */
 	ssp_init();
 
 	systimer_init();
 
 	init_cli();
-
-	LPC_IOCON->TRST_PIO0_14 = 0x13;
-	//LPC_GPIO->DIR[0] |= _BV(14);
-	//LPC_GPIO->SET[0] |= _BV(14);
 
 	timer32_init(0, SystemCoreClock / 20);
 	timer32_add_event(0, timer32_0_handler);
@@ -436,8 +469,12 @@ int main(void)
 	timer32_init(1, SystemCoreClock / 1000000 * 20000);
 	timer32_add_event(1, timer32_1_handler);
 	timer32_set_pwm(1, SystemCoreClock / 1000000 * 20000);
-	//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
+	timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
 	timer32_enable(1);
+
+	timer16_init(0, 10000, SystemCoreClock / 10000);
+	timer16_add_event(0, timer16_0_handler);
+	timer16_enable(0);
 
 	while (1)
 	{

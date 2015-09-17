@@ -24,7 +24,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 
 -- spec
--- 供給クロック : 1kHz
+-- 供給クロック : 5kHz
 -- 噴射精度 : 0.1ms
 -- 最大噴射可能時間 : 25.5ms
 

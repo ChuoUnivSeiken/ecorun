@@ -79,7 +79,7 @@ var timer = setInterval(() => {
         carTransmitter.requestData('car_data');
         carTransmitter.requestData('engine_data');
     }
-}, 100);
+}, 200);
 
 io.sockets.on('connection', (socket) => {
     socket.on('connected', (id) => {

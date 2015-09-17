@@ -10,8 +10,6 @@
 
 #include "../type.h"
 
-#define MOD_ADLER 65521
-
 uint32_t adler32(uint8_t *data, size_t len);
 
 #endif /* ADLER32_H_ */
