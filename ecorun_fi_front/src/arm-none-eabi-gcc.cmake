@@ -11,7 +11,7 @@ endif()
 set(CPREF ${CROSS_COMPILE_TOOLS}/arm-none-eabi)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE None)
 
 set(CMAKE_C_COMPILER ${CPREF}-gcc CACHE STRING "arm-none-eabi-gcc" FORCE)
 set(CMAKE_CXX_COMPILER ${CPREF}-g++ CACHE STRING "arm-none-eabi-g++" FORCE)
