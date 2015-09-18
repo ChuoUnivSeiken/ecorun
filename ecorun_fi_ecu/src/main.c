@@ -19,7 +19,7 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 {
 	if (num == 0)
 	{
-		bool starter_on = (LPC_GPIO3->DATA & _BV(0)) == 0;
+		bool starter_on = (LPC_GPIO3->DATA & _BV(0)) != 0;
 
 		adc_burst_read();
 
@@ -30,7 +30,7 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 		{
 			inject_time = 100;
 		}
-#if 1
+#if 0
 		char numbuff[20];
 		uint32_to_str(inject_time, numbuff);
 		uart_write_string(numbuff);
@@ -46,8 +46,8 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 		fi_feedback();
 
 		set_starter_sw(starter_on);
-		set_fuel_sw((LPC_GPIO3->DATA & _BV(1)) == 0);
-		set_cdi_sw((LPC_GPIO3->DATA & _BV(2)) == 0);
+		set_fuel_sw((LPC_GPIO3->DATA & _BV(1)) != 0);
+		set_cdi_sw((LPC_GPIO3->DATA & _BV(2)) != 0);
 	}
 }
 
@@ -88,6 +88,8 @@ int main(void)
 {
 	SystemCoreClockUpdate();
 
+	init_io();
+
 	NVIC_SetPriority(ADC_IRQn, 1);
 	NVIC_SetPriority(TIMER_32_0_IRQn, 2);
 
@@ -96,8 +98,6 @@ int main(void)
 			sizeof(eg_data) - sizeof(eg_data.checksum));
 
 	uart_init(115200);
-
-	init_io();
 
 	ssp_init(1); // transmit with interface cpu
 	ssp_init(0); // transmit with fi timer

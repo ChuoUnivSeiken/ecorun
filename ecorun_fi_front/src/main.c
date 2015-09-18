@@ -65,8 +65,8 @@ void receive_eneine_data(void)
 		{
 			memcpy(&eg_data, ssp_buf, sizeof(eg_data));
 
-			//usart_write_uint32(eg_data.th);
-			//usart_writeln_string("\r\n");
+			usart_write_uint32(eg_data.th);
+			usart_writeln_string("\r\n");
 		}
 	}
 	// send injection map
@@ -94,29 +94,29 @@ void timer32_0_handler(uint8_t timer, uint8_t num)
 
 		if (LPC_GPIO->PIN[1] & _BV(4))
 		{
-			LPC_GPIO->SET[1] |= _BV(11);
+			LPC_GPIO->CLR[1] |= _BV(11);
 		}
 		else
 		{
-			LPC_GPIO->CLR[1] |= _BV(11);
+			LPC_GPIO->SET[1] |= _BV(11);
 		}
 
 		if (LPC_GPIO->PIN[1] & _BV(27))
 		{
-			LPC_GPIO->SET[1] |= _BV(29);
+			LPC_GPIO->CLR[1] |= _BV(29);
 		}
 		else
 		{
-			LPC_GPIO->CLR[1] |= _BV(29);
+			LPC_GPIO->SET[1] |= _BV(29);
 		}
 
 		if (LPC_GPIO->PIN[1] & _BV(26))
 		{
-			LPC_GPIO->SET[0] |= _BV(22);
+			LPC_GPIO->CLR[0] |= _BV(22);
 		}
 		else
 		{
-			LPC_GPIO->CLR[0] |= _BV(22);
+			LPC_GPIO->SET[0] |= _BV(22);
 		}
 	}
 }
@@ -139,9 +139,7 @@ void timer16_0_handler(uint8_t timer, uint8_t num)
 		usart_writeln_string("\r\n");
 		usart_write_uint32(angle + 500);
 		usart_writeln_string("\r\n");*/
-		timer32_disable(1);
 		timer32_set_match(1, 1, match);
-		timer32_enable(1);
 	}
 }
 
@@ -418,7 +416,7 @@ void init_io_signals(void)
 
 	LPC_IOCON->TRST_PIO0_14 = 0x13; // servo
 	//LPC_GPIO->DIR[0] |= _BV(14);
-	//LPC_GPIO->SET[0] |= _BV(14);
+	//LPC_GPIO->CLR[0] |= _BV(14);
 }
 
 void init_io(void)
@@ -448,13 +446,13 @@ int main(void)
 {
 	SystemCoreClockUpdate();
 
+	init_io();
+
 	NVIC_SetPriority(USART_IRQn, 1);
 	NVIC_SetPriority(CT32B0_IRQn, 2);
 
 	eeprom_read((uint8_t*) 0, (buffer*) fi_settings.basic_inject_time_map,
 			sizeof(fi_settings.basic_inject_time_map));
-
-	init_io();
 
 	ssp_init();
 
@@ -466,13 +464,13 @@ int main(void)
 	timer32_add_event(0, timer32_0_handler);
 	timer32_enable(0);
 
-	timer32_init(1, SystemCoreClock / 1000000 * 20000);
+	timer32_init(1, SystemCoreClock / 1000000 * 15000);
 	timer32_add_event(1, timer32_1_handler);
-	timer32_set_pwm(1, SystemCoreClock / 1000000 * 20000);
-	timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
+	timer32_set_pwm(1, SystemCoreClock / 1000000 * 15000);
+	//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
 	timer32_enable(1);
 
-	timer16_init(0, 10000, SystemCoreClock / 10000);
+	timer16_init(0, 10000, SystemCoreClock / 10000 / 10);
 	timer16_add_event(0, timer16_0_handler);
 	timer16_enable(0);
 
