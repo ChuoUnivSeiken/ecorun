@@ -102,6 +102,7 @@
 
 void ssp_init(uint8_t port);
 void ssp_send(uint8_t port, uint8_t* buf, uint32_t length);
+void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length);
 void ssp_exchange(uint8_t port, uint8_t *buf, uint32_t length);
 
 #endif /* PERIPHERAL_SSP_H_ */

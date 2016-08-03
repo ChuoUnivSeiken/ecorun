@@ -27,6 +27,7 @@ typedef volatile struct engine_data_t
 	volatile uint32_t current_total_injected_time;
 	volatile uint32_t current_inject_started_count;
 	volatile uint32_t current_inject_ended_count;
+	volatile uint32_t checksum;
 } engine_data;
 
 extern volatile engine_data eg_data;

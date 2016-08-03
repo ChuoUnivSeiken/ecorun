@@ -121,9 +121,9 @@ void ssp_send(uint8_t port, uint8_t* buf, uint32_t length)
 	volatile uint32_t i = 0;
 	volatile uint8_t Dummy = Dummy;
 
-	for (i = 0; i < length; i++)
+	if (port == 0)
 	{
-		if (port == 0)
+		for (i = 0; i < length; i++)
 		{
 			/* Move on only if NOT busy and TX FIFO not full. */
 			while ((LPC_SSP0->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
@@ -142,7 +142,10 @@ void ssp_send(uint8_t port, uint8_t* buf, uint32_t length)
 			while ( LPC_SSP0->SR & SSPSR_BSY );
 #endif
 		}
-		else
+	}
+	else
+	{
+		for (i = 0; i < length; i++)
 		{
 			/* Move on only if NOT busy and TX FIFO not full. */
 			while ((LPC_SSP1->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
@@ -164,18 +167,69 @@ void ssp_send(uint8_t port, uint8_t* buf, uint32_t length)
 	}
 }
 
+void ssp_send_uint16(uint8_t port, uint16_t* buf, uint32_t length)
+{
+	volatile uint32_t i = 0;
+	volatile uint16_t dummy = dummy;
+
+	if (port == 0)
+	{
+		for (i = 0; i < length; i++)
+		{
+			/* Move on only if NOT busy and TX FIFO not full. */
+			while ((LPC_SSP0->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
+				;
+			LPC_SSP0->DR = *buf;
+			buf++;
+#if !LOOPBACK_MODE
+			while ((LPC_SSP0->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
+				;
+			/* Whenever a byte is written, MISO FIFO counter increments, Clear FIFO
+			 on MISO. Otherwise, when SSP0Receive() is called, previous data byte
+			 is left in the FIFO. */
+			dummy = LPC_SSP0->DR;
+#else
+			/* Wait until the Busy bit is cleared. */
+			while ( LPC_SSP0->SR & SSPSR_BSY );
+#endif
+		}
+	}
+	else
+	{
+		for (i = 0; i < length; i++)
+		{
+			/* Move on only if NOT busy and TX FIFO not full. */
+			while ((LPC_SSP1->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
+				;
+			LPC_SSP1->DR = *buf;
+			buf++;
+#if !LOOPBACK_MODE
+			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
+				;
+			/* Whenever a byte is written, MISO FIFO counter increments, Clear FIFO
+			 on MISO. Otherwise, when SSP0Receive() is called, previous data byte
+			 is left in the FIFO. */
+			dummy = LPC_SSP1->DR;
+#else
+			/* Wait until the Busy bit is cleared. */
+			while ( LPC_SSP1->SR & SSPSR_BSY );
+#endif
+		}
+	}
+}
+
 void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length)
 {
 	volatile uint32_t i;
 
-	for (i = 0; i < length; i++)
+	/* As long as Receive FIFO is not empty, I can always receive. */
+	/* If it's a loopback test, clock is shared for both TX and RX,
+	 no need to write dummy byte to get clock to get the data */
+	/* if it's a peer-to-peer communication, SSPDR needs to be written
+	 before a read can take place. */
+	if (port == 0)
 	{
-		/* As long as Receive FIFO is not empty, I can always receive. */
-		/* If it's a loopback test, clock is shared for both TX and RX,
-		 no need to write dummy byte to get clock to get the data */
-		/* if it's a peer-to-peer communication, SSPDR needs to be written
-		 before a read can take place. */
-		if (port == 0)
+		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
 #if SSP_SLAVE
@@ -192,13 +246,67 @@ void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length)
 			*buf = LPC_SSP0->DR;
 			buf++;
 		}
-		else
+	}
+	else
+	{
+		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
 #if SSP_SLAVE
 			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
 #else
 			LPC_SSP1->DR = 0xFF;
+			/* Wait until the Busy bit is cleared */
+			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
+				;
+#endif
+#else
+			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
+#endif
+			*buf = LPC_SSP1->DR;
+			buf++;
+		}
+	}
+}
+
+void ssp_receive_uint16(uint8_t port, uint16_t* buf, uint32_t length)
+{
+	volatile uint32_t i;
+
+	/* As long as Receive FIFO is not empty, I can always receive. */
+	/* If it's a loopback test, clock is shared for both TX and RX,
+	 no need to write dummy byte to get clock to get the data */
+	/* if it's a peer-to-peer communication, SSPDR needs to be written
+	 before a read can take place. */
+	if (port == 0)
+	{
+		for (i = 0; i < length; i++)
+		{
+#if !LOOPBACK_MODE
+#if SSP_SLAVE
+			while ( !(LPC_SSP0->SR & SSPSR_RNE) );
+#else
+			LPC_SSP0->DR = 0xFFFF;
+			/* Wait until the Busy bit is cleared */
+			while ((LPC_SSP0->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
+				;
+#endif
+#else
+			while ( !(LPC_SSP0->SR & SSPSR_RNE) );
+#endif
+			*buf = LPC_SSP0->DR;
+			buf++;
+		}
+	}
+	else
+	{
+		for (i = 0; i < length; i++)
+		{
+#if !LOOPBACK_MODE
+#if SSP_SLAVE
+			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
+#else
+			LPC_SSP1->DR = 0xFFFF;
 			/* Wait until the Busy bit is cleared */
 			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
 				;

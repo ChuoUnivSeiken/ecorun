@@ -10,6 +10,6 @@
 
 #include "../type.h"
 
-uint32_t adler32(volatile uint8_t *data, size_t len);
+uint32_t adler32(const uint8_t *data, size_t len);
 
 #endif /* ADLER32_H_ */

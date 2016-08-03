@@ -9,7 +9,7 @@
 
 #define MOD_ADLER 65521
 
-uint32_t adler32(volatile uint8_t *data, size_t len)
+uint32_t adler32(const uint8_t *data, size_t len)
 {
 	volatile uint32_t a = 1, b = 0;
 
@@ -22,10 +22,10 @@ uint32_t adler32(volatile uint8_t *data, size_t len)
 			a += *data++;
 			b += a;
 		} while (--tlen);
-	}
 
-	a %= MOD_ADLER;
-	b %= MOD_ADLER;
+		a %= MOD_ADLER;
+		b %= MOD_ADLER;
+	}
 
 	return (b << 16) | a;
 }

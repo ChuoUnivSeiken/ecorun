@@ -8,6 +8,8 @@
 #ifndef UART_H_
 #define UART_H_
 
+#include <stdint.h>
+
 #define UART_STX 0x02
 #define UART_ETX 0x03
 

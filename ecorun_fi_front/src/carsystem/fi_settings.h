@@ -35,6 +35,7 @@ extern volatile uint32_t fuel_cut_interval_threshold;
 typedef struct
 {
 	volatile uint8_t basic_inject_time_map[NUM_REV_POINTS][NUM_TH_POINTS];
+	volatile uint8_t padding;
 	volatile uint32_t checksum;
 } fi_setting_data;
 

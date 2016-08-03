@@ -31,65 +31,66 @@
 
 #define USE_BLUETOOTH 0
 
-volatile uint8_t ssp_buf[sizeof(eg_data) + 4];
+#define SSP_MAX_DATA_SIZE (512 + 4)
 
-static uint16_t spi_encode_header(uint32_t func, uint32_t addr, uint32_t size)
+volatile uint8_t ssp_buf[SSP_MAX_DATA_SIZE];
+
+static uint16_t spi_encode_header(uint32_t func, uint32_t addr, size_t size)
 {
-	return (((func & 0x01) << 15) | ((addr & 0x7F) << 8) | ((size - 1) & 0xFF));
+	return (((func & 0x01) << 15) | ((addr & 0x7F) << 8)
+			| (((size - 3) >> 1) & 0xFF));
 }
 
 static void receive_and_send_eneine_data(void)
 {
-	volatile uint32_t i = 0;
+	// synchronizing
+	{
+		volatile uint32_t i = 0;
+		for (i = 0; i < (SSP_MAX_DATA_SIZE >> 1); i++)
+		{
+			uint16_t data = 0xFFFF;
+			ssp_send_uint16(0, &data, 1);
+		}
+	}
 
 	// receive engine data
 	{
-		const uint32_t size = sizeof(eg_data) + 4;
+		const size_t size = sizeof(eg_data);
 		const uint16_t data = spi_encode_header(0x00, 0x00, size);
 
-		taskENTER_CRITICAL();
 		{
 			ssp_send_uint16(0, &data, 1);
-			for (i = 0; i < size; i++)
-			{
-				uint8_t received = 0;
-				ssp_receive(0, &received, 1);
-
-				ssp_buf[i] = received;
-			}
+			ssp_receive_uint16(0, (uint16_t*) ssp_buf, size >> 1);
 		}
-		taskEXIT_CRITICAL();
 
-		const uint32_t checksum = *(uint32_t*) ((uint8_t*) ssp_buf
-				+ sizeof(eg_data));
+		const uint32_t checksum = *(uint32_t*) ((uint8_t*) ssp_buf + size - 4);
 
-		const uint32_t sum = adler32((const_buffer) ssp_buf, sizeof(eg_data));
+		const uint32_t sum = adler32((const_buffer) ssp_buf, size - 4);
 
 		if (sum == checksum)
 		{
 			memcpy(&eg_data, ssp_buf, sizeof(eg_data));
 		}
+		else
+		{
+			usart_writeln_string("msg <checksum of data from is invalid.>");
+		}
 	}
+
 	// send injection map
 	{
-		fi_settings.checksum = adler32(
-				(const_buffer) fi_settings.basic_inject_time_map,
-				sizeof(fi_settings.basic_inject_time_map));
 		volatile uint8_t* fi_settings_ptr = (uint8_t*) &fi_settings;
+
+		fi_settings.checksum = adler32((const_buffer) &fi_settings,
+				sizeof(fi_settings) - sizeof(fi_settings.checksum));
 
 		const uint32_t size = sizeof(fi_settings);
 		const uint16_t data = spi_encode_header(0x01, 0x01, size);
 
-		taskENTER_CRITICAL();
 		{
 			ssp_send_uint16(0, &data, 1);
-			for (i = 0; i < size; i++)
-			{
-				const uint8_t send = fi_settings_ptr[i];
-				ssp_send(0, &send, 1);
-			}
+			ssp_send_uint16(0, (uint16_t*) fi_settings_ptr, size >> 1);
 		}
-		taskEXIT_CRITICAL();
 	}
 }
 
@@ -136,14 +137,11 @@ static void monitor_switch(void)
 	}
 }
 
-void timer16_0_handler(uint8_t timer, uint8_t num)
+static void monitor_throttle(void)
 {
-	if (num == 0)
-	{
-		volatile uint32_t angle = ((1800 * eg_data.th) >> 10);
-		volatile uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
-		timer32_set_match(1, 1, match);
-	}
+	volatile uint32_t angle = ((1800 * eg_data.th) >> 10);
+	volatile uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
+	timer32_set_match(1, 1, match);
 }
 
 typedef struct
@@ -430,10 +428,10 @@ void init_cli(void)
 }
 
 /* Priorities at which the tasks are created. */
-#define EXECUTE_COMMAND_TASK_PRIORITY ( tskIDLE_PRIORITY + 1 )
+#define EXECUTE_COMMAND_TASK_PRIORITY ( tskIDLE_PRIORITY + 2 )
 
 /* The rate at which data is sent to the queue, specified in milliseconds. */
-#define COMMAND_PROCESS_FREQENCY_MS	( 20 / portTICK_RATE_MS )
+#define EXECUTE_COMMAND_TASK_FREQENCY_MS	( 20 / portTICK_RATE_MS )
 
 static void execute_command_task(void* parameters)
 {
@@ -448,7 +446,7 @@ static void execute_command_task(void* parameters)
 		 The block state is specified in ticks, the constant used converts ticks
 		 to ms.  While in the blocked state this task will not consume any CPU
 		 time. */
-		vTaskDelayUntil(&xNextWakeTime, COMMAND_PROCESS_FREQENCY_MS);
+		vTaskDelayUntil(&xNextWakeTime, EXECUTE_COMMAND_TASK_FREQENCY_MS);
 
 		execute_one_command();
 	}
@@ -480,6 +478,31 @@ static void monitor_switch_task(void* parameters)
 }
 
 /* Priorities at which the tasks are created. */
+#define MONITOR_THROTTLE_TASK_PRIORITY ( tskIDLE_PRIORITY + 3 )
+
+/* The rate at which data is sent to the queue, specified in milliseconds. */
+#define MONITOR_THROTTLE_TASK_FREQENCY_MS	( 20 / portTICK_RATE_MS )
+
+static void monitor_throttle_task(void* parameters)
+{
+	portTickType xNextWakeTime;
+
+	/* Initialise xNextWakeTime - this only needs to be done once. */
+	xNextWakeTime = xTaskGetTickCount();
+
+	for (;;)
+	{
+		/* Place this task in the blocked state until it is time to run again.
+		 The block state is specified in ticks, the constant used converts ticks
+		 to ms.  While in the blocked state this task will not consume any CPU
+		 time. */
+		vTaskDelayUntil(&xNextWakeTime, MONITOR_THROTTLE_TASK_FREQENCY_MS);
+
+		monitor_throttle();
+	}
+}
+
+/* Priorities at which the tasks are created. */
 #define RXTX_ENGINE_DATA_TASK_PRIORITY ( tskIDLE_PRIORITY + 2 )
 
 /* The rate at which data is sent to the queue, specified in milliseconds. */
@@ -491,6 +514,8 @@ static void rxtx_engine_data_task(void* parameters)
 
 	/* Initialise xNextWakeTime - this only needs to be done once. */
 	xNextWakeTime = xTaskGetTickCount();
+
+	ssp_init(0);
 
 	for (;;)
 	{
@@ -529,6 +554,13 @@ static void start_scheduler(void)
 		write_error("cannot create \"rxtx_eg_data\" task.", result);
 	}
 
+	if ((result = xTaskCreate(monitor_throttle_task, "monitor_throttle",
+			configMINIMAL_STACK_SIZE, NULL, MONITOR_THROTTLE_TASK_PRIORITY,
+			NULL)) != pdPASS)
+	{
+		write_error("cannot create \"monitor_throttle\" task.", result);
+	}
+
 	/* Start the tasks running. */
 	vTaskStartScheduler();
 }
@@ -545,9 +577,6 @@ int main(void)
 	eeprom_read((uint8_t*) 0, (buffer) fi_settings.basic_inject_time_map,
 			sizeof(fi_settings.basic_inject_time_map));
 
-	//ssp_init(1);
-	ssp_init(0);
-
 	//systimer_init();
 
 	init_cli();
@@ -557,11 +586,7 @@ int main(void)
 	//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
 	timer32_enable(1);
 
-	timer16_init(0, 10000, SystemCoreClock / 10000 / 10);
-	timer16_add_event(0, timer16_0_handler);
-	timer16_enable(0);
-
-	countdown_timer_init();
+	//countdown_timer_init();
 
 	dev_info.major_version = 1;
 	dev_info.minor_version = 0;

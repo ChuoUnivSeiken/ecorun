@@ -15,7 +15,7 @@ extern "C"
 {
 #endif
 
-uint32_t adler32(const_buffer data, size_t len);
+uint32_t adler32(const uint8_t* data, size_t len);
 
 #if defined(__cplusplus)
 }
