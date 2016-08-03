@@ -80,6 +80,28 @@ uint8_t hex_table[16] =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
 				'e', 'f' };
 
+size_t uint8_to_hex_str(uint32_t num, string str)
+{
+	volatile uint32_t bufpos = 0;
+	volatile uint32_t count = 0;
+	strcpy(str, "0x");
+	count = count + 2;
+
+	while (bufpos < 2)
+	{
+		num_convert_buf[bufpos++] = hex_table[(num & 0x0f)];
+		num = (num >> 4);
+	}
+
+	while (bufpos-- > 0)
+	{
+		str[count++] = num_convert_buf[bufpos];
+	}
+	str[count] = '\0';
+
+	return count;
+}
+
 size_t uint32_to_hex_str(uint32_t num, string str)
 {
 	volatile uint32_t bufpos = 0;

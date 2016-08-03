@@ -26,18 +26,17 @@ void register_data(const named_data* data, uint32_t count)
 
 bool find_and_put_data(const_string id)
 {
-	volatile uint32_t i = 0;
-	for (i = 0; i < registered_count; i++)
+	volatile named_data found;
+	if (find_data(id, &found))
 	{
-		const_string name = registered[i].name;
-		void* data_ptr = registered[i].data_ptr;
-		size_t data_size = registered[i].data_size;
-		if (strcmp(id, name) == 0)
-		{
-			put_data((const_buffer) data_ptr, data_size, name);
-			return true;
-		}
+		const_string name = found.name;
+		void* data_ptr = found.data_ptr;
+		size_t data_size = found.data_size;
+		put_data((const_buffer) data_ptr, data_size, name);
+		return true;
 	}
+
+	return false;
 }
 
 bool find_data(const_string id, named_data* out)
@@ -52,6 +51,8 @@ bool find_data(const_string id, named_data* out)
 			return true;
 		}
 	}
+
+	return false;
 }
 
 /**
@@ -60,7 +61,6 @@ bool find_data(const_string id, named_data* out)
  */
 void put_data(const_buffer data, size_t size, const_string id)
 {
-	systime_t send_time = systimer_tick();
 	usart_write_string("put ");
 	usart_write_string(id);
 	usart_write_string(" ");
@@ -69,9 +69,5 @@ void put_data(const_buffer data, size_t size, const_string id)
 	usart_write_base64(data, size);
 	usart_write_string(" ");
 	usart_write_uint32(adler32(data, size));
-	usart_write_string(" ");
-	usart_write_uint32(send_time.high_part);
-	usart_write_string(" ");
-	usart_write_uint32(send_time.low_part);
 	usart_writeln_string("");
 }

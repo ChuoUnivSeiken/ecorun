@@ -4,13 +4,13 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.08 secs
+Total CPU time to Xst completion: 0.12 secs
  
 --> Parameter xsthdpdir set to xst
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.08 secs
+Total CPU time to Xst completion: 0.12 secs
  
 --> Reading design: Main.prj
 
@@ -75,15 +75,26 @@ wysiwyg                            : NO
 =========================================================================
 *                          HDL Compilation                              *
 =========================================================================
-Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" in Library work.
+WARNING:HDLParsers:3607 - Unit work/Main is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
+WARNING:HDLParsers:3607 - Unit work/Main/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
+WARNING:HDLParsers:3607 - Unit work/PulseTimer is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
+WARNING:HDLParsers:3607 - Unit work/PulseTimer/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
+WARNING:HDLParsers:3607 - Unit work/SPISlave is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
+WARNING:HDLParsers:3607 - Unit work/SPISlave/Behavioral is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
+WARNING:HDLParsers:3607 - Unit work/Stepper is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
+WARNING:HDLParsers:3607 - Unit work/Stepper/Behavioral is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
+WARNING:HDLParsers:3607 - Unit work/Stopwatch is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
+WARNING:HDLParsers:3607 - Unit work/Stopwatch/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
+Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" in Library work.
 Architecture behavioral of Entity stepper is up to date.
-Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd" in Library work.
+Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd" in Library work.
 Architecture rtl of Entity stopwatch is up to date.
-Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd" in Library work.
+Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd" in Library work.
 Architecture behavioral of Entity spislave is up to date.
-Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd" in Library work.
-Architecture rtl of Entity pulsetimer is up to date.
-Compiling vhdl file "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd" in Library work.
+Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd" in Library work.
+Entity <pulsetimer> compiled.
+Entity <pulsetimer> (Architecture <rtl>) compiled.
+Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd" in Library work.
 Entity <main> compiled.
 Entity <main> (Architecture <rtl>) compiled.
 
@@ -127,7 +138,7 @@ Entity <PulseTimer> analyzed. Unit <PulseTimer> generated.
 Performing bidirectional port resolution...
 
 Synthesizing Unit <Stepper>.
-    Related source file is "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
+    Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
     Found 8-bit 4-to-1 multiplexer for signal <iac_out>.
     Found 2-bit updown counter for signal <phase>.
     Summary:
@@ -136,7 +147,7 @@ Unit <Stepper> synthesized.
 
 
 Synthesizing Unit <Stopwatch>.
-    Related source file is "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
+    Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
     Found finite state machine <FSM_0> for signal <state>.
     -----------------------------------------------------------------------
     | States             | 4                                              |
@@ -161,7 +172,7 @@ Unit <Stopwatch> synthesized.
 
 
 Synthesizing Unit <SPISlave>.
-    Related source file is "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
+    Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
     Found 8-bit register for signal <out_data>.
     Found 1-bit tristate buffer for signal <miso>.
     Found 1-bit register for signal <first<0>>.
@@ -175,13 +186,13 @@ Unit <SPISlave> synthesized.
 
 
 Synthesizing Unit <PulseTimer>.
-    Related source file is "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
+    Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
     Found 1-bit register for signal <pulse>.
     Found 8-bit register for signal <counter>.
-    Found 8-bit adder for signal <counter$addsub0000> created at line 56.
-    Found 8-bit comparator greater for signal <counter$cmp_gt0000> created at line 49.
+    Found 8-bit adder for signal <counter$addsub0000> created at line 54.
+    Found 8-bit comparator greater for signal <counter$cmp_gt0000> created at line 47.
     Found 1-bit register for signal <enabled<0>>.
-    Found 8-bit comparator lessequal for signal <enabled_0$cmp_le0000> created at line 49.
+    Found 8-bit comparator lessequal for signal <enabled_0$cmp_le0000> created at line 47.
     Found 8-bit register for signal <match_cache>.
     Summary:
 	inferred   2 D-type flip-flop(s).
@@ -191,7 +202,7 @@ Unit <PulseTimer> synthesized.
 
 
 Synthesizing Unit <Main>.
-    Related source file is "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
+    Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
 Unit <Main> synthesized.
 
 
@@ -351,14 +362,14 @@ Cell Usage :
 =========================================================================
 
 
-Total REAL time to Xst completion: 4.00 secs
-Total CPU time to Xst completion: 4.32 secs
+Total REAL time to Xst completion: 5.00 secs
+Total CPU time to Xst completion: 4.59 secs
  
 --> 
 
-Total memory usage is 264220 kilobytes
+Total memory usage is 261192 kilobytes
 
 Number of errors   :    0 (   0 filtered)
-Number of warnings :    1 (   0 filtered)
+Number of warnings :   11 (   0 filtered)
 Number of infos    :    0 (   0 filtered)
 

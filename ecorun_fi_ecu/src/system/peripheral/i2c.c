@@ -15,8 +15,8 @@ volatile uint32_t timeout = 0;
 
 volatile uint32_t I2CMode;
 
-volatile uint8_t I2CMasterBuffer[BUFSIZE];
-volatile uint8_t I2CSlaveBuffer[BUFSIZE];
+volatile uint8_t I2CMasterBuffer[USART_BUFFER_SIZE];
+volatile uint8_t I2CSlaveBuffer[USART_BUFFER_SIZE];
 volatile uint32_t I2CCount = 0;
 volatile uint32_t I2CReadLength;
 volatile uint32_t I2CWriteLength;

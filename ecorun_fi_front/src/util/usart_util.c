@@ -41,6 +41,12 @@ void usart_write_uint32(uint32_t value)
 	usart_write_string(usart_util_conv_buf);
 }
 
+void usart_write_uint8_hex(uint32_t value)
+{
+	uint8_to_hex_str(value, usart_util_conv_buf);
+	usart_write_string(usart_util_conv_buf);
+}
+
 void usart_write_uint32_hex(uint32_t value)
 {
 	uint32_to_hex_str(value, usart_util_conv_buf);

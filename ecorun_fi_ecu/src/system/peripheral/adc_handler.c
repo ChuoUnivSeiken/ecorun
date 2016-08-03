@@ -7,6 +7,7 @@
 
 #include "../cmsis/LPC11xx.h"
 #include "adc.h"
+#include <stdlib.h>
 
 #define ADC_DONE		0x80000000
 #define ADC_OVERRUN		0x40000000

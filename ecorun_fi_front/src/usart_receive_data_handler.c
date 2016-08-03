@@ -50,7 +50,16 @@ void usart_receive_data_handler(string buf, uint32_t count)
 	}
 	cmd->command_id = cmd_id;
 	//cmd->accept_time = receive_time;
+	if (sizeof(cmd->data) <= strlen(last))
+	{
+		usart_write_string("msg <invalid_command : ");
+		usart_write_string(buf);
+		usart_write_string(". ");
+		usart_writeln_string("data field is too long.");
+		return;
+	}
 	strcpy(cmd->data, last);
+	last = cmd->data;
 	cmd->args_count = 0;
 
 	volatile string arg_str;

@@ -103,6 +103,10 @@ extern void __main(void);
 extern int main(void);
 #endif
 
+extern void xPortSysTickHandler(void);
+extern void xPortPendSVHandler(void);
+extern void vPortSVCHandler( void );
+
 extern unsigned int _estack;
 
 //*****************************************************************************
@@ -133,11 +137,11 @@ void (* const Vectors[])(void) =
 		0,// Reserved
 		0,// Reserved
 		0,// Reserved
-		SVCall_Handler,// SVCall handler
+		vPortSVCHandler,// SVCall_Handler,// SVCall handler
 		DebugMon_Handler,// Debug monitor handler
 		0,// Reserved
-		PendSV_Handler,// The PendSV handler
-		SysTick_Handler,// The SysTick handler
+		xPortPendSVHandler,// PendSV_Handler,// The PendSV handler
+		xPortSysTickHandler,// SysTick_Handler,// The SysTick handler
 
 		// LPC13U External Interrupts
 		PIN_INT0_IRQHandler,// All GPIO pin can be routed to PIN_INTx

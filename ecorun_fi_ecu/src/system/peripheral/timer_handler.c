@@ -7,144 +7,156 @@
 
 #include "../cmsis/LPC11xx.h"
 #include "timer.h"
+#include <stdlib.h>
+
+typedef struct timer_event_handler
+{
+	void (*func)(uint8_t timer, uint8_t num);
+	struct timer_event_handler* next;
+} timer_event_handler;
 
 timer_event_handler timer_events_buf[TIMER_MAX_EVENT];
 uint32_t timer_event_count = 0;
 
-timer_event_handler* event_timer32_0;
-timer_event_handler* event_timer32_1;
+timer_event_handler* timer32_events[2];
 
-int timer_add_event_32_0(void (*func)(uint8_t timer, uint8_t num)) {
+uint32_t timer32_add_event(uint32_t timer, timer_event_func func)
+{
 	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
 	new_event->func = func;
-	new_event->next = event_timer32_0;
-	event_timer32_0 = new_event;
+	new_event->next = timer32_events[timer];
+	timer32_events[timer] = new_event;
 	return timer_event_count++;
 }
 
-int timer_add_event_32_1(void (*func)(uint8_t timer, uint8_t num)) {
-	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
-	new_event->func = func;
-	new_event->next = event_timer32_1;
-	event_timer32_1 = new_event;
-	return timer_event_count++;
-}
-
-void do_timer32_0_event(uint8_t num) {
-	volatile timer_event_handler* ptr = event_timer32_0;
-	while (ptr != NULL) {
-		ptr->func(0, num);
+void timer32_notify_event(uint8_t timer, uint8_t num)
+{
+	volatile timer_event_handler* ptr = timer32_events[timer];
+	while (ptr != NULL)
+	{
+		ptr->func(timer, num);
 		ptr = ptr->next;
 	}
 }
 
-void do_timer32_1_event(uint8_t num) {
-	volatile timer_event_handler* ptr = event_timer32_1;
-	while (ptr != NULL) {
-		ptr->func(1, num);
-		ptr = ptr->next;
-	}
-}
-
-void TIMER32_0_IRQHandler(void) {
-	if (LPC_TMR32B0->IR & _BV(0)) {
-		do_timer32_0_event(0);
+void TIMER32_0_IRQHandler(void)
+{
+	if (LPC_TMR32B0->IR & _BV(0))
+	{
+		timer32_notify_event(0, 0);
 		LPC_TMR32B0->IR = _BV(0);
-	} else if (LPC_TMR32B0->IR & _BV(1)) {
-		do_timer32_0_event(1);
+	}
+	else if (LPC_TMR32B0->IR & _BV(1))
+	{
+		timer32_notify_event(0, 1);
 		LPC_TMR32B0->IR = _BV(1);
-	} else if (LPC_TMR32B0->IR & _BV(2)) {
-		do_timer32_0_event(2);
+	}
+	else if (LPC_TMR32B0->IR & _BV(2))
+	{
+		timer32_notify_event(0, 2);
 		LPC_TMR32B0->IR = _BV(2);
-	} else if (LPC_TMR32B0->IR & _BV(3)) {
-		do_timer32_0_event(3);
+	}
+	else if (LPC_TMR32B0->IR & _BV(3))
+	{
+		timer32_notify_event(0, 3);
 		LPC_TMR32B0->IR = _BV(3);
 	}
 }
 
-void TIMER32_1_IRQHandler(void) {
-	if (LPC_TMR32B1->IR & _BV(0)) {
-		do_timer32_1_event(0);
+void TIMER32_1_IRQHandler(void)
+{
+	if (LPC_TMR32B1->IR & _BV(0))
+	{
+		timer32_notify_event(1, 0);
 		LPC_TMR32B1->IR = _BV(0);
-	} else if (LPC_TMR32B1->IR & _BV(1)) {
-		do_timer32_1_event(1);
+	}
+	else if (LPC_TMR32B1->IR & _BV(1))
+	{
+		timer32_notify_event(1, 1);
 		LPC_TMR32B1->IR = _BV(1);
-	} else if (LPC_TMR32B1->IR & _BV(2)) {
-		do_timer32_1_event(2);
+	}
+	else if (LPC_TMR32B1->IR & _BV(2))
+	{
+		timer32_notify_event(1, 2);
 		LPC_TMR32B1->IR = _BV(2);
-	} else if (LPC_TMR32B1->IR & _BV(3)) {
-		do_timer32_1_event(3);
+	}
+	else if (LPC_TMR32B1->IR & _BV(3))
+	{
+		timer32_notify_event(1, 3);
 		LPC_TMR32B1->IR = _BV(3);
 	}
 }
 
-timer_event_handler* event_timer16_0;
-timer_event_handler* event_timer16_1;
+timer_event_handler* timer16_events[2];
 
-int timer_add_event_16_0(void (*func)(uint8_t timer, uint8_t num)) {
+uint32_t timer16_add_event(uint32_t timer, timer_event_func func)
+{
 	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
 	new_event->func = func;
-	new_event->next = event_timer16_0;
-	event_timer16_0 = new_event;
+	new_event->next = timer16_events[timer];
+	timer16_events[timer] = new_event;
 	return timer_event_count++;
 }
 
-int timer_add_event_16_1(void (*func)(uint8_t timer, uint8_t num)) {
-	timer_event_handler* new_event = &timer_events_buf[timer_event_count];
-	new_event->func = func;
-	new_event->next = event_timer16_1;
-	event_timer16_1 = new_event;
-	return timer_event_count++;
-}
-
-void do_timer16_0_event(uint8_t num) {
-	volatile timer_event_handler* ptr = event_timer16_0;
-	while (ptr != NULL) {
+void timer16_notify_event(uint8_t timer, uint8_t num)
+{
+	volatile timer_event_handler* ptr = timer16_events[timer];
+	while (ptr != NULL)
+	{
 		ptr->func(0, num);
 		ptr = ptr->next;
 	}
 }
 
-void do_timer16_1_event(uint8_t num) {
-	volatile timer_event_handler* ptr = event_timer16_1;
-	while (ptr != NULL) {
-		ptr->func(1, num);
-		ptr = ptr->next;
-	}
-}
-
-void TIMER16_0_IRQHandler(void) {
-	if (LPC_TMR16B0->IR & _BV(0)) {
-		do_timer16_0_event(0);
+void TIMER16_0_IRQHandler(void)
+{
+	if (LPC_TMR16B0->IR & _BV(0))
+	{
+		timer16_notify_event(0, 0);
 		LPC_TMR16B0->IR = _BV(0);
-	} else if (LPC_TMR16B0->IR & _BV(1)) {
-		do_timer16_0_event(1);
+	}
+	else if (LPC_TMR16B0->IR & _BV(1))
+	{
+		timer16_notify_event(0, 1);
 		LPC_TMR16B0->IR = _BV(1);
-	} else if (LPC_TMR16B0->IR & _BV(2)) {
-		do_timer16_0_event(2);
+	}
+	else if (LPC_TMR16B0->IR & _BV(2))
+	{
+		timer16_notify_event(0, 2);
 		LPC_TMR16B0->IR = _BV(2);
-	} else if (LPC_TMR16B0->IR & _BV(3)) {
-		do_timer16_0_event(3);
+	}
+	else if (LPC_TMR16B0->IR & _BV(3))
+	{
+		timer16_notify_event(0, 3);
 		LPC_TMR16B0->IR = _BV(3);
 	}
 }
 
-void TIMER16_1_IRQHandler(void) {
-	if (LPC_TMR16B1->IR & _BV(0)) {
-		do_timer16_1_event(0);
+void TIMER16_1_IRQHandler(void)
+{
+	if (LPC_TMR16B1->IR & _BV(0))
+	{
+		timer16_notify_event(1, 0);
 		LPC_TMR16B1->IR = _BV(0);
-	} else if (LPC_TMR16B1->IR & _BV(1)) {
-		do_timer16_1_event(1);
+	}
+	else if (LPC_TMR16B1->IR & _BV(1))
+	{
+		timer16_notify_event(1, 1);
 		LPC_TMR16B1->IR = _BV(1);
-	} else if (LPC_TMR16B1->IR & _BV(2)) {
-		do_timer16_1_event(2);
+	}
+	else if (LPC_TMR16B1->IR & _BV(2))
+	{
+		timer16_notify_event(1, 2);
 		LPC_TMR16B1->IR = _BV(2);
-	} else if (LPC_TMR16B1->IR & _BV(3)) {
-		do_timer16_1_event(3);
+	}
+	else if (LPC_TMR16B1->IR & _BV(3))
+	{
+		timer16_notify_event(1, 3);
 		LPC_TMR16B1->IR = _BV(3);
 	}
 }
 
-void SysTick_Handler(void) {
+void SysTick_Handler(void)
+{
 }
 

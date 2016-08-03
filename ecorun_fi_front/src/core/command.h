@@ -11,13 +11,21 @@
 #include "../system/common_types.h"
 #include "../system/systimer.h"
 
+#define USE_FREE_RTOS 1
+
+#if USE_FREE_RTOS
+#include "FreeRTOS.h"
+#include "queue.h"
+#endif
+
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
 #define MAX_COMMAND 20
-#define MAX_COMMAND_QUEUE 5
+#define MAX_COMMAND_QUEUE 4
+#define MAX_COMMAND_DATA_SIZE 128
 
 typedef struct command_arg_t
 {
@@ -31,7 +39,7 @@ typedef struct command_data_t
 {
 	int command_id;
 	int datasize;
-	uint8_t data[512];
+	uint8_t data[MAX_COMMAND_DATA_SIZE];
 	command_arg args[10];
 	int args_count;
 	systime_t accept_time;

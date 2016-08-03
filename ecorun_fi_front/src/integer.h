@@ -44,6 +44,8 @@ extern "C"
 
 size_t int32_to_str(int32_t num, string str);
 size_t uint32_to_str(uint32_t num, string str);
+
+size_t uint8_to_hex_str(uint32_t num, string str);
 size_t uint32_to_hex_str(uint32_t num, string str);
 
 size_t str_to_uint32(const_string str);

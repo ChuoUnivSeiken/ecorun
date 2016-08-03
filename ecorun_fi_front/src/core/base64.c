@@ -6,16 +6,22 @@
  */
 
 #include <stddef.h>
+#include <string.h>
 #include "base64.h"
 #include "../system/peripheral/usart.h"
 
 static const uint8_t b64[] =
-		{ 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
-				128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 62 /* + */, 128, 128, 128, 63 /*/ */, 52 /* 0 */, 53, 54, 55, 56, 57, 58, 59,
-				60, 61 /* 9 */, 128, 128, 128, 0 /* = */, 128, 128, 128, 0 /* A */, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-				22, 23, 24, 25 /* Z */, 128, 128, 128, 128, 128, 128, 26 /* a */, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
-				46, 47, 48, 49, 50, 51 /* z */};
-static const uint8_t* w = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+{ 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+		128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+		128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+		62 /* + */, 128, 128, 128, 63 /*/ */, 52 /* 0 */, 53, 54, 55, 56, 57,
+		58, 59, 60, 61 /* 9 */, 128, 128, 128, 0 /* = */, 128, 128, 128,
+		0 /* A */, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+		18, 19, 20, 21, 22, 23, 24, 25 /* Z */, 128, 128, 128, 128, 128, 128,
+		26 /* a */, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+		42, 43, 44, 45, 46, 47, 48, 49, 50, 51 /* z */};
+static const uint8_t* w =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 void usart_write_base64(const_buffer data, uint32_t size)
 {
@@ -45,14 +51,14 @@ void usart_write_base64(const_buffer data, uint32_t size)
 	}
 }
 
-uint32_t get_base64(const_buffer data, uint32_t size, string dest)
+uint32_t encode_base64(const_buffer data, uint32_t size, string dest)
 {
 	uint32_t i; // sizeof encoded char
 	if (dest == NULL)
 	{
 		return (8 * size + 5) / 6;
 	}
-	volatile uint8_t *p = data;
+	const_buffer p = data;
 	int x = 0, l = 0;
 	i = 0;
 
@@ -87,7 +93,7 @@ uint32_t get_base64(const_buffer data, uint32_t size, string dest)
  */
 uint32_t decode_base64_s(const_string base64, buffer dest, uint32_t dest_size)
 {
-	uint8_t* dest_ptr = dest;
+	buffer dest_ptr = dest;
 	uint32_t base64_size = strlen(base64);
 	char temp[4];
 	char temp2[4];
@@ -111,15 +117,16 @@ uint32_t decode_base64_s(const_string base64, buffer dest, uint32_t dest_size)
 	{
 		for (j = 0; (j < 4) & (base64_size > 0); j++)
 		{
-			temp2[j] = *base64;
 			temp[j] = b64[*(base64++)];
+			temp2[j] = *base64;
 			base64_size--;
 		}
 		for (j = 0; j < 3; j++)
 		{
 			if (temp2[j + 1] != '=' && i < dest_size)
 			{
-				dest_ptr[i++] = temp[j] << ((j << 1) + 2) | temp[j + 1] >> (((2 - j) << 1));
+				dest_ptr[i++] = temp[j] << ((j << 1) + 2)
+						| temp[j + 1] >> (((2 - j) << 1));
 
 			}
 		}
@@ -130,18 +137,18 @@ uint32_t decode_base64_s(const_string base64, buffer dest, uint32_t dest_size)
 
 uint32_t decode_base64(const_string base64, buffer dest)
 {
-	uint8_t* dest_ptr = dest;
+	buffer dest_ptr = dest;
 	char temp[4];
+	char temp2[4];
 	int i = 0, j;
-	uint32_t len = 0;
 	uint32_t base64_len = strlen(base64);
 
 	if (dest == NULL)
 	{
-		len = (base64_len * 3) / 4;
+		uint32_t len = (base64_len * 3) / 4;
 		if (base64[base64_len - 1] == '=')
 		{
-			if (base64[base64_len - 2] == '=') /* = ‚ª‚Â‚­‚Ì‚ÍÅ‘å2ŒÂ */
+			if (base64[base64_len - 2] == '=')
 			{
 				return len - 2;
 			}
@@ -151,17 +158,18 @@ uint32_t decode_base64(const_string base64, buffer dest)
 
 	while (base64_len > 0)
 	{
-		for (j = 0; j < 4 & base64_len > 0; j++)
+		for (j = 0; (j < 4) & (base64_len > 0); j++)
 		{
 			temp[j] = b64[*(base64++)];
+			temp2[j] = *base64;
 			base64_len--;
 		}
 		for (j = 0; j < 3; j++)
 		{
 			if (temp[j] != '=')
 			{
-				dest_ptr[i++] = temp[j] << ((j << 1) + 2) | temp[j + 1] >> (((2 - j) << 1));
-
+				dest_ptr[i++] = temp[j] << ((j << 1) + 2)
+						| temp[j + 1] >> (((2 - j) << 1));
 			}
 		}
 	}

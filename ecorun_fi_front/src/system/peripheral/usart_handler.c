@@ -36,11 +36,67 @@
  */
 
 #include "usart.h"
+#include "usart_handler.h"
 #include "../cmsis/LPC13Uxx.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
-#define BUFSIZE		512
+static xQueueHandle usart_rx_queue = NULL;
 
-uint8_t usart_buf_arr[BUFSIZE];
+static void usart_receive_data(uint8_t data);
+
+/* Priorities at which the tasks are created. */
+#define USART_RECEIVE_DATA_TASK_PRIORITY ( tskIDLE_PRIORITY + 2 )
+
+/* The rate at which data is sent to the queue, specified in milliseconds. */
+#define USART_RECEIVE_DATA_FREQENCY_MS	( 20 / portTICK_RATE_MS )
+
+static void usart_receive_data_task(void* parameters)
+{
+	portTickType xNextWakeTime;
+
+	/* Initialise xNextWakeTime - this only needs to be done once. */
+	xNextWakeTime = xTaskGetTickCount();
+	for (;;)
+	{
+		vTaskDelayUntil(&xNextWakeTime, USART_RECEIVE_DATA_FREQENCY_MS);
+
+		usart_receive_data(0);
+	}
+}
+
+static inline void write_error(const_string msg, portBASE_TYPE code)
+{
+	usart_write_string("msg <");
+	usart_write_string(msg);
+	usart_write_string(", code ");
+	usart_write_int32((int) code);
+	usart_writeln_string(">");
+}
+
+void usart_handler_init(void)
+{
+	/*
+	usart_rx_queue = xQueueCreate(USART_BUFFER_SIZE, sizeof(uint8_t));
+
+	if (usart_rx_queue == NULL)
+	{
+		usart_write_string("msg <can't allocate usart_rx_queue.");
+		usart_writeln_string(">");
+	}
+
+	portBASE_TYPE result;
+
+	if ((result = xTaskCreate(usart_receive_data_task, "usart_rx_data",
+			configMINIMAL_STACK_SIZE, NULL, USART_RECEIVE_DATA_TASK_PRIORITY,
+			NULL)) != pdPASS)
+	{
+		write_error("cannot create \"usart_rx_data\" task.", result);
+	}*/
+}
+
+uint8_t usart_buf_arr[USART_BUFFER_SIZE];
 uint8_t* usart_buf_ptr = usart_buf_arr;
 uint32_t usart_buf_count = 0;
 
@@ -48,9 +104,12 @@ uint32_t usart_buf_count = 0;
 
 WEAK void usart_receive_data_handler(string str, uint32_t str_len);
 
-void usart_receive_data(uint8_t data)
+static void usart_receive_data(uint8_t data)
 {
-	if (usart_buf_count < BUFSIZE)
+	//if (!xQueueReceive(usart_rx_queue, &data, 0))
+	//	return;
+
+	if (usart_buf_count < USART_BUFFER_SIZE)
 	{
 		switch (data)
 		{
@@ -77,6 +136,7 @@ void usart_receive_data(uint8_t data)
 
 void USART_IRQHandler(void)
 {
+	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	uint8_t IIRValue, LSRValue;
 	uint8_t Dummy = Dummy;
 
@@ -105,7 +165,7 @@ void USART_IRQHandler(void)
 			/* If no error on RLS, normal ready, save into the data buffer. */
 			/* Note: read RBR will clear the interrupt */
 			usart_buf_arr[usart_buf_count++] = LPC_USART->RBR;
-			if (usart_buf_count == BUFSIZE)
+			if (usart_buf_count == USART_BUFFER_SIZE)
 			{
 				usart_buf_count = 0; /* buffer overflow */
 			}
@@ -117,6 +177,14 @@ void USART_IRQHandler(void)
 	{
 		// Add incoming text to UART buffer
 		uint8_t data = LPC_USART->RBR;
+
+		/*
+		 if (usart_rx_queue)
+		 {
+		 xQueueSendToBackFromISR(usart_rx_queue, &data,
+		 &xHigherPriorityTaskWoken);
+		 }*/
+
 		usart_receive_data(data);
 	}
 

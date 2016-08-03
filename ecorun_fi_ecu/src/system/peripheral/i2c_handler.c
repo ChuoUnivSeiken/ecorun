@@ -14,8 +14,8 @@ extern volatile uint32_t timeout;
 
 extern volatile uint32_t I2CMode;
 
-extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
-extern volatile uint8_t I2CSlaveBuffer[BUFSIZE];
+extern volatile uint8_t I2CMasterBuffer[USART_BUFFER_SIZE];
+extern volatile uint8_t I2CSlaveBuffer[USART_BUFFER_SIZE];
 extern volatile uint32_t I2CCount;
 extern volatile uint32_t I2CReadLength;
 extern volatile uint32_t I2CWriteLength;

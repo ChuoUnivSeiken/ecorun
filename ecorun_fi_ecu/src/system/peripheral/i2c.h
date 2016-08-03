@@ -13,7 +13,7 @@
 
 #define FAST_MODE_PLUS	0
 
-#define BUFSIZE             64
+#define USART_BUFFER_SIZE             64
 #define MAX_TIMEOUT		0x00FFFFFF
 
 #define I2CMASTER		0x01

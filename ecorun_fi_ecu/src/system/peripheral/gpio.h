@@ -15,7 +15,8 @@
 #define ENABLE_PIOINT2_IRQHandler 0
 #define ENABLE_PIOINT3_IRQHandler 0
 
-typedef struct gpio_event_handler {
+typedef struct gpio_event_handler
+{
 	void (*func)(uint8_t port, uint8_t bit);
 	struct gpio_event_handler* next;
 } gpio_event_handler;
@@ -29,17 +30,12 @@ int gpio1_add_event(void (*func)(uint8_t port, uint8_t bit));
 #define PORT3		3
 
 void gpio_init(void);
-
 void gpio_set_value(uint32_t port, uint32_t bit, uint32_t value);
-
+uint32_t gpio_get_value(uint32_t port, uint32_t bit);
 void gpio_set_dir(uint32_t port, uint32_t bit, uint32_t value);
-
 void gpio_enable_interrupt(uint32_t port, uint32_t bit);
-
 void gpio_disable_interrupt(uint32_t port, uint32_t bit);
-
 uint32_t gpio_has_interrupted(uint32_t port, uint32_t bit);
-
 void gpio_clear_interrupted(uint32_t port, uint32_t bit);
 
 /*

@@ -5,7 +5,7 @@
 <design name='Main'/>
 <rptdir name='Main'/>
 <xilinx path='C:/Xilinx/14.7/ISE_DS/ISE;'/>
-<projDir path='C:\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer'/>
+<projDir path='C:\Users\Yoshio\git\ecorun\ecorun_fi_hardware\fi_timer\FiTimer'/>
 <xslDir path='chipviewer/data/xsl'/>
 <fileDir path='/chipviewer/data/html'/>
 <dataFile file='index.htm'/>

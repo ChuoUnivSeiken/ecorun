@@ -38,7 +38,7 @@
 #include "../cmsis/LPC13Uxx.h"
 #include "usart.h"
 
-static uint32_t is_start_of_txt = 0;
+static volatile uint32_t is_start_of_txt = 0;
 
 void usart_init(uint32_t baudrate)
 {

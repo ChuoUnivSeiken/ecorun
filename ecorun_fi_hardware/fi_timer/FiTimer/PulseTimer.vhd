@@ -37,8 +37,6 @@ architecture RTL of PulseTimer is
 	signal enabled : boolean := false;
 	signal match_cache : std_logic_vector(7 downto 0);
 begin
-	--FI_SIGN <= SPEED_PULSE;
-	-- カウントが終了すると必ず1クロックだけFI_SIGNが'0'になる
 	process(clk, enable, start, match) begin
 		if (start = '1' and enable = '1') then
 			enabled <= true;

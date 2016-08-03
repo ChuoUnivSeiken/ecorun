@@ -29,7 +29,8 @@ __reset_hardware(void);
 
 void
 __attribute__((weak,noreturn))
-__reset_hardware() {
+__reset_hardware()
+{
 	NVIC_SystemReset();
 }
 

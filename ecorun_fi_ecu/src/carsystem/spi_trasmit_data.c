@@ -5,9 +5,10 @@
  *      Author: Yoshio
  */
 
+#include <string.h>
+
 #include "spi_transmit_data.h"
 
-#include "fi_settings.h"
 #include "injection.h"
 #include "../system/cmsis/LPC11xx.h"
 #include "../system/peripheral/ssp.h"
@@ -39,16 +40,21 @@ void spi_receive_fi_settings(uint32_t size)
 	}
 }
 
-void spi_receive(uint32_t size, uint8_t* temp_buf, uint32_t dest_size,
-		uint8_t* dest)
+void spi_receive(uint32_t size, volatile uint8_t* temp_buf, uint32_t dest_size,
+		volatile uint8_t* dest)
 {
 	volatile uint32_t i;
-	for (i = 0; i < size; i++)
+
+	__disable_irq();
 	{
-		while (!(LPC_SSP1->SR & SSPSR_RNE))
-			;
-		temp_buf[i] = LPC_SSP1->DR;
+		for (i = 0; i < size; i++)
+		{
+			while (!(LPC_SSP1->SR & SSPSR_RNE))
+				;
+			temp_buf[i] = LPC_SSP1->DR;
+		}
 	}
+	__enable_irq();
 
 	volatile uint32_t sum = adler32(temp_buf, size - 4);
 
@@ -60,16 +66,20 @@ void spi_receive(uint32_t size, uint8_t* temp_buf, uint32_t dest_size,
 	}
 }
 
-void spi_send_engine_data(uint32_t size)
+void spi_send_data(volatile uint8_t* data, uint32_t size)
 {
-	volatile uint8_t* eg_data_ptr = (uint8_t*) &eg_data;
 	volatile uint32_t i;
-	for (i = 0; i < size; i++)
+
+	__disable_irq();
 	{
-		while ((LPC_SSP1->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
-			;
-		LPC_SSP1->DR = eg_data_ptr[i];
+		for (i = 0; i < size; i++)
+		{
+			while ((LPC_SSP1->SR & (SSPSR_TNF | SSPSR_BSY)) != SSPSR_TNF)
+				;
+			LPC_SSP1->DR = data[i];
+		}
 	}
+	__enable_irq();
 }
 
 void spi_transmit_blocking(void)
@@ -80,8 +90,6 @@ void spi_transmit_blocking(void)
 		;
 	data = LPC_SSP1->DR;
 
-	__disable_irq();
-
 	uint8_t func = (data >> 15) & 0x01;
 	uint8_t addr = (data >> 8) & 0x7F;
 	uint32_t size = (uint32_t) (data & 0xFF) + 1;
@@ -90,14 +98,16 @@ void spi_transmit_blocking(void)
 	{
 		if (addr == 0)
 		{
-			spi_send_engine_data(size);
+			spi_send_data((uint8_t*) &eg_data, size);
 		}
 	}
 	else // write
 	{
 		if (addr == 1)
 		{
-			spi_receive_fi_settings(size);
+			//spi_receive_fi_settings(size);
+			spi_receive(size, ssp_fi_settings_buf, sizeof(fi_settings),
+					(uint8_t*) &fi_settings);
 		}
 		else if (addr == 2)
 		{
@@ -106,7 +116,5 @@ void spi_transmit_blocking(void)
 					(uint8_t*) &fi_feedback_settings);
 		}
 	}
-
-	__enable_irq();
 }
 

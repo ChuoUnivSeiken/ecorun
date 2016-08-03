@@ -8,7 +8,8 @@
 #include "../cmsis/LPC11xx.h"
 #include "gpio.h"
 
-void gpio_init(void) {
+void gpio_init(void)
+{
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 6);
 #if ENABLE_PIOINT0_IRQHandler
 	NVIC_EnableIRQ(EINT0_IRQn);
@@ -24,35 +25,55 @@ void gpio_init(void) {
 #endif
 }
 
-LPC_GPIO_TypeDef* LPC_GPIO[] = { LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3 };
+LPC_GPIO_TypeDef* LPC_GPIO[] =
+{ LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3 };
 
-void gpio_set_value(uint32_t port, uint32_t bit, uint32_t value) {
+void gpio_set_value(uint32_t port, uint32_t bit, uint32_t value)
+{
 	if (value)
+	{
 		LPC_GPIO[port]->DATA |= _BV(bit);
+	}
 	else
+	{
 		LPC_GPIO[port]->DATA &= ~_BV(bit);
+	}
 }
 
-void gpio_set_dir(uint32_t port, uint32_t bit, uint32_t value) {
+uint32_t gpio_get_value(uint32_t port, uint32_t bit)
+{
+	return (LPC_GPIO[port]->DATA & _BV(bit)) ? 1 : 0;
+}
+
+void gpio_set_dir(uint32_t port, uint32_t bit, uint32_t value)
+{
 	if (value)
+	{
 		LPC_GPIO[port]->DIR |= _BV(bit);
+	}
 	else
+	{
 		LPC_GPIO[port]->DIR &= ~_BV(bit);
+	}
 }
 
-void gpio_enable_interrupt(uint32_t port, uint32_t bit) {
+void gpio_enable_interrupt(uint32_t port, uint32_t bit)
+{
 	LPC_GPIO[port]->IE |= _BV(bit);
 }
 
-void gpio_disable_interrupt(uint32_t port, uint32_t bit) {
+void gpio_disable_interrupt(uint32_t port, uint32_t bit)
+{
 	LPC_GPIO[port]->IE &= ~_BV(bit);
 }
 
-uint32_t gpio_has_interrupted(uint32_t port, uint32_t bit) {
+uint32_t gpio_has_interrupted(uint32_t port, uint32_t bit)
+{
 	return LPC_GPIO[port]->MIS & _BV(bit);
 }
 
-void gpio_clear_interrupted(uint32_t port, uint32_t bit) {
+void gpio_clear_interrupted(uint32_t port, uint32_t bit)
+{
 	LPC_GPIO0->IC = _BV(bit);
 }
 

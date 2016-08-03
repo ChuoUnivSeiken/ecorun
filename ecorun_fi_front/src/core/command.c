@@ -55,10 +55,8 @@ uint32_t get_registered_command_count()
 }
 void execute_command(command_data* cmd)
 {
-	__disable_irq();
 	command_table[cmd->command_id].command_func(cmd);
 	delete_command(cmd);
-	__enable_irq();
 }
 void execute_all_command(void)
 {
@@ -109,7 +107,9 @@ command_data* dequeue_command(void)
 	commands = commands->next;
 	cmd->next = NULL;
 	if (commands == NULL)
+	{
 		commands_last = NULL;
+	}
 	queue_command_count = queue_command_count - 1;
 	return cmd;
 }
@@ -120,6 +120,7 @@ void enqueue_command(command_data* command)
 	{
 		return;
 	}
+
 	queue_command_count = queue_command_count + 1;
 	if (commands == NULL)
 	{
@@ -130,6 +131,7 @@ void enqueue_command(command_data* command)
 	commands_last->next = command;
 	commands_last = command;
 }
+
 command_data* create_command(void)
 {
 	if (command_data_recycle == NULL)
@@ -142,6 +144,7 @@ command_data* create_command(void)
 
 	return cmd;
 }
+
 void delete_command(command_data* command)
 {
 	if (command == NULL)

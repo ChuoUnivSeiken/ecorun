@@ -125,12 +125,12 @@ void timer16_reset(uint8_t timer)
 	}
 }
 
-void timer16_init(uint8_t timer, uint32_t prescale, uint32_t interval)
+void timer16_init(uint8_t timer, uint32_t interval)
 {
 	if (timer == 1)
 	{
 		LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 8);
-		LPC_TMR16B1->PR = prescale;
+		LPC_TMR16B1->PR = 0;
 		LPC_TMR16B1->MR0 = interval / 2;
 		LPC_TMR16B1->MR1 = interval / 2;
 		LPC_TMR16B1->MR2 = interval / 2;
@@ -144,7 +144,7 @@ void timer16_init(uint8_t timer, uint32_t prescale, uint32_t interval)
 	else
 	{
 		LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 7);
-		LPC_TMR16B0->PR = prescale;
+		LPC_TMR16B0->PR = 0;
 		LPC_TMR16B0->MR0 = interval / 2;
 		LPC_TMR16B0->MR1 = interval / 2;
 		LPC_TMR16B0->MR2 = interval / 2;
@@ -159,7 +159,7 @@ void timer16_init(uint8_t timer, uint32_t prescale, uint32_t interval)
 
 void timer16_set_pwm(uint32_t timer, uint32_t period)
 {
-	if (timer)
+	if (timer == 1)
 	{
 		NVIC_DisableIRQ(TIMER_16_1_IRQn);
 		timer16_disable(timer);
@@ -210,7 +210,7 @@ void timer16_set_pwm(uint32_t timer, uint32_t period)
 
 void timer16_set_match(uint32_t timer, uint32_t num, uint32_t value)
 {
-	if (timer)
+	if (timer == 1)
 	{
 		switch (num)
 		{
@@ -250,11 +250,5 @@ void timer16_set_match(uint32_t timer, uint32_t num, uint32_t value)
 			break;
 		}
 	}
-}
-
-void enable_system_timer(uint32_t fraq)
-{
-	SysTick->LOAD = 48000000 / fraq - 1;
-	SysTick->CTRL = 0x07;
 }
 
