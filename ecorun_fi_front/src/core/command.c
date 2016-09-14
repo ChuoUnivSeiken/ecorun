@@ -39,7 +39,7 @@ command_id register_command(const_string cmd, command_func func)
 }
 command_id get_command_id(const_string cmd)
 {
-	int i;
+	uint32_t i;
 	for (i = 0; i < registered_command_count; i++)
 	{
 		if (strcmp(command_table[i].command_name, cmd) == 0)
@@ -55,7 +55,10 @@ uint32_t get_registered_command_count()
 }
 void execute_command(command_data* cmd)
 {
-	command_table[cmd->command_id].command_func(cmd);
+	if (cmd != NULL && cmd->command_id < registered_command_count)
+	{
+		command_table[cmd->command_id].command_func(cmd);
+	}
 	delete_command(cmd);
 }
 void execute_all_command(void)
@@ -70,8 +73,7 @@ void execute_all_command(void)
 void execute_one_command(void)
 {
 	command_data* cmd = dequeue_command();
-	if (cmd != NULL && cmd->command_id >= 0
-			&& cmd->command_id < registered_command_count)
+	if (cmd != NULL && cmd->command_id < registered_command_count)
 	{
 		execute_command(cmd);
 	}
@@ -79,7 +81,7 @@ void execute_one_command(void)
 
 void initialize_command_system(error_func func)
 {
-	int i;
+	uint32_t i;
 	commands = NULL;
 	commands_last = NULL;
 	command_data_recycle = command_data_reserved;
@@ -132,14 +134,15 @@ void enqueue_command(command_data* command)
 	commands_last = command;
 }
 
-command_data* create_command(void)
+command_data* create_command()
 {
 	if (command_data_recycle == NULL)
+	{
 		return NULL;
+	}
+
 	command_data* cmd = command_data_recycle;
 	command_data_recycle = command_data_recycle->next;
-	cmd->datasize = 0;
-	cmd->command_id = -1;
 	cmd->next = NULL;
 
 	return cmd;
@@ -148,7 +151,10 @@ command_data* create_command(void)
 void delete_command(command_data* command)
 {
 	if (command == NULL)
+	{
 		return;
+	}
+
 	command->next = command_data_recycle;
 	command_data_recycle = command;
 }

@@ -19,95 +19,460 @@
 #include "integer.h"
 #include "carsystem/car_info.h"
 #include "carsystem/injection.h"
-#include "carsystem/fi_settings.h"
 #include "carsystem/accessible_data.h"
 #include <string.h>
-#include "countdown_timer.h"
+#include <stdlib.h>
+#include "json/jsmn.h"
 
 /* Kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 
-#define USE_BLUETOOTH 0
+#define USE_BLUETOOTH 1
+
+xSemaphoreHandle usart_mutex = NULL;
+
+typedef struct eeprom_entry_t
+{
+	const char* name;
+	uint8_t* data;
+	size_t size;
+	uint32_t offset;
+} eeprom_entry;
+
+#define EEPROM_ENTRY(data) { #data, (uint8_t*) &data, sizeof(data), -1 }
+
+static eeprom_entry eeprom_entries[] =
+{
+EEPROM_ENTRY(fi_basic_setting),
+EEPROM_ENTRY(fi_feedback_setting),
+EEPROM_ENTRY(fi_starting_setting),
+EEPROM_ENTRY(fi_intake_temperature_correction),
+EEPROM_ENTRY(fi_oil_temperature_correction), };
+
+#define NUM_EEPRON_ENTRIES (sizeof(eeprom_entries) / sizeof(eeprom_entries[0]))
+
+/*---------------------------------------------------------------------------*/
+
+static inline void write_message(const_string msg)
+{
+	if (usart_mutex)
+	{
+		xSemaphoreTake(usart_mutex, portMAX_DELAY);
+	}
+	usart_write_string("msg <");
+	usart_write_string(msg);
+	usart_writeln_string(">");
+	if (usart_mutex)
+	{
+		xSemaphoreGive(usart_mutex);
+	}
+}
+
+static inline void write_error(const_string msg, portBASE_TYPE code)
+{
+	if (usart_mutex)
+	{
+		xSemaphoreTake(usart_mutex, portMAX_DELAY);
+	}
+	usart_write_string("msg <");
+	usart_write_string(msg);
+	usart_write_string(", code ");
+	usart_write_int32((int) code);
+	usart_writeln_string(">");
+	if (usart_mutex)
+	{
+		xSemaphoreGive(usart_mutex);
+	}
+}
+
+/*---------------------------------------------------------------------------*/
 
 #define SSP_MAX_DATA_SIZE (512 + 4)
-
-volatile uint8_t ssp_buf[SSP_MAX_DATA_SIZE];
 
 static uint16_t spi_encode_header(uint32_t func, uint32_t addr, size_t size)
 {
 	return (((func & 0x01) << 15) | ((addr & 0x7F) << 8)
-			| (((size - 3) >> 1) & 0xFF));
+			| (((size >> 1) - 3) & 0xFF));
+}
+
+static const uint16_t START_DATA = 0xAB;
+
+static void send_data_to_ecu(const uint8_t* data, size_t size, size_t address)
+{
+	const uint16_t header = spi_encode_header(0x01, 0x01, size);
+
+	portENTER_CRITICAL();
+	{
+		ssp_send_uint16(0, &header, 1);
+		ssp_send_uint16(0, (const uint16_t*) data, size >> 1);
+	}
+	portEXIT_CRITICAL();
+}
+
+static void receive_data_from_ecu(uint8_t* data, size_t size, size_t address)
+{
+	const uint16_t header = spi_encode_header(0x00, 0x01, size);
+
+	{
+		ssp_send_uint16(0, &header, 1);
+
+		volatile uint16_t res = 0;
+
+		volatile int32_t retry = 10;
+		do
+		{
+			vTaskDelay(2);
+			ssp_receive_uint16(0, (uint16_t*) &res, 1);
+		} while (res != START_DATA && retry-- > 0); // Wait for card goes ready or timeout
+
+		ssp_receive_uint16(0, (uint16_t*) data, size >> 1);
+	}
 }
 
 static void receive_and_send_eneine_data(void)
 {
-	// synchronizing
-	{
-		volatile uint32_t i = 0;
-		for (i = 0; i < (SSP_MAX_DATA_SIZE >> 1); i++)
-		{
-			uint16_t data = 0xFFFF;
-			ssp_send_uint16(0, &data, 1);
-		}
-	}
+	static volatile uint8_t ssp_buf[SSP_MAX_DATA_SIZE];
 
 	// receive engine data
 	{
-		const size_t size = sizeof(eg_data);
-		const uint16_t data = spi_encode_header(0x00, 0x00, size);
+		receive_data_from_ecu((uint8_t*) ssp_buf, sizeof(fi_engine_state),
+				0x01);
 
-		{
-			ssp_send_uint16(0, &data, 1);
-			ssp_receive_uint16(0, (uint16_t*) ssp_buf, size >> 1);
-		}
+		const uint32_t checksum =
+				*(uint32_t*) ((uint8_t*) ssp_buf
+						+ (size_t) &fi_engine_state.checksum
+						- (size_t) &fi_engine_state);
 
-		const uint32_t checksum = *(uint32_t*) ((uint8_t*) ssp_buf + size - 4);
-
-		const uint32_t sum = adler32((const_buffer) ssp_buf, size - 4);
+		const uint32_t sum = adler32((uint8_t*) ssp_buf,
+				(size_t) &fi_engine_state.checksum - (size_t) &fi_engine_state);
 
 		if (sum == checksum)
 		{
-			memcpy(&eg_data, ssp_buf, sizeof(eg_data));
+			memcpy(&fi_engine_state, ssp_buf, sizeof(fi_engine_state));
 		}
 		else
 		{
-			usart_writeln_string("msg <checksum of data from is invalid.>");
+			write_message("checksum of data from ecu is invalid.");
 		}
 	}
 
-	// send injection map
+	// send settings
 	{
-		volatile uint8_t* fi_settings_ptr = (uint8_t*) &fi_settings;
+		{
+			fi_basic_setting.checksum = adler32(
+					(const_buffer) &fi_basic_setting,
+					sizeof(fi_basic_setting)
+							- sizeof(fi_basic_setting.checksum));
 
-		fi_settings.checksum = adler32((const_buffer) &fi_settings,
-				sizeof(fi_settings) - sizeof(fi_settings.checksum));
-
-		const uint32_t size = sizeof(fi_settings);
-		const uint16_t data = spi_encode_header(0x01, 0x01, size);
+			send_data_to_ecu((uint8_t*) &fi_basic_setting,
+					sizeof(fi_basic_setting), 0x01);
+		}
 
 		{
-			ssp_send_uint16(0, &data, 1);
-			ssp_send_uint16(0, (uint16_t*) fi_settings_ptr, size >> 1);
+			fi_starting_setting.checksum = adler32(
+					(const_buffer) &fi_starting_setting,
+					sizeof(fi_starting_setting)
+							- sizeof(fi_starting_setting.checksum));
+
+			send_data_to_ecu((uint8_t*) &fi_starting_setting,
+					sizeof(fi_starting_setting), 0x02);
+		}
+
+		{
+			fi_intake_temperature_correction.checksum =
+					adler32((const_buffer) &fi_intake_temperature_correction,
+							sizeof(fi_intake_temperature_correction)
+									- sizeof(fi_intake_temperature_correction.checksum));
+
+			send_data_to_ecu((uint8_t*) &fi_intake_temperature_correction,
+					sizeof(fi_intake_temperature_correction), 0x03);
+		}
+
+		{
+			fi_oil_temperature_correction.checksum = adler32(
+					(const_buffer) &fi_oil_temperature_correction,
+					sizeof(fi_oil_temperature_correction)
+							- sizeof(fi_oil_temperature_correction.checksum));
+
+			send_data_to_ecu((uint8_t*) &fi_oil_temperature_correction,
+					sizeof(fi_oil_temperature_correction), 0x04);
+		}
+
+		{
+			fi_feedback_setting.checksum = adler32(
+					(const_buffer) &fi_feedback_setting,
+					sizeof(fi_feedback_setting)
+							- sizeof(fi_feedback_setting.checksum));
+
+			send_data_to_ecu((uint8_t*) &fi_feedback_setting,
+					sizeof(fi_feedback_setting), 0x05);
 		}
 	}
 }
+
+/*---------------------------------------------------------------------------*/
 
 typedef struct
 {
 	uint8_t switches[5];
 	uint8_t leds[4];
-} io_info;
+} io_info_data;
 
-static io_info io_info_inst;
+static io_info_data io_info;
+
+typedef struct
+{
+	uint8_t major_version;
+	uint8_t minor_version;
+	uint8_t injection_map_th_points;
+	uint8_t injection_map_rev_points;
+} device_info_data;
+
+static device_info_data device_info;
+
+#define DATA_TABLE_ENTRY(name, data, is_readonly) { name, (void*) &data, sizeof(data), is_readonly }
+
+static const accessible_data_entry register_data_table[] =
+{
+DATA_TABLE_ENTRY("device_info", device_info, true),
+DATA_TABLE_ENTRY("fi_engine_state", fi_engine_state, true),
+DATA_TABLE_ENTRY("fi_basic_setting", fi_basic_setting, false),
+DATA_TABLE_ENTRY("fi_feedback_setting", fi_feedback_setting, false),
+DATA_TABLE_ENTRY("fi_starting_setting", fi_starting_setting, false),
+DATA_TABLE_ENTRY("fi_intake_temperature_correction",
+		fi_intake_temperature_correction, false),
+DATA_TABLE_ENTRY("fi_oil_temperature_correction",
+		fi_oil_temperature_correction, false),
+DATA_TABLE_ENTRY("io_info", io_info, true),
+DATA_TABLE_ENTRY("car_data", cr_data, true), };
+
+void command_error_func(const char* id, command_func func)
+{
+	usart_write_string("msg <can't register command : ");
+	usart_write_string(id);
+	usart_writeln_string(">");
+}
+
+typedef struct
+{
+	const char* method;
+	uint32_t unique_id;
+
+	const char* id;
+	uint32_t size;
+	const char* data;
+	uint32_t checksum;
+} request_data;
+
+void request_get(request_data request)
+{
+	volatile accessible_data_entry found;
+	if (!find_data(request.id, &found))
+	{
+
+		send_response(100, request.unique_id);
+		return;
+	}
+
+	const_string name = found.name;
+	void* data_ptr = found.data_ptr;
+	size_t data_size = found.data_size;
+	send_response_with_data(0, request.unique_id, name, data_ptr, data_size);
+	return;
+}
+
+void request_put(request_data request)
+{
+	accessible_data_entry registered_data;
+	if (!find_data(request.id, &registered_data))
+	{
+		write_message("cannot find the data.");
+		send_response(100, request.unique_id);
+		return;
+	}
+
+	if (registered_data.is_read_only)
+	{
+		write_message("the data is readonly.");
+		send_response(100, request.unique_id);
+		return;
+	}
+
+	uint32_t decoded_size = decode_base64(request.data, NULL);
+	uint32_t size = registered_data.data_size;
+	if (size != decoded_size)
+	{
+		write_message("don't match the data size.");
+		send_response(100, request.unique_id);
+		return;
+	}
+	if (size > MAX_COMMAND_DATA_SIZE)
+	{
+		write_message("the data size is too long.");
+		send_response(100, request.unique_id);
+		return;
+	}
+
+	decode_base64_s(request.data, request.data, MAX_COMMAND_DATA_SIZE);
+
+	const uint32_t sum = adler32(request.data, decoded_size);
+
+	if (sum != request.checksum)
+	{
+		write_message("don't match the check sum.");
+		send_response(100, request.unique_id);
+		return;
+	}
+
+	memcpy((uint8_t*) registered_data.data_ptr, request.data, size);
+
+	send_response(0, request.unique_id);
+	return;
+}
+
+void request_exec(request_data request)
+{
+	if (strcmp(request.id, "save-settings") == 0)
+	{
+		volatile size_t i = 0;
+		for (i = 0; i < NUM_EEPRON_ENTRIES; i++)
+		{
+			uint8_t* address = (uint8_t*) eeprom_entries[i].offset;
+			uint8_t* data = eeprom_entries[i].data;
+			size_t size = eeprom_entries[i].size;
+
+			if (eeprom_write(address, data, size) == EFAULT)
+			{
+				send_response(100, request.unique_id);
+				return;
+			}
+		}
+	}
+	else if (strcmp(request.id, "load-settings") == 0)
+	{
+		volatile size_t i = 0;
+		for (i = 0; i < NUM_EEPRON_ENTRIES; i++)
+		{
+			uint8_t* address = (uint8_t*) eeprom_entries[i].offset;
+			uint8_t* data = eeprom_entries[i].data;
+			size_t size = eeprom_entries[i].size;
+
+			if (eeprom_read(address, data, size) == EFAULT)
+			{
+				send_response(100, request.unique_id);
+				return;
+			}
+		}
+	}
+
+	send_response(0, request.unique_id);
+	return;
+}
+
+static jsmntok_t* parse_json_object_as_request(char* js, jsmntok_t* tokens,
+		size_t num_tokens, request_data* request)
+{
+	jsmntok_t* tok = tokens;
+	const jsmntok_t* tok_end = tok + num_tokens;
+
+	for (; tok < tok_end;)
+	{
+		const char* name = js + tok->start;
+		js[tok->end] = '\0';
+		tok++;
+
+		const char* value = js + tok->start;
+		js[tok->end] = '\0';
+		tok++;
+
+		if (strcmp(name, "method") == 0)
+		{
+			request->method = value;
+		}
+		else if (strcmp(name, "unique-id") == 0)
+		{
+			request->unique_id = str_to_uint32(value);
+		}
+		else if (strcmp(name, "id") == 0)
+		{
+			request->id = value;
+		}
+		else if (strcmp(name, "size") == 0)
+		{
+			request->size = str_to_uint32(value);
+		}
+		else if (strcmp(name, "data") == 0)
+		{
+			request->data = value;
+		}
+		else if (strcmp(name, "checksum") == 0)
+		{
+			request->checksum = str_to_uint32(value);
+		}
+	}
+
+	return tok;
+}
+
+void command_request(command_data* cmd_data)
+{
+#define JSON_NUM_TOKENS 16
+
+	static jsmn_parser json_parser;
+	static jsmntok_t tokens[JSON_NUM_TOKENS];
+
+	char* js = cmd_data->data;
+
+	jsmn_init(&json_parser);
+	jsmnerr_t error = jsmn_parse(&json_parser, js, tokens, JSON_NUM_TOKENS);
+
+	if (error != JSMN_SUCCESS)
+	{
+		write_message("not sufficient space in tokens buffer.");
+		return;
+	}
+
+	jsmntok_t* tok = tokens;
+
+	int i = 0;
+	if (tok->type != JSMN_OBJECT)
+	{
+		return;
+	}
+
+	request_data request =
+	{ 0 };
+
+	tok = parse_json_object_as_request(js, tok + 1, tok->size, &request);
+
+	if (strcmp(request.method, "get") == 0)
+	{
+		request_get(request);
+		return;
+	}
+	else if (strcmp(request.method, "put") == 0)
+	{
+		request_put(request);
+		return;
+	}
+	else if (strcmp(request.method, "exec") == 0)
+	{
+		request_exec(request);
+		return;
+	}
+}
+
+/*---------------------------------------------------------------------------*/
 
 static void monitor_switch(void)
 {
-	// send switch states to ecu pin
-	io_info_inst.switches[0] = (LPC_GPIO->PIN[1] & _BV(4)) == 0;
-	io_info_inst.switches[1] = (LPC_GPIO->PIN[1] & _BV(27)) == 0;
-	io_info_inst.switches[2] = (LPC_GPIO->PIN[1] & _BV(26)) == 0;
+// send switch states to ecu pin
+	io_info.switches[0] = (LPC_GPIO->PIN[1] & _BV(4)) == 0;
+	io_info.switches[1] = (LPC_GPIO->PIN[1] & _BV(27)) == 0;
+	io_info.switches[2] = (LPC_GPIO->PIN[1] & _BV(26)) == 0;
 
 	if (LPC_GPIO->PIN[1] & _BV(4))
 	{
@@ -139,123 +504,12 @@ static void monitor_switch(void)
 
 static void monitor_throttle(void)
 {
-	volatile uint32_t angle = ((1800 * eg_data.th) >> 10);
+	volatile uint32_t angle = ((1800 * fi_engine_state.th) >> 10);
 	volatile uint32_t match = ((SystemCoreClock / 1000000) * (angle + 500));
 	timer32_set_match(1, 1, match);
 }
 
-typedef struct
-{
-	uint8_t major_version;
-	uint8_t minor_version;
-	uint8_t injection_map_th_points;
-	uint8_t injection_map_rev_points;
-} device_info;
-
-static device_info dev_info;
-
-void command_error_func(const char* id, command_func func)
-{
-	usart_write_string("msg <can't register command : ");
-	usart_write_string(id);
-	usart_writeln_string(">");
-}
-
-static const named_data register_data_table[] =
-{
-{ "device_info", (void*) &dev_info, sizeof(dev_info), true },
-{ "engine_data", (void*) &eg_data, sizeof(eg_data), true },
-{ "basic_inject_time_map", (void*) &fi_settings.basic_inject_time_map[0][0],
-		sizeof(fi_settings.basic_inject_time_map), false },
-{ "io_info", (void*) &io_info_inst, sizeof(io_info_inst), true },
-{ "car_data", (void*) &cr_data, sizeof(cr_data), true } };
-
-void command_get(command_data* data)
-{
-	const_string id = data->args[0].arg_value;
-
-	find_and_put_data(id);
-}
-
-static inline void write_message(const_string msg)
-{
-	usart_write_string("msg <");
-	usart_write_string(msg);
-	usart_writeln_string(">");
-}
-
-static inline void write_error(const_string msg, portBASE_TYPE code)
-{
-	usart_write_string("msg <");
-	usart_write_string(msg);
-	usart_write_string(", code ");
-	usart_write_int32((int) code);
-	usart_writeln_string(">");
-}
-
-void command_put(command_data* data)
-{
-	static volatile uint8_t buffer[512];
-
-	const uint8_t* id = data->args[0].arg_value;
-	const uint32_t encoded_size = str_to_uint32(data->args[1].arg_value);
-	const_string encoded_data = data->args[2].arg_value;
-	const uint32_t sum = str_to_uint32(data->args[3].arg_value);
-
-	named_data registered_data;
-	if (!find_data(id, &registered_data))
-	{
-		write_message("cannot find the data.");
-	}
-
-	if (registered_data.is_read_only)
-	{
-		write_message("the data is readonly.");
-		return;
-	}
-	uint32_t decoded_size = decode_base64(encoded_data, NULL);
-	uint32_t size = registered_data.data_size;
-	if (size != decoded_size)
-	{
-		write_message("don't match the data size.");
-		return;
-	}
-	if (size > sizeof(buffer))
-	{
-		write_message("the data size is too long.");
-		return;
-	}
-	decode_base64_s(encoded_data, (uint8_t*) buffer, 512);
-
-	const uint32_t check_sum = adler32(buffer, decoded_size);
-
-	if (check_sum != sum)
-	{
-		write_message("don't match the check sum.");
-		return;
-	}
-
-	memcpy((uint8_t*) registered_data.data_ptr, buffer, size);
-}
-
-void command_exec(command_data* data)
-{
-	const uint8_t* id = data->args[0].arg_value;
-	if (strcmp(id, "save-settings") == 0)
-	{
-		eeprom_write((uint8_t*) 0, (buffer) fi_settings.basic_inject_time_map,
-				sizeof(fi_settings.basic_inject_time_map));
-
-		write_message("settings saved.");
-	}
-	else if (strcmp(id, "load-settings") == 0)
-	{
-		eeprom_read((uint8_t*) 0, (buffer) fi_settings.basic_inject_time_map,
-				sizeof(fi_settings.basic_inject_time_map));
-
-		write_message("settings loaded.");
-	}
-}
+/*---------------------------------------------------------------------------*/
 
 void adc_handler(uint8_t num, uint32_t value)
 {
@@ -271,6 +525,8 @@ void adc_handler(uint8_t num, uint32_t value)
 		break;
 	}
 }
+
+/*---------------------------------------------------------------------------*/
 
 void init_io_adc(void)
 {
@@ -405,11 +661,13 @@ void init_io_signals(void)
 
 void init_io(void)
 {
-	//init_io_adc();
+//init_io_adc();
 	init_io_ssp0();
 	init_io_usart();
 	init_io_signals();
 }
+
+/*---------------------------------------------------------------------------*/
 
 void init_cli(void)
 {
@@ -422,10 +680,10 @@ void init_cli(void)
 	uint32_t registered_data_count = sizeof(register_data_table)
 			/ sizeof(register_data_table[0]);
 	register_data(register_data_table, registered_data_count);
-	register_command("get", command_get);
-	register_command("put", command_put);
-	register_command("exec", command_exec);
+	register_command("request", command_request);
 }
+
+/*---------------------------------------------------------------------------*/
 
 /* Priorities at which the tasks are created. */
 #define EXECUTE_COMMAND_TASK_PRIORITY ( tskIDLE_PRIORITY + 2 )
@@ -452,6 +710,8 @@ static void execute_command_task(void* parameters)
 	}
 }
 
+/*---------------------------------------------------------------------------*/
+
 /* Priorities at which the tasks are created. */
 #define MONITOR_SWITCH_TASK_PRIORITY ( tskIDLE_PRIORITY + 3 )
 
@@ -476,6 +736,8 @@ static void monitor_switch_task(void* parameters)
 		monitor_switch();
 	}
 }
+
+/*---------------------------------------------------------------------------*/
 
 /* Priorities at which the tasks are created. */
 #define MONITOR_THROTTLE_TASK_PRIORITY ( tskIDLE_PRIORITY + 3 )
@@ -502,11 +764,13 @@ static void monitor_throttle_task(void* parameters)
 	}
 }
 
+/*---------------------------------------------------------------------------*/
+
 /* Priorities at which the tasks are created. */
 #define RXTX_ENGINE_DATA_TASK_PRIORITY ( tskIDLE_PRIORITY + 2 )
 
 /* The rate at which data is sent to the queue, specified in milliseconds. */
-#define RXTX_ENGINE_DATA_TASK_FREQENCY_MS	( 20 / portTICK_RATE_MS )
+#define RXTX_ENGINE_DATA_TASK_FREQENCY_MS	( 100 / portTICK_RATE_MS )
 
 static void rxtx_engine_data_task(void* parameters)
 {
@@ -529,7 +793,9 @@ static void rxtx_engine_data_task(void* parameters)
 	}
 }
 
-static void start_scheduler(void)
+/*---------------------------------------------------------------------------*/
+
+static void start_tasks(void)
 {
 	/* Create and start tasks */
 	portBASE_TYPE result;
@@ -561,43 +827,70 @@ static void start_scheduler(void)
 		write_error("cannot create \"monitor_throttle\" task.", result);
 	}
 
+	usart_mutex = xSemaphoreCreateMutex();
+
+	if (usart_mutex == NULL)
+	{
+		write_error("cannot create \"usart_mutex\" mutex.", result);
+	}
+
 	/* Start the tasks running. */
 	vTaskStartScheduler();
 }
 
+/*---------------------------------------------------------------------------*/
+
+static void init_device_info(void)
+{
+	device_info.major_version = 1;
+	device_info.minor_version = 0;
+	device_info.injection_map_rev_points = 13;
+	device_info.injection_map_th_points = 11;
+}
+
+static void init_servo_pulse(void)
+{
+	timer32_init(1, SystemCoreClock / 1000000 * 15000);
+	timer32_set_pwm(1, SystemCoreClock / 1000000 * 15000);
+//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
+	timer32_enable(1);
+}
+
+static void init_fi_settings(void)
+{
+	volatile uint32_t offset = 0;
+	volatile size_t i = 0;
+
+	for (i = 0; i < NUM_EEPRON_ENTRIES; i++)
+	{
+		eeprom_entries[i].offset = offset;
+		offset += eeprom_entries[i].size;
+	}
+
+	for (i = 0; i < NUM_EEPRON_ENTRIES; i++)
+	{
+		uint8_t* address = (uint8_t*) eeprom_entries[i].offset;
+		uint8_t* data = eeprom_entries[i].data;
+		size_t size = eeprom_entries[i].size;
+
+		eeprom_read(address, data, size);
+	}
+}
+
 int main(void)
 {
-	SystemCoreClockUpdate();
+	init_fi_settings();
 
 	init_io();
 
-	NVIC_SetPriority(USART_IRQn, 1);
-	NVIC_SetPriority(CT32B0_IRQn, 2);
-
-	eeprom_read((uint8_t*) 0, (buffer) fi_settings.basic_inject_time_map,
-			sizeof(fi_settings.basic_inject_time_map));
-
-	//systimer_init();
+	init_device_info();
 
 	init_cli();
 
-	timer32_init(1, SystemCoreClock / 1000000 * 15000);
-	timer32_set_pwm(1, SystemCoreClock / 1000000 * 15000);
-	//timer32_set_match(1, 1, SystemCoreClock * 7 / 10000);
-	timer32_enable(1);
+	init_servo_pulse();
 
-	//countdown_timer_init();
+	start_tasks();
 
-	dev_info.major_version = 1;
-	dev_info.minor_version = 0;
-	dev_info.injection_map_rev_points = 13;
-	dev_info.injection_map_th_points = 11;
-
-	start_scheduler();
-
-	/* If all is well we will never reach here as the scheduler will now be
-	 running.  If we do reach here then it is likely that there was insufficient
-	 heap available for the idle task to be created. */
 	for (;;)
 		;
 

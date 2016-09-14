@@ -6,182 +6,177 @@
 ********** Mapped Logic **********
 </td></tr><tr><td>
 </td></tr><tr><td>
-BUF_fi_pulse_gen/enabled(0) <= ((fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(7) AND fi_pulse_gen/match_cache(6))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(7) AND fi_pulse_gen/match_cache(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(7) AND 
+$OpTx$FX_DC$71 <= ((NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(5))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(5))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(7))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(7) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(7))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND fi_pulse_gen/match_cache(6))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2));
-</td></tr><tr><td>
-FDCPE_fi_pulse: FDCPE port map (fi_pulse,fi_pulse_D,clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_D <= ((timing_pulse AND NOT fi_pulse AND enable)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT timing_pulse AND NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT enable AND NOT BUF_fi_pulse_gen/enabled(0)));
-</td></tr><tr><td>
-</td></tr><tr><td>
-fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2 <= ((fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/match_cache(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(2) AND NOT fi_pulse_gen/match_cache(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_OBUF.EXP)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(2) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(6))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(6))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(1))
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(2) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(2))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(1) AND fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(1))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(2))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(1) AND NOT fi_pulse_gen/match_cache(0)));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(2))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/match_cache(3))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(1)));
 </td></tr><tr><td>
 </td></tr><tr><td>
-fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN(6)_D2 <= ((NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(5))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(5))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/match_cache(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(3) AND fi_pulse_gen/match_cache(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(5))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache(4) AND fi_pulse_gen/match_cache(5))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(4) AND fi_pulse_gen/match_cache(3))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN(3)_D2));
+</td></tr><tr><td>
+FTCPE_fi_pulse: FTCPE port map (fi_pulse,fi_pulse_T,clk,'0','0');
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_T <= ((NOT fi_pulse_gen/enabled(0) AND NOT fi_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (timing_pulse AND enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse AND NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND fi_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7)));
 </td></tr><tr><td>
 FDCPE_fi_pulse_gen/counter0: FDCPE port map (fi_pulse_gen/counter(0),fi_pulse_gen/counter_D(0),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_D(0) <= ((
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND NOT timing_pulse AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND timing_pulse AND enable));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_D(0) <= ((NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND NOT enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND timing_pulse AND enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
-FTCPE_fi_pulse_gen/counter1: FTCPE port map (fi_pulse_gen/counter(1),fi_pulse_gen/counter_T(1),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(1) <= ((NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (timing_pulse AND enable));
+FDCPE_fi_pulse_gen/counter1: FDCPE port map (fi_pulse_gen/counter(1),fi_pulse_gen/counter_D(1),clk,'0','0');
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_D(1) <= ((fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND NOT enable AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(1) AND timing_pulse AND enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(1) AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
-FTCPE_fi_pulse_gen/counter2: FTCPE port map (fi_pulse_gen/counter(2),fi_pulse_gen/counter_T(2),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(2) <= ((NOT fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (timing_pulse AND enable));
+FDCPE_fi_pulse_gen/counter2: FDCPE port map (fi_pulse_gen/counter(2),fi_pulse_gen/counter_D(2),clk,'0','0');
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_D(2) <= ((fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(1) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(1) AND NOT enable AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(2) AND timing_pulse AND enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
-FTCPE_fi_pulse_gen/counter3: FTCPE port map (fi_pulse_gen/counter(3),fi_pulse_gen/counter_T(3),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(3) <= ((NOT fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (timing_pulse AND enable));
+FDCPE_fi_pulse_gen/counter3: FDCPE port map (fi_pulse_gen/counter(3),fi_pulse_gen/counter_D(3),clk,'0','0');
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_D(3) <= ((fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(3) AND timing_pulse AND enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(3) AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(3) AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
 FTCPE_fi_pulse_gen/counter4: FTCPE port map (fi_pulse_gen/counter(4),fi_pulse_gen/counter_T(4),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(4) <= ((NOT timing_pulse AND fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(4) <= ((NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(4) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(4) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0)));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
 FTCPE_fi_pulse_gen/counter5: FTCPE port map (fi_pulse_gen/counter(5),fi_pulse_gen/counter_T(5),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(5) <= ((fi_pulse_gen/counter(5) AND NOT timing_pulse AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(5) <= ((NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(5) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(5) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(4) AND BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable AND BUF_fi_pulse_gen/enabled(0)));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(1) AND NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(1) AND NOT enable AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
 FTCPE_fi_pulse_gen/counter6: FTCPE port map (fi_pulse_gen/counter(6),fi_pulse_gen/counter_T(6),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(6) <= ((fi_pulse_gen/counter(6) AND NOT timing_pulse AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(6) <= ((NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(6) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(6) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND NOT timing_pulse AND fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(4) AND NOT enable AND BUF_fi_pulse_gen/enabled(0)));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(1) AND NOT enable AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(1) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$FX_DC$71));
 </td></tr><tr><td>
 FTCPE_fi_pulse_gen/counter7: FTCPE port map (fi_pulse_gen/counter(7),fi_pulse_gen/counter_T(7),clk,'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(7) <= ((NOT timing_pulse AND fi_pulse_gen/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/counter_T(7) <= ((NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/enabled(0) AND fi_pulse_gen/counter(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(7) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(7) AND NOT timing_pulse AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND fi_pulse_gen/counter(2) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND NOT enable AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	BUF_fi_pulse_gen/enabled(0)));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(2) AND fi_pulse_gen/counter(3) AND fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/counter(5) AND fi_pulse_gen/counter(6) AND fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT enable AND $OpTx$FX_DC$71));
 </td></tr><tr><td>
-FDCPE_fi_pulse_gen/enabled0: FDCPE port map (fi_pulse_gen/enabled(0),BUF_fi_pulse_gen/enabled(0),clk,'0',fi_pulse_gen/enabled_PRE(0));
+FDCPE_fi_pulse_gen/enabled0: FDCPE port map (fi_pulse_gen/enabled(0),fi_pulse_gen/enabled_D(0),clk,'0',fi_pulse_gen/enabled_PRE(0));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/enabled_D(0) <= ((fi_pulse_gen/enabled(0) AND $OpTx$FX_DC$71)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7)));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi_pulse_gen/enabled_PRE(0) <= (timing_pulse AND enable);
 </td></tr><tr><td>
 FDCPE_fi_pulse_gen/match_cache0: FDCPE port map (fi_pulse_gen/match_cache(0),fi_pulse_gen/match_cache_D(0),clk,'0','0');
@@ -233,13 +228,13 @@ FDCPE_fi_pulse_gen/match_cache7: FDCPE port map (fi_pulse_gen/match_cache(7),fi_
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2));
 </td></tr><tr><td>
 </td></tr><tr><td>
-fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 <= ((fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT timing_pulse AND NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(4) AND NOT fi_pulse_gen/counter(7))
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (fi_pulse_gen/enabled(0) AND NOT fi_pulse_gen/counter(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(1) AND NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND 
+fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2 <= ((NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND NOT timing_pulse)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT fi_pulse_gen/counter(0) AND fi_pulse_gen/enabled(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(2) AND NOT fi_pulse_gen/counter(3) AND NOT fi_pulse_gen/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(5) AND NOT fi_pulse_gen/counter(6) AND NOT fi_pulse_gen/counter(1) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT fi_pulse_gen/counter(7) AND NOT enable));
 </td></tr><tr><td>
 </td></tr><tr><td>
@@ -327,147 +322,235 @@ FTCPE_st/phase1: FTCPE port map (st/phase(1),st/phase_T(1),NOT iac_pulse,'0','0'
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT st/phase(0) AND iac_clockwise));
 </td></tr><tr><td>
 FTCPE_sw/counter0: FTCPE port map (sw/counter(0),sw/counter_T(0),clk,'0','0',NOT timing_pulse);
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(0) <= ((sw/counter(0) AND sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(0) <= ((sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter1: FTCPE port map (sw/counter(1),sw/counter_T(1),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(1) <= ((sw/counter(1) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/state_FSM_FFd1 AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter2: FTCPE port map (sw/counter(2),sw/counter_T(2),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(2) <= ((sw/counter(2) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter3: FTCPE port map (sw/counter(3),sw/counter_T(3),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(3) <= ((sw/counter(3) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter4: FTCPE port map (sw/counter(4),sw/counter_T(4),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(4) <= ((sw/counter(4) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(1) AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter5: FTCPE port map (sw/counter(5),sw/counter_T(5),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(5) <= ((sw/counter(5) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(1) AND sw/state_FSM_FFd1 AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(2) AND sw/counter(3) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter6: FTCPE port map (sw/counter(6),sw/counter_T(6),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(6) <= ((sw/counter(6) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(1) AND sw/counter(2) AND sw/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter7: FTCPE port map (sw/counter(7),sw/counter_T(7),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(7) <= ((sw/counter(7) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(1) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(6) AND sw/counter(1) AND sw/counter(2) AND sw/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter8: FTCPE port map (sw/counter(8),sw/counter_T(8),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(8) <= ((sw/counter(8) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(6) AND sw/counter(7) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(1) AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2 AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FTCPE_sw/counter9: FTCPE port map (sw/counter(9),sw/counter_T(9),clk,'0','0',NOT timing_pulse);
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(9) <= ((sw/counter(9) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND sw/counter(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(2) AND sw/counter(3) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3));
+</td></tr><tr><td>
+FTCPE_sw/counter10: FTCPE port map (sw/counter(10),sw/counter_T(10),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(10) <= ((sw/counter(10) AND sw/state_FSM_FFd2 AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/state_FSM_FFd1 AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd3));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(4) AND sw/counter(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND sw/counter(9) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(1) AND sw/counter(2) AND sw/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3));
+</td></tr><tr><td>
+FTCPE_sw/counter11: FTCPE port map (sw/counter(11),sw/counter_T(11),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/counter_T(11) <= ((sw/counter(11) AND sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(1) AND sw/counter(2) AND sw/counter(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2 AND sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 FDCPE_sw/state_FSM_FFd1: FDCPE port map (sw/state_FSM_FFd1,sw/state_FSM_FFd1_D,clk,timing_pulse,'0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/state_FSM_FFd1_D <= ((NOT sw/state_FSM_FFd1 AND NOT sw/state_FSM_FFd2)
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(2) AND sw/counter(3) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(4) AND sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(8) AND sw/counter(1) AND sw/counter(9) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd2));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sw/state_FSM_FFd1_D <= ((NOT sw/state_FSM_FFd2 AND NOT sw/state_FSM_FFd1)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2));
 </td></tr><tr><td>
 FDCPE_sw/state_FSM_FFd2: FDCPE port map (sw/state_FSM_FFd2,sw/state_FSM_FFd3,clk,timing_pulse,'0');
 </td></tr><tr><td>
 FDCPE_sw/state_FSM_FFd3: FDCPE port map (sw/state_FSM_FFd3,'0',clk,'0',timing_pulse);
 </td></tr><tr><td>
-FDCPE_time_stamp0: FDCPE port map (time_stamp(0),sw/counter(2),clk,'0','0',time_stamp_CE(0));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(0) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp0: FTCPE port map (time_stamp(0),time_stamp_T(0),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(0) <= ((sw/counter(4) AND NOT time_stamp(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(4) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(0) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp1: FDCPE port map (time_stamp(1),sw/counter(3),clk,'0','0',time_stamp_CE(1));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(1) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp1: FTCPE port map (time_stamp(1),time_stamp_T(1),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(1) <= ((sw/counter(5) AND NOT time_stamp(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(5) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(1) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp2: FDCPE port map (time_stamp(2),sw/counter(4),clk,'0','0',time_stamp_CE(2));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(2) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp2: FTCPE port map (time_stamp(2),time_stamp_T(2),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(2) <= ((sw/counter(6) AND NOT time_stamp(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(6) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(2) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp3: FDCPE port map (time_stamp(3),sw/counter(5),clk,'0','0',time_stamp_CE(3));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(3) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp3: FTCPE port map (time_stamp(3),time_stamp_T(3),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(3) <= ((sw/counter(7) AND NOT time_stamp(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(7) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(3) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(3) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp4: FDCPE port map (time_stamp(4),sw/counter(6),clk,'0','0',time_stamp_CE(4));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(4) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp4: FTCPE port map (time_stamp(4),time_stamp_T(4),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(4) <= ((sw/counter(8) AND NOT time_stamp(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(8) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(4) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp5: FDCPE port map (time_stamp(5),sw/counter(7),clk,'0','0',time_stamp_CE(5));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(5) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp5: FTCPE port map (time_stamp(5),time_stamp_T(5),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(5) <= ((sw/counter(9) AND NOT time_stamp(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(9) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(5) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp6: FDCPE port map (time_stamp(6),sw/counter(8),clk,'0','0',time_stamp_CE(6));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(6) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp6: FTCPE port map (time_stamp(6),time_stamp_T(6),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(6) <= ((sw/counter(10) AND NOT time_stamp(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(10) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(6) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(6) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
-FDCPE_time_stamp7: FDCPE port map (time_stamp(7),sw/counter(9),clk,'0','0',time_stamp_CE(7));
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_CE(7) <= (NOT timing_pulse AND sw/state_FSM_FFd3);
+FTCPE_time_stamp7: FTCPE port map (time_stamp(7),time_stamp_T(7),clk,'0','0',NOT timing_pulse);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_stamp_T(7) <= ((sw/counter(11) AND NOT time_stamp(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT sw/counter(11) AND NOT sw/state_FSM_FFd2 AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	time_stamp(7) AND sw/state_FSM_FFd3)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (sw/counter(0) AND sw/counter(10) AND sw/counter(4) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(5) AND sw/counter(6) AND sw/counter(7) AND sw/counter(8) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(9) AND sw/counter(11) AND sw/counter(1) AND sw/counter(2) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	sw/counter(3) AND NOT sw/state_FSM_FFd2 AND time_stamp(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT sw/state_FSM_FFd3));
 </td></tr><tr><td>
 Register Legend:
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FDCPE (Q,D,C,CLR,PRE,CE); 

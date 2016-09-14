@@ -32,9 +32,9 @@ entity Stepper is
 end Stepper;
 
 architecture Behavioral of Stepper is
-	signal phase : integer range 0 to 3 := 0;
+	signal phase : std_logic_vector(1 downto 0) := (others => '0');
 begin
-	process(iac_pulse, phase) begin
+	process(iac_pulse) begin
 		if (falling_edge(iac_pulse)) then
 			if (iac_clockwise = '1') then
 				phase <= phase + 1;
@@ -43,13 +43,17 @@ begin
 			end if;
 		end if;
 	
-		case phase is
-         when 0  => iac_out <= "10010000" and (7 downto 0 => iac_pulse);
-         when 1  => iac_out <= "00001001" and (7 downto 0 => iac_pulse);
-         when 2  => iac_out <= "01100000" and (7 downto 0 => iac_pulse);
-         when 3  => iac_out <= "00000110" and (7 downto 0 => iac_pulse);
-			when others => iac_out <= (others => '0');
-      end case;
+		if (iac_pulse = '1') then
+			case phase is
+				when "00"  => iac_out <= "10010000";
+				when "01"  => iac_out <= "00001001";
+				when "10"  => iac_out <= "01100000";
+				when "11"  => iac_out <= "00000110";
+				when others => iac_out <= (others => '0');
+			end case;
+		else
+			iac_out <= (others => '0');
+		end if;
 	end process;
 end Behavioral;
 

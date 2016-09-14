@@ -38,8 +38,6 @@
 #include "../cmsis/LPC13Uxx.h"
 #include "usart.h"
 
-static volatile uint32_t is_start_of_txt = 0;
-
 void usart_init(uint32_t baudrate)
 {
 	volatile uint32_t fdiv, regVal;
@@ -89,51 +87,19 @@ void usart_init(uint32_t baudrate)
 		regVal = LPC_USART->RBR;
 	}
 
+#if USART_INTERRUPT
 	NVIC_EnableIRQ(USART_IRQn);
 	LPC_USART->IER = USART_IER_RBR_Interrupt_Enabled
 			| USART_IER_RLS_Interrupt_Enabled;
-
-	is_start_of_txt = 1;
+#endif
 }
 
-void usart_write_char(uint8_t c)
+void usart_write(uint8_t c)
 {
-	if (is_start_of_txt)
-	{
-		is_start_of_txt = 0;
-		usart_write_char(USART_STX);
-	}
-	if (c == USART_ETX)
-	{
-		is_start_of_txt = 1;
-	}
 	while (!(LPC_USART->LSR & USART_LSR_THRE))
 	{
 		// no operation
 	}
 	LPC_USART->THR = c;
-}
-
-uint32_t usart_writeln_string(const_string s)
-{
-	volatile uint32_t n;
-	n = usart_write_string(s);
-	usart_endln();
-	return n;
-}
-
-uint32_t usart_write_string(const_string s)
-{
-	volatile uint32_t n;
-	for (n = 0; s[n] != '\0'; n++)
-	{
-		usart_write_char(s[n]);
-	}
-	return n;
-}
-
-void usart_endln(void)
-{
-	usart_write_char(USART_ETX);
 }
 

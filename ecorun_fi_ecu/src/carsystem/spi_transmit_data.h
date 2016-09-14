@@ -8,6 +8,6 @@
 #ifndef CARSYSTEM_SPI_TRANSMIT_DATA_H_
 #define CARSYSTEM_SPI_TRANSMIT_DATA_H_
 
-void spi_transmit_blocking(void);
+void spi_transmit(void);
 
 #endif /* CARSYSTEM_SPI_TRANSMIT_DATA_H_ */

@@ -105,7 +105,7 @@ extern int main(void);
 
 extern void xPortSysTickHandler(void);
 extern void xPortPendSVHandler(void);
-extern void vPortSVCHandler( void );
+extern void vPortSVCHandler(void);
 
 extern unsigned int _estack;
 
@@ -276,6 +276,8 @@ __run_fini_array(void)
 __attribute__ ((section(".after_vectors")))
 void Reset_Handler(void)
 {
+	__initialize_hardware_early();
+
 	// Zero fill the bss segment
 	__initialize_bss(&__bss_start__, &__bss_end__);
 
@@ -284,6 +286,10 @@ void Reset_Handler(void)
 	__initialize_data(&_sidata, &_sdata, &_edata);
 
 	SystemInit();
+
+	// Hook to continue the initialisations. Usually compute and store the
+	// clock frequency in the global CMSIS variable, cleared above.
+	__initialize_hardware();
 
 	// Call the standard library initialisation (mandatory for C++ to
 	// execute the constructors for the static objects).

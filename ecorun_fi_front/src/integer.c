@@ -124,23 +124,24 @@ size_t uint32_to_hex_str(uint32_t num, string str)
 	return count;
 }
 
-size_t str_to_uint32(const_string str)
+size_t str_to_uint32(const char* str)
 {
 	volatile uint32_t num = 0;
 	volatile uint32_t place = 1;
 	volatile uint32_t base = 10;
-	volatile const_string ptr = str + strlen(str);
+	volatile const char* ptr = str + strlen(str);
 
 	if (str[0] == '0')
 	{
+		str += 1;
+		base = 8;
+
 		switch (str[1])
 		{
 		case 'x':
 		case 'X':
+			str += 1;
 			base = 16;
-			break;
-		default:
-			base = 8;
 			break;
 		}
 	}

@@ -76,13 +76,45 @@ void init_io_output_signals(void)
 	LPC_GPIO1->DATA &= ~_BV(10);
 	LPC_GPIO3->DATA &= ~_BV(4);
 	LPC_GPIO1->DATA &= ~_BV(11);
+
+	LPC_IOCON->PIO1_9 &= ~0x07; // iac
+	LPC_IOCON->PIO1_9 |= 0x01;
+	LPC_GPIO1->DIR |= _BV(9);
+	LPC_GPIO1->DATA |= _BV(9);
 }
 
 void init_io(void)
 {
-	LPC_IOCON->R_PIO1_0 = 0x02; // adc 1 for throttle angle
-	LPC_IOCON->R_PIO1_1 = 0x02; // adc 2 for throttle angle
-	LPC_IOCON->R_PIO1_2 = 0x02; // adc 3 for throttle angle
+	{
+		// set FUNC AD1
+		LPC_IOCON->R_PIO1_0 &= ~0x07;
+		LPC_IOCON->R_PIO1_0 |= 0x02;
+		// set MODE inactive
+		LPC_IOCON->R_PIO1_0 &= ~(0x03 << 3);
+		// set ADMODE analog
+		LPC_IOCON->R_PIO1_0 &= ~(0x01 << 7);
+	}
+
+	{
+		// set FUNC AD2
+		LPC_IOCON->R_PIO1_1 &= ~0x07;
+		LPC_IOCON->R_PIO1_1 |= 0x02;
+		// set MODE inactive
+		LPC_IOCON->R_PIO1_1 &= ~(0x03 << 3);
+		// set ADMODE analog
+		LPC_IOCON->R_PIO1_1 &= ~(0x01 << 7);
+	}
+
+	{
+		// set FUNC AD3
+		LPC_IOCON->R_PIO1_2 &= ~0x07;
+		LPC_IOCON->R_PIO1_2 |= 0x02;
+		// set MODE inactive
+		LPC_IOCON->R_PIO1_2 &= ~(0x03 << 3);
+		// set ADMODE analog
+		LPC_IOCON->R_PIO1_2 &= ~(0x01 << 7);
+	}
+
 	LPC_IOCON->SWCLK_PIO0_10 = 0xd3; // fi clock
 
 	init_io_input_signals();

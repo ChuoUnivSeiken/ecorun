@@ -11,34 +11,11 @@
 #include "system/systimer.h"
 #include "core/command.h"
 
+#define RESPONSE_IMMEDIATELY 0
+
 // see system/peripheral/usart_handler.c
-void usart_receive_data_handler(string buf, uint32_t count)
+void receive_request(const_string buf)
 {
-	//systime_t receive_time = systimer_tick();
-
-	if (strlen(buf) == 0)
-	{
-		return;
-	}
-
-	volatile string last;
-	const_string cmd_name = strtok_r(buf, " ", (char**) &last);
-	if (cmd_name == NULL)
-	{
-		usart_write_string("msg <invalid_command : ");
-		usart_write_string(buf);
-		usart_writeln_string(">");
-		return;
-	}
-	uint32_t cmd_id = get_command_id(cmd_name);
-	if (cmd_id == -1)
-	{
-		usart_write_string("msg <not registerd command : ");
-		usart_write_string(buf);
-		usart_writeln_string(">");
-		return;
-	}
-
 	command_data* cmd = create_command();
 	if (cmd == NULL)
 	{
@@ -48,9 +25,8 @@ void usart_receive_data_handler(string buf, uint32_t count)
 		usart_writeln_string("command queue is fully used.");
 		return;
 	}
-	cmd->command_id = cmd_id;
-	//cmd->accept_time = receive_time;
-	if (sizeof(cmd->data) <= strlen(last))
+
+	if (sizeof(cmd->data) <= strlen(buf))
 	{
 		usart_write_string("msg <invalid_command : ");
 		usart_write_string(buf);
@@ -58,15 +34,23 @@ void usart_receive_data_handler(string buf, uint32_t count)
 		usart_writeln_string("data field is too long.");
 		return;
 	}
-	strcpy(cmd->data, last);
-	last = cmd->data;
-	cmd->args_count = 0;
 
-	volatile string arg_str;
-	while ((arg_str = strtok_r(last, " ", (char**) &last)) != NULL)
-	{
-		command_arg* arg = &cmd->args[cmd->args_count++];
-		arg->arg_value = arg_str;
-	}
+	cmd->command_id = 0;
+	strcpy(cmd->data, buf);
+
+#if RESPONSE_IMMEDIATELY
+	execute_command(cmd);
+#else
 	enqueue_command(cmd);
+#endif
+}
+
+void usart_receive_data_handler(string buf, uint32_t count)
+{
+	if (strlen(buf) == 0)
+	{
+		return;
+	}
+
+	receive_request(buf);
 }

@@ -24,24 +24,24 @@ miso S:PIN7
 ;The remaining section of the .gyd file is for documentation purposes only.
 ;It shows where your internal equations were placed in the last successful fit.
 
-PARTITION FB1_1 fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>/fi_pulse_gen/Mcompar_enabled_0_cmp_le0000_CARRY_IN<6>_D2 iac_out_0_OBUF$BUF0 fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>/fi_pulse_gen/Mcompar_counter_cmp_gt0000_CARRY_IN<3>_D2 fi_pulse_gen/counter<3>
-		 fi_pulse_gen/counter<0> fi_pulse_gen/counter<2> BUF_fi_pulse_gen/enabled<0> fi_pulse_gen/counter<4>
-		 fi_pulse_gen/counter<5> fi_pulse_gen/counter<6> fi_pulse_gen/counter<7> fi_pulse_gen/counter<1>
-		 fi_pulse_gen/enabled<0> fi_pulse_gen/match_cache<0> fi_pulse_gen/match_cache<1> fi_pulse_gen/match_cache<2>
-		 fi_pulse_OBUF fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
-PARTITION FB2_1 st/phase<0> st/phase<1> spi/mosi_cache spi/first<0>
-		 spi/reg<6> iac_out_4_OBUF spi/reg<5> iac_out_5_OBUF
-		 iac_out_5_OBUF$BUF0 spi/reg<4> iac_out_4_OBUF$BUF0 spi/reg<3>
-		 spi/reg<2> iac_out_0_OBUF iac_out_1_OBUF spi/reg<1>
-		 iac_out_1_OBUF$BUF0 spi/reg<0>
-PARTITION FB3_1 time_stamp<3> time_stamp<2> spi/out_data<7> spi/out_data<6>
-		 spi/out_data<5> spi/out_data<4> sw/state_FSM_FFd1 spi/Mtridata_miso
-		 sw/counter<9> sw/counter<8> sw/counter<7> sw/counter<6>
-		 sw/counter<5> sw/counter<4> sw/counter<3> sw/counter<2>
-		 sw/counter<1> sw/counter<0>
-PARTITION FB4_2 sw/state_FSM_FFd3 time_stamp<7> time_stamp<6> time_stamp<5>
-		 time_stamp<4> time_stamp<1> time_stamp<0> sw/state_FSM_FFd2
-		 spi/out_data<3> spi/out_data<2> spi/out_data<1> spi/out_data<0>
-		 fi_pulse_gen/match_cache<7> fi_pulse_gen/match_cache<6> fi_pulse_gen/match_cache<5> fi_pulse_gen/match_cache<4>
-		 fi_pulse_gen/match_cache<3>
+PARTITION FB1_1 $OpTx$FX_DC$71 iac_out_0_OBUF$BUF0 sw/state_FSM_FFd1 fi_pulse_gen/enabled<0>
+		 sw/counter<11> sw/counter<10> sw/counter<0> fi_pulse_gen/counter<1>
+		 fi_pulse_gen/counter<2> fi_pulse_gen/counter<0> fi_pulse_gen/counter<7> fi_pulse_gen/match_cache_and0000/fi_pulse_gen/match_cache_and0000_D2
+		 fi_pulse_gen/counter<6> fi_pulse_gen/counter<5> fi_pulse_gen/counter<4> fi_pulse_gen/counter<3>
+		 fi_pulse_OBUF EXP6_
+PARTITION FB2_1 sw/state_FSM_FFd3 st/phase<0> sw/state_FSM_FFd2 st/phase<1>
+		 time_stamp<5> iac_out_4_OBUF time_stamp<4> iac_out_5_OBUF
+		 iac_out_5_OBUF$BUF0 time_stamp<3> iac_out_4_OBUF$BUF0 time_stamp<2>
+		 time_stamp<1> iac_out_0_OBUF iac_out_1_OBUF spi/reg<2>
+		 iac_out_1_OBUF$BUF0 spi/reg<1>
+PARTITION FB3_1 spi/out_data<7> spi/out_data<6> spi/out_data<5> spi/out_data<4>
+		 spi/out_data<3> time_stamp<7> time_stamp<6> spi/Mtridata_miso
+		 time_stamp<0> sw/counter<9> sw/counter<8> sw/counter<7>
+		 sw/counter<6> sw/counter<5> sw/counter<4> sw/counter<3>
+		 sw/counter<2> sw/counter<1>
+PARTITION FB4_1 spi/out_data<2> spi/out_data<1> spi/out_data<0> fi_pulse_gen/match_cache<7>
+		 fi_pulse_gen/match_cache<6> fi_pulse_gen/match_cache<5> fi_pulse_gen/match_cache<4> fi_pulse_gen/match_cache<3>
+		 fi_pulse_gen/match_cache<2> fi_pulse_gen/match_cache<1> fi_pulse_gen/match_cache<0> spi/mosi_cache
+		 spi/first<0> spi/reg<6> spi/reg<5> spi/reg<4>
+		 spi/reg<3> spi/reg<0>
 

@@ -15,7 +15,17 @@ extern "C"
 {
 #endif
 
-// send interger with '\0'
+#define USART_STX 0x02
+#define USART_ETX 0x03
+
+void usart_write_char(uint8_t c);
+
+uint32_t usart_write_string(const_string s);
+
+uint32_t usart_writeln_string(const_string s);
+
+void usart_endln(void);
+
 void usart_writeln_int32(int32_t value);
 void usart_writeln_uint32(uint32_t value);
 void usart_writeln_uint32_hex(uint32_t value);

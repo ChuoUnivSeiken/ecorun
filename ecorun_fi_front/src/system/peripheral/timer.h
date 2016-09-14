@@ -10,14 +10,14 @@
 
 #include "../common_types.h"
 
-#define ENABLE_INTERRUPT 1
+#define TIMER_INTERRUPT 0
 
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
-#if ENABLE_INTERRUPT
+#if TIMER_INTERRUPT
 #define TIMER_MAX_EVENT 5
 
 typedef void (*timer_event_func)(uint8_t timer, uint8_t num);

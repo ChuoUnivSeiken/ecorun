@@ -8,7 +8,7 @@
 #include "cmsis/LPC13Uxx.h"
 #include "cmsis/core_cm3.h"
 #include "systimer.h"
-
+#if 0
 static volatile uint32_t counter = 0;
 static volatile uint32_t sub_counter = 0;
 
@@ -39,4 +39,4 @@ void SysTick_Handler(void)
 		sub_counter = 0;
 	}
 }
-
+#endif

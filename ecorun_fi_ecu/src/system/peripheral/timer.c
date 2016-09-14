@@ -34,16 +34,15 @@ void timer32_disable(uint8_t timer)
 
 void timer32_reset(uint8_t timer)
 {
+	uint32_t regVal;
 	if (timer == 1)
 	{
-		uint32_t regVal;
 		regVal = LPC_TMR32B1->TCR;
 		regVal |= 0x02;
 		LPC_TMR32B1->TCR = regVal;
 	}
 	else
 	{
-		uint32_t regVal;
 		regVal = LPC_TMR32B0->TCR;
 		regVal |= 0x02;
 		LPC_TMR32B0->TCR = regVal;
@@ -65,7 +64,10 @@ void timer32_init(uint8_t timer, uint32_t interval)
 		LPC_TMR32B1->MCR = _BV(9) | _BV(10);
 		LPC_TMR32B1->PWMC = _BV(0) | _BV(1);
 		LPC_TMR32B1->EMR = (1 << 6) | (1 << 4) | 0x3;
+
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(TIMER_32_1_IRQn);
+#endif
 	}
 	else
 	{
@@ -79,7 +81,10 @@ void timer32_init(uint8_t timer, uint32_t interval)
 		LPC_TMR32B0->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 		//LPC_TMR32B0->PWMC = _BV(0);
 		//LPC_TMR32B0->EMR = (1 << 4) | 1;
+
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(TIMER_32_0_IRQn);
+#endif
 	}
 }
 
@@ -109,16 +114,15 @@ void timer16_disable(uint8_t timer)
 
 void timer16_reset(uint8_t timer)
 {
+	uint32_t regVal;
 	if (timer == 1)
 	{
-		uint32_t regVal;
 		regVal = LPC_TMR16B1->TCR;
 		regVal |= 0x02;
 		LPC_TMR16B1->TCR = regVal;
 	}
 	else
 	{
-		uint32_t regVal;
 		regVal = LPC_TMR16B0->TCR;
 		regVal |= 0x02;
 		LPC_TMR16B0->TCR = regVal;
@@ -130,16 +134,18 @@ void timer16_init(uint8_t timer, uint32_t interval)
 	if (timer == 1)
 	{
 		LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 8);
-		LPC_TMR16B1->PR = 0;
-		LPC_TMR16B1->MR0 = interval / 2;
-		LPC_TMR16B1->MR1 = interval / 2;
-		LPC_TMR16B1->MR2 = interval / 2;
-		LPC_TMR16B1->MR3 = interval;
+		LPC_TMR16B1->PR = 10000;
+		LPC_TMR16B1->MR0 = interval / 100000 / 2;
+		LPC_TMR16B1->MR1 = interval / 100000 / 2;
+		LPC_TMR16B1->MR2 = interval / 100000 / 2;
+		LPC_TMR16B1->MR3 = interval / 100000;
 
 		LPC_TMR16B1->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		/* Enable the TIMER1 Interrupt */
 		NVIC_EnableIRQ(TIMER_16_1_IRQn);
+#endif
 	}
 	else
 	{
@@ -152,8 +158,10 @@ void timer16_init(uint8_t timer, uint32_t interval)
 
 		LPC_TMR16B0->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		/* Enable the TIMER0 Interrupt */
 		NVIC_EnableIRQ(TIMER_16_0_IRQn);
+#endif
 	}
 }
 
@@ -161,7 +169,10 @@ void timer16_set_pwm(uint32_t timer, uint32_t period)
 {
 	if (timer == 1)
 	{
+#if TIMER_INTERRUPT
 		NVIC_DisableIRQ(TIMER_16_1_IRQn);
+#endif
+
 		timer16_disable(timer);
 
 		/* Setup the external match register (clear on match) */
@@ -172,7 +183,7 @@ void timer16_set_pwm(uint32_t timer, uint32_t period)
 		LPC_TMR16B1->PWMC = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 
 		/* MAT3 controls period, set MAT1..3 to 50% duty cycle to start */
-		LPC_TMR16B1->PR = 0;
+		LPC_TMR16B1->PR = 10000;
 		timer16_set_match(timer, 0, period / 2);
 		timer16_set_match(timer, 1, period / 2);
 		timer16_set_match(timer, 2, period / 2);
@@ -181,11 +192,16 @@ void timer16_set_pwm(uint32_t timer, uint32_t period)
 		/* Reset on MR3 */
 		LPC_TMR16B1->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(TIMER_16_1_IRQn);
+#endif
 	}
 	else
 	{
+#if TIMER_INTERRUPT
 		NVIC_DisableIRQ(TIMER_16_0_IRQn);
+#endif
+
 		timer16_disable(timer);
 
 		/* Setup the external match register (clear on match) */
@@ -204,7 +220,9 @@ void timer16_set_pwm(uint32_t timer, uint32_t period)
 		/* Reset on MR3 */
 		LPC_TMR16B0->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(TIMER_16_0_IRQn);
+#endif
 	}
 }
 
@@ -215,16 +233,16 @@ void timer16_set_match(uint32_t timer, uint32_t num, uint32_t value)
 		switch (num)
 		{
 		case 0:
-			LPC_TMR16B1->MR0 = value;
+			LPC_TMR16B1->MR0 = value / 10000;
 			break;
 		case 1:
-			LPC_TMR16B1->MR1 = value;
+			LPC_TMR16B1->MR1 = value / 10000;
 			break;
 		case 2:
-			LPC_TMR16B1->MR2 = value;
+			LPC_TMR16B1->MR2 = value / 10000;
 			break;
 		case 3:
-			LPC_TMR16B1->MR3 = value;
+			LPC_TMR16B1->MR3 = value / 10000;
 			break;
 		default:
 			break;

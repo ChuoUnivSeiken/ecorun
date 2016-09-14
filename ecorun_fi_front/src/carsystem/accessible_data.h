@@ -16,7 +16,7 @@ extern "C"
 {
 #endif
 
-typedef struct data_t
+typedef struct
 {
 	const_string name;
 	void* data_ptr;
@@ -24,14 +24,17 @@ typedef struct data_t
 
 	// attributes
 	bool is_read_only;
-	//systime_t timestamp;
-} named_data;
+} accessible_data_entry;
 
 bool find_and_put_data(const_string id);
-bool find_data(const_string id, named_data* out);
+bool find_data(const_string id, accessible_data_entry* out);
+
+void send_response(uint32_t status, uint32_t unique_id);
+void send_response_with_data(uint32_t status, uint32_t unique_id,
+		const_string id, const_buffer data, size_t size);
 
 // data pointer is shared
-void register_data(const named_data* data, uint32_t count);
+void register_data(const accessible_data_entry* data, uint32_t count);
 
 #if defined(__cplusplus)
 }

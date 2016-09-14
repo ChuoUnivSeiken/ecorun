@@ -67,7 +67,7 @@ void timer32_init(uint32_t timer, uint32_t interval)
 		//LPC_CT32B0->PWMC = _BV(0);
 		//LPC_CT32B0->EMR = (1 << 4) | 1;
 
-#if ENABLE_INTERRUPT
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(CT32B0_IRQn);
 #endif
 	}
@@ -85,7 +85,7 @@ void timer32_init(uint32_t timer, uint32_t interval)
 		LPC_CT32B1->PWMC = _BV(0) | _BV(1);
 		LPC_CT32B1->EMR = (1 << 6) | (1 << 4) | 0x3;
 
-#if ENABLE_INTERRUPT
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(CT32B1_IRQn);
 #endif
 	}
@@ -159,7 +159,9 @@ void timer32_set_pwm(uint32_t timer, uint32_t period)
 		/* Reset on MR3 */
 		LPC_CT32B1->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(CT32B1_IRQn);
+#endif
 	}
 	else
 	{
@@ -182,7 +184,9 @@ void timer32_set_pwm(uint32_t timer, uint32_t period)
 		/* Reset on MR3 */
 		LPC_CT32B0->MCR = _BV(0) | _BV(3) | _BV(6) | _BV(9) | _BV(10);
 
+#if TIMER_INTERRUPT
 		NVIC_EnableIRQ(CT32B0_IRQn);
+#endif
 	}
 }
 

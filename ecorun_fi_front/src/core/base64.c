@@ -154,6 +154,7 @@ uint32_t decode_base64(const_string base64, buffer dest)
 			}
 			return len - 1;
 		}
+		return len;
 	}
 
 	while (base64_len > 0)

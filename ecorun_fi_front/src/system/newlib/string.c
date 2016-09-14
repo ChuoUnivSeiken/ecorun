@@ -6,7 +6,7 @@
  */
 
 #include <string.h>
-
+#if 1
 void * memcpy(void *pDestination, const void *pSource, size_t num)
 {
 	unsigned char *pByteDestination;
@@ -261,3 +261,4 @@ char *strtok(char *s, const char *delim)
 	static char *last;
 	return strtok_r(s, delim, &last);
 }
+#endif

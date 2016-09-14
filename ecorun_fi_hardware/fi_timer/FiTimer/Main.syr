@@ -4,13 +4,13 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.12 secs
+Total CPU time to Xst completion: 0.17 secs
  
 --> Parameter xsthdpdir set to xst
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.12 secs
+Total CPU time to Xst completion: 0.17 secs
  
 --> Reading design: Main.prj
 
@@ -75,16 +75,6 @@ wysiwyg                            : NO
 =========================================================================
 *                          HDL Compilation                              *
 =========================================================================
-WARNING:HDLParsers:3607 - Unit work/Main is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
-WARNING:HDLParsers:3607 - Unit work/Main/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
-WARNING:HDLParsers:3607 - Unit work/PulseTimer is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
-WARNING:HDLParsers:3607 - Unit work/PulseTimer/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd".
-WARNING:HDLParsers:3607 - Unit work/SPISlave is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
-WARNING:HDLParsers:3607 - Unit work/SPISlave/Behavioral is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd".
-WARNING:HDLParsers:3607 - Unit work/Stepper is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
-WARNING:HDLParsers:3607 - Unit work/Stepper/Behavioral is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
-WARNING:HDLParsers:3607 - Unit work/Stopwatch is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
-WARNING:HDLParsers:3607 - Unit work/Stopwatch/RTL is now defined in a different file.  It was defined in "C:/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd", and is now defined in "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd".
 Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" in Library work.
 Architecture behavioral of Entity stepper is up to date.
 Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stopwatch.vhd" in Library work.
@@ -92,11 +82,9 @@ Architecture rtl of Entity stopwatch is up to date.
 Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/SPISlave.vhd" in Library work.
 Architecture behavioral of Entity spislave is up to date.
 Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/PulseTimer.vhd" in Library work.
-Entity <pulsetimer> compiled.
-Entity <pulsetimer> (Architecture <rtl>) compiled.
+Architecture rtl of Entity pulsetimer is up to date.
 Compiling vhdl file "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd" in Library work.
-Entity <main> compiled.
-Entity <main> (Architecture <rtl>) compiled.
+Architecture rtl of Entity main is up to date.
 
 =========================================================================
 *                     Design Hierarchy Analysis                         *
@@ -119,6 +107,9 @@ Analyzing Entity <Main> in library <work> (Architecture <rtl>).
 Entity <Main> analyzed. Unit <Main> generated.
 
 Analyzing Entity <Stepper> in library <work> (Architecture <behavioral>).
+INFO:Xst:1561 - "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" line 51: Mux is complete : default of case is discarded
+WARNING:Xst:819 - "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd" line 37: One or more signals are missing in the process sensitivity list. To enable synthesis of FPGA/CPLD hardware, XST will assume that all necessary signals are present in the sensitivity list. Please note that the result of the synthesis may differ from the initial design specification. The missing signals are:
+   <phase>
 Entity <Stepper> analyzed. Unit <Stepper> generated.
 
 Analyzing Entity <Stopwatch> in library <work> (Architecture <rtl>).
@@ -139,7 +130,6 @@ Performing bidirectional port resolution...
 
 Synthesizing Unit <Stepper>.
     Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Stepper.vhd".
-    Found 8-bit 4-to-1 multiplexer for signal <iac_out>.
     Found 2-bit updown counter for signal <phase>.
     Summary:
 	inferred   1 Counter(s).
@@ -163,8 +153,8 @@ Synthesizing Unit <Stopwatch>.
     | Implementation     | automatic                                      |
     -----------------------------------------------------------------------
     Found 8-bit register for signal <time_stamp>.
-    Found 10-bit register for signal <counter>.
-    Found 10-bit adder for signal <counter$addsub0000> created at line 54.
+    Found 12-bit register for signal <counter>.
+    Found 12-bit adder for signal <counter$addsub0000> created at line 55.
     Summary:
 	inferred   1 Finite State Machine(s).
 	inferred   1 Adder/Subtractor(s).
@@ -190,9 +180,9 @@ Synthesizing Unit <PulseTimer>.
     Found 1-bit register for signal <pulse>.
     Found 8-bit register for signal <counter>.
     Found 8-bit adder for signal <counter$addsub0000> created at line 54.
-    Found 8-bit comparator greater for signal <counter$cmp_gt0000> created at line 47.
+    Found 8-bit comparator equal for signal <counter$cmp_eq0001> created at line 47.
     Found 1-bit register for signal <enabled<0>>.
-    Found 8-bit comparator lessequal for signal <enabled_0$cmp_le0000> created at line 47.
+    Found 8-bit comparator not equal for signal <enabled_0$cmp_ne0000> created at line 47.
     Found 8-bit register for signal <match_cache>.
     Summary:
 	inferred   2 D-type flip-flop(s).
@@ -203,6 +193,8 @@ Unit <PulseTimer> synthesized.
 
 Synthesizing Unit <Main>.
     Related source file is "C:/Users/Yoshio/git/ecorun/ecorun_fi_hardware/fi_timer/FiTimer/Main.vhd".
+WARNING:Xst:2565 - Inout <cpu_con<0>> is never assigned.
+WARNING:Xst:2565 - Inout <cpu_con<1>> is never assigned.
 Unit <Main> synthesized.
 
 
@@ -211,20 +203,18 @@ HDL Synthesis Report
 
 Macro Statistics
 # Adders/Subtractors                                   : 2
- 10-bit adder                                          : 1
+ 12-bit adder                                          : 1
  8-bit adder                                           : 1
 # Counters                                             : 1
  2-bit updown counter                                  : 1
 # Registers                                            : 11
  1-bit register                                        : 5
- 10-bit register                                       : 1
+ 12-bit register                                       : 1
  7-bit register                                        : 1
  8-bit register                                        : 4
 # Comparators                                          : 2
- 8-bit comparator greater                              : 1
- 8-bit comparator lessequal                            : 1
-# Multiplexers                                         : 1
- 8-bit 4-to-1 multiplexer                              : 1
+ 8-bit comparator equal                                : 1
+ 8-bit comparator not equal                            : 1
 # Tristates                                            : 1
  1-bit tristate buffer                                 : 1
 
@@ -251,14 +241,14 @@ Advanced HDL Synthesis Report
 Macro Statistics
 # FSMs                                                 : 1
 # Adders/Subtractors                                   : 2
- 10-bit adder                                          : 1
+ 12-bit adder                                          : 1
  8-bit adder                                           : 1
 # Counters                                             : 1
  2-bit updown counter                                  : 1
 # Registers                                            : 5
  Flip-Flops                                            : 5
-# Multiplexers                                         : 1
- 8-bit 4-to-1 multiplexer                              : 1
+# Comparators                                          : 1
+ 8-bit comparator equal                                : 1
 
 =========================================================================
 
@@ -281,9 +271,6 @@ Optimizing unit <Main> ...
 
 Optimizing unit <Stopwatch> ...
   implementation constraint: INIT=r	 : state_FSM_FFd3
-  implementation constraint: INIT=r	 : counter_8
-  implementation constraint: INIT=r	 : counter_9
-  implementation constraint: INIT=r	 : counter_0
   implementation constraint: INIT=r	 : counter_1
   implementation constraint: INIT=r	 : counter_2
   implementation constraint: INIT=r	 : counter_3
@@ -291,24 +278,29 @@ Optimizing unit <Stopwatch> ...
   implementation constraint: INIT=r	 : counter_5
   implementation constraint: INIT=r	 : counter_6
   implementation constraint: INIT=r	 : counter_7
+  implementation constraint: INIT=r	 : counter_8
+  implementation constraint: INIT=r	 : counter_9
+  implementation constraint: INIT=r	 : counter_10
+  implementation constraint: INIT=r	 : counter_0
+  implementation constraint: INIT=r	 : counter_11
   implementation constraint: INIT=r	 : state_FSM_FFd1
   implementation constraint: INIT=r	 : state_FSM_FFd2
 
 Optimizing unit <PulseTimer> ...
+  implementation constraint: INIT=r	 : counter_5
   implementation constraint: INIT=r	 : enabled_0
   implementation constraint: INIT=r	 : pulse
+  implementation constraint: INIT=r	 : counter_6
+  implementation constraint: INIT=r	 : counter_7
   implementation constraint: INIT=r	 : counter_0
   implementation constraint: INIT=r	 : counter_1
   implementation constraint: INIT=r	 : counter_2
   implementation constraint: INIT=r	 : counter_3
   implementation constraint: INIT=r	 : counter_4
-  implementation constraint: INIT=r	 : counter_5
-  implementation constraint: INIT=r	 : counter_6
-  implementation constraint: INIT=r	 : counter_7
 
 Optimizing unit <Stepper> ...
-  implementation constraint: INIT=r	 : phase_0
   implementation constraint: INIT=r	 : phase_1
+  implementation constraint: INIT=r	 : phase_0
 
 =========================================================================
 *                           Partition Report                            *
@@ -337,22 +329,23 @@ Clock Enable                       : YES
 wysiwyg                            : NO
 
 Design Statistics
-# IOs                              : 18
+# IOs                              : 20
 
 Cell Usage :
-# BELS                             : 223
-#      AND2                        : 89
+# BELS                             : 259
+#      AND2                        : 111
 #      AND3                        : 9
 #      AND4                        : 2
 #      GND                         : 3
-#      INV                         : 62
-#      OR2                         : 39
-#      OR3                         : 1
-#      XOR2                        : 18
-# FlipFlops/Latches                : 59
+#      INV                         : 59
+#      OR2                         : 37
+#      OR3                         : 8
+#      OR4                         : 1
+#      XOR2                        : 29
+# FlipFlops/Latches                : 61
 #      FD                          : 11
 #      FDC                         : 2
-#      FDCE                        : 43
+#      FDCE                        : 45
 #      FDP                         : 1
 #      FDPE                        : 2
 # IO Buffers                       : 18
@@ -363,13 +356,13 @@ Cell Usage :
 
 
 Total REAL time to Xst completion: 5.00 secs
-Total CPU time to Xst completion: 4.59 secs
+Total CPU time to Xst completion: 4.61 secs
  
 --> 
 
-Total memory usage is 261192 kilobytes
+Total memory usage is 258888 kilobytes
 
 Number of errors   :    0 (   0 filtered)
-Number of warnings :   11 (   0 filtered)
-Number of infos    :    0 (   0 filtered)
+Number of warnings :    4 (   0 filtered)
+Number of infos    :    1 (   0 filtered)
 

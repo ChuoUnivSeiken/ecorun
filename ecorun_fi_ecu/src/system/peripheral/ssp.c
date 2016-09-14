@@ -8,10 +8,16 @@
 #include "ssp.h"
 #include "../cmsis/LPC11xx.h"
 
+#include "FreeRTOS.h"
+#include "queue.h"
+
+QueueHandle_t xSSP1RxQueue = NULL;
+QueueHandle_t xSSP1TxQueue = NULL;
+
 void ssp_init(uint8_t port)
 {
 	volatile uint8_t i;
-	volatile uint32_t Dummy;
+	volatile uint32_t dummy;
 	if (port == 1)
 	{
 		LPC_SYSCON->PRESETCTRL &= ~(0x1 << 2);
@@ -48,7 +54,7 @@ void ssp_init(uint8_t port)
 
 		for (i = 0; i < FIFOSIZE; i++)
 		{
-			Dummy = LPC_SSP1->DR; /* clear the RxFIFO */
+			dummy = LPC_SSP1->DR; /* clear the RxFIFO */
 		}
 
 		/* Slave mode */
@@ -59,7 +65,10 @@ void ssp_init(uint8_t port)
 		}
 		LPC_SSP1->CR1 = SSPCR1_SSE | SSPCR1_MS; /* Enable slave bit first */
 
-		LPC_SSP1->IMSC = SSPIMSC_RORIM | SSPIMSC_RTIM;
+		LPC_SSP1->IMSC = SSPIMSC_RORIM | SSPIMSC_RTIM | SSPIMSC_RXIM;
+
+		xSSP1RxQueue = xQueueCreate(512 + 256, sizeof(uint16_t));
+		xSSP1TxQueue = xQueueCreate(512, sizeof(uint16_t));
 
 		/* Enable the SSP Interrupt */
 		NVIC_EnableIRQ(SSP1_IRQn);
@@ -68,7 +77,8 @@ void ssp_init(uint8_t port)
 	{
 		LPC_SYSCON->PRESETCTRL |= (0x1 << 0);
 		LPC_SYSCON->SYSAHBCLKCTRL |= (0x1 << 11);
-		LPC_SYSCON->SSP0CLKDIV = 0x02; /* Divided by 2 */
+		LPC_SYSCON->SSP0CLKDIV = 0x01; /* Divided by 2 */
+
 		LPC_IOCON->PIO0_8 &= ~0x07; /*  SSP I/O config */
 		LPC_IOCON->PIO0_8 |= 0x01; /* SSP MISO */
 		LPC_IOCON->PIO0_9 &= ~0x07;
@@ -100,7 +110,7 @@ void ssp_init(uint8_t port)
 
 		for (i = 0; i < FIFOSIZE; i++)
 		{
-			Dummy = LPC_SSP0->DR; /* clear the RxFIFO */
+			dummy = LPC_SSP0->DR; /* clear the RxFIFO */
 		}
 		/* Device select as master, SSP Enabled */
 
@@ -116,7 +126,7 @@ void ssp_init(uint8_t port)
 	}
 }
 
-void ssp_send(uint8_t port, uint8_t* buf, uint32_t length)
+void ssp_send(uint8_t port, const uint8_t* buf, uint32_t length)
 {
 	volatile uint32_t i = 0;
 	volatile uint8_t Dummy = Dummy;
@@ -167,7 +177,7 @@ void ssp_send(uint8_t port, uint8_t* buf, uint32_t length)
 	}
 }
 
-void ssp_send_uint16(uint8_t port, uint16_t* buf, uint32_t length)
+void ssp_send_uint16(uint8_t port, const uint16_t* buf, uint32_t length)
 {
 	volatile uint32_t i = 0;
 	volatile uint16_t dummy = dummy;
@@ -232,7 +242,7 @@ void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length)
 		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
+#if SSP0_SLAVE
 			while ( !(LPC_SSP0->SR & SSPSR_RNE) );
 #else
 			LPC_SSP0->DR = 0xFF;
@@ -252,13 +262,14 @@ void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length)
 		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
-			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
+#if SSP1_SLAVE
+			while (!(LPC_SSP1->SR & SSPSR_RNE))
+				;
 #else
 			LPC_SSP1->DR = 0xFF;
 			/* Wait until the Busy bit is cleared */
 			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
-				;
+			;
 #endif
 #else
 			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
@@ -283,7 +294,7 @@ void ssp_receive_uint16(uint8_t port, uint16_t* buf, uint32_t length)
 		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
+#if SSP0_SLAVE
 			while ( !(LPC_SSP0->SR & SSPSR_RNE) );
 #else
 			LPC_SSP0->DR = 0xFFFF;
@@ -303,13 +314,14 @@ void ssp_receive_uint16(uint8_t port, uint16_t* buf, uint32_t length)
 		for (i = 0; i < length; i++)
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
-			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
+#if SSP1_SLAVE
+			while (!(LPC_SSP1->SR & SSPSR_RNE))
+				;
 #else
 			LPC_SSP1->DR = 0xFFFF;
 			/* Wait until the Busy bit is cleared */
 			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
-				;
+			;
 #endif
 #else
 			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
@@ -334,7 +346,7 @@ void ssp_exchange(uint8_t port, uint8_t* buf, uint32_t length)
 		if (port == 0)
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
+#if SSP0_SLAVE
 			while ( !(LPC_SSP0->SR & SSPSR_RNE) );
 #else
 			LPC_SSP0->DR = *buf;
@@ -351,13 +363,14 @@ void ssp_exchange(uint8_t port, uint8_t* buf, uint32_t length)
 		else
 		{
 #if !LOOPBACK_MODE
-#if SSP_SLAVE
-			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
+#if SSP1_SLAVE
+			while (!(LPC_SSP1->SR & SSPSR_RNE))
+				;
 #else
 			LPC_SSP1->DR = *buf;
 			/* Wait until the Busy bit is cleared */
 			while ((LPC_SSP1->SR & (SSPSR_BSY | SSPSR_RNE)) != SSPSR_RNE)
-				;
+			;
 #endif
 #else
 			while ( !(LPC_SSP1->SR & SSPSR_RNE) );
@@ -392,9 +405,13 @@ void SSP0_IRQHandler(void)
 	return;
 }
 
+static uint32_t counter = 0;
+
 void SSP1_IRQHandler(void)
 {
 	volatile uint32_t regValue;
+
+	long xHigherPriorityTaskWoken = pdFALSE;
 
 	regValue = LPC_SSP1->MIS;
 	if (regValue & SSPMIS_RORMIS) /* Receive overrun interrupt */
@@ -407,7 +424,51 @@ void SSP1_IRQHandler(void)
 	}
 	if (regValue & SSPMIS_RXMIS) /* Rx at least half full */
 	{
+		while ((LPC_SSP1->SR & SSPSR_RNE) == SSPSR_RNE)
+		{
+			while (LPC_SSP1->SR & SSPSR_BSY)
+				;
+			regValue = LPC_SSP1->DR;
+
+			if (!xQueueIsQueueFullFromISR(xSSP1RxQueue))
+			{
+				/* Post the byte. */
+				xQueueSendFromISR(xSSP1RxQueue, &regValue,
+						&xHigherPriorityTaskWoken);
+			}
+		}
 	}
+	if (regValue & SSPMIS_TXMIS) /* Tx at least half empty */
+	{
+		while ((LPC_SSP1->SR & SSPSR_TNF) == SSPSR_TNF
+				&& xQueuePeekFromISR(xSSP1TxQueue, &regValue) == pdTRUE)
+		{
+			while (LPC_SSP1->SR & SSPSR_BSY)
+				;
+			LPC_SSP1->DR = regValue;
+
+			xQueueReceiveFromISR(xSSP1TxQueue, &regValue,
+					&xHigherPriorityTaskWoken);
+		}
+	}
+
+	/* Clear the interrupt if necessary. */
+	//Dummy_ClearITPendingBit();
+	/* This interrupt does nothing more than demonstrate how to synchronise a
+	 task with an interrupt.  A semaphore is used for this purpose.  Note
+	 lHigherPriorityTaskWoken is initialised to zero.  Only FreeRTOS API functions
+	 that end in "FromISR" can be called from an ISR. */
+	//xSemaphoreGiveFromISR( xTestSemaphore, &lHigherPriorityTaskWoken );
+	/* If there was a task that was blocked on the semaphore, and giving the
+	 semaphore caused the task to unblock, and the unblocked task has a priority
+	 higher than the current Running state task (the task that this interrupt
+	 interrupted), then lHigherPriorityTaskWoken will have been set to pdTRUE
+	 internally within xSemaphoreGiveFromISR().  Passing pdTRUE into the
+	 portEND_SWITCHING_ISR() macro will result in a context switch being pended to
+	 ensure this interrupt returns directly to the unblocked, higher priority,
+	 task.  Passing pdFALSE into portEND_SWITCHING_ISR() has no effect. */
+	portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+
 	return;
 }
 

@@ -32,7 +32,7 @@ entity Stopwatch is
 end Stopwatch;
 
 architecture RTL of Stopwatch is
-	signal counter : std_logic_vector(9 downto 0) := (others => '0');
+	signal counter : std_logic_vector(11 downto 0) := (others => '0');
 	type sw_state is (idle, should_stamp, should_reset, counting);
 	signal state : sw_state := idle;
 begin
@@ -42,13 +42,14 @@ begin
 		else
 			if (rising_edge(clk)) then
 				if (state = should_stamp) then
-					time_stamp <= counter(9 downto 2);
+					time_stamp <= counter(11 downto 4);
 					state <= should_reset;
 				elsif (state = should_reset) then
 					counter <= (others => '0');
 					state <= counting;
-				elsif (counter = "1111111111") then
+				elsif (counter = "111111111111") then
 					counter <= (others => '0');
+					time_stamp <= (others => '0');
 					state <= idle;
 				elsif (state = counting) then
 					counter <= counter + 1;

@@ -24,9 +24,10 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 
 -- spec
--- 供給クロック : 5kHz
--- 噴射精度 : 0.1ms
--- 最大噴射可能時間 : 25.5ms
+-- 供給クロック : 50kHz
+-- 噴射精度 : 0.02ms
+-- 最大噴射可能時間 : 5.1ms
+-- 検出可能最低回転数 : 1700rpm
 
 entity Main is
 	port(
@@ -40,7 +41,8 @@ entity Main is
 		miso : out std_logic;
 		iac_pulse : in std_logic := '0';
 		iac_clockwise : in std_logic := '0';
-		iac_out : out std_logic_vector(7 downto 0) := (others => '0'));
+		iac_out : out std_logic_vector(7 downto 0) := (others => '0');
+		cpu_con : inout std_logic_vector(1 downto 0) := (others => '0'));
 end Main;
 
 architecture RTL of Main is
@@ -104,6 +106,8 @@ architecture RTL of Main is
 	signal time_stamp : std_logic_vector(7 downto 0);
 	
 begin
+
+	--cpu_con(0) <= timing_pulse;
 
 	st: Stepper port map (
 		iac_pulse => iac_pulse,

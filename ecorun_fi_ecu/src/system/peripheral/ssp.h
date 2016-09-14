@@ -18,7 +18,7 @@
  (4) RX(Slave) Only:		LOOPBACK_MODE=0, SSP_SLAVE=1, TX_RX_ONLY=1, USE_CS=1 */
 
 #define LOOPBACK_MODE	0		/* 1 is loopback, 0 is normal operation. */
-#define SSP_SLAVE		0		/* 1 is SLAVE mode, 0 is master mode */
+#define SSP0_SLAVE		0		/* 1 is SLAVE mode, 0 is master mode */
 #define TX_RX_ONLY		0		/* 1 is TX or RX only depending on SSP_SLAVE
 								flag, 0 is either loopback mode or communicate
 								with a serial EEPROM. */
@@ -100,9 +100,14 @@
 #define SSP1_CPOL 0
 #define SSP1_CPHA 0
 
+#define SSP0_SLAVE 0
+#define SSP1_SLAVE 1
+
 void ssp_init(uint8_t port);
-void ssp_send(uint8_t port, uint8_t* buf, uint32_t length);
+void ssp_send(uint8_t port, const uint8_t* buf, uint32_t length);
 void ssp_receive(uint8_t port, uint8_t* buf, uint32_t length);
+void ssp_send_uint16(uint8_t port, const uint16_t* buf, uint32_t length);
+void ssp_receive_uint16(uint8_t port, uint16_t* buf, uint32_t length);
 void ssp_exchange(uint8_t port, uint8_t *buf, uint32_t length);
 
 #endif /* PERIPHERAL_SSP_H_ */

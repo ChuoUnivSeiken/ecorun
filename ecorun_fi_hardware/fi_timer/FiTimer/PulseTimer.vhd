@@ -45,7 +45,7 @@ begin
 				if (counter = "00000000") then
 					match_cache <= match;
 					counter <= counter + 1;
-				elsif (counter > match_cache) then
+				elsif (counter = match_cache) then
 					pulse <= '0';
 					enabled <=  false;
 					counter <= (others => '0');

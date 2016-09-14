@@ -7,7 +7,7 @@ MEMORY
 {
   FLASH  (rx) : ORIGIN = 0x0,         LENGTH = 0x10000
   RAM (rwx) : ORIGIN = 0x10000000,  LENGTH = 0x2000
-  USBRAM (rwx) : ORIGIN = 0x20004000,  LENGTH = 0x800
+  /*USBRAM (rwx) : ORIGIN = 0x20004000,  LENGTH = 0x800*/
 }
 
 /*
@@ -282,11 +282,13 @@ SECTIONS
     } >RAM
 
 	/* This is used for USBRAM section */
+	/*
 	.usb_ram (NOLOAD): ALIGN(4)
 	{
 		FILL(0xff)
 		*(USB_RAM)
 	} >USBRAM
+	*/
   
 	/* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
